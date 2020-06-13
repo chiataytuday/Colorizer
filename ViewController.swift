@@ -11,7 +11,7 @@ import AVFoundation
 
 class ViewController: UIViewController {
 
-	private let circle: UIImageView = {
+	private let dot: UIImageView = {
 		let config = UIImage.SymbolConfiguration(pointSize: 9, weight: .bold)
 		let image = UIImage(systemName: "circle.fill", withConfiguration: config)
 		let imageView = UIImageView(image: image)
@@ -43,10 +43,10 @@ class ViewController: UIViewController {
 		setupSubviews()
 		setupCamera()
 
-		view.addSubview(circle)
+		view.addSubview(dot)
 		view.addSubview(viewfinder)
 
-		circle.center = view.center
+		dot.center = view.center
 		viewfinder.center = view.center
 	}
 
@@ -68,7 +68,7 @@ class ViewController: UIViewController {
 		])
 	}
 
-	let queue = DispatchQueue(label: "com.camera.video.queue")
+	let queue = DispatchQueue(label: "com.camera.video.queue", attributes: .concurrent)
 
 	private func setupCamera() {
 		self.captureSession.sessionPreset = .hd1280x720
