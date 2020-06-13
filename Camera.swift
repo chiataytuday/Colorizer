@@ -15,41 +15,24 @@ final class Camera {
 	var captureSession = AVCaptureSession()
 	var previewView: PreviewView!
 
-	let queue = DispatchQueue(label: "com.camera.video.queue")
-
 	private var photoOutput = AVCapturePhotoOutput()
 
-	init(_ delegate: AVCaptureVideoDataOutputSampleBufferDelegate) {
+	init() {
 		captureSession.beginConfiguration()
 		captureSession.sessionPreset = .hd1920x1080
 
 		captureDevice = bestDevice(in: .back)
 		do {
-            let captureDeviceInput = try AVCaptureDeviceInput(device: captureDevice)
-            let videoOutput = AVCaptureVideoDataOutput()
-            videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as AnyHashable: NSNumber(value: kCMPixelFormat_32BGRA)] as? [String : Any]
-            videoOutput.alwaysDiscardsLateVideoFrames = true
-            videoOutput.setSampleBufferDelegate(delegate, queue: queue)
-
-            if self.captureSession.canAddOutput(videoOutput) {
-                self.captureSession.addOutput(videoOutput)
-            }
-            self.captureSession.addInput(captureDeviceInput)
-        } catch {
-            print(error)
-            return
-        }
-//		do {
-//			let deviceInput = try AVCaptureDeviceInput(device: captureDevice)
-//			if captureSession.canAddInput(deviceInput) {
-//				captureSession.addInput(deviceInput)
-//			}
-//			if captureSession.canAddOutput(photoOutput) {
-//				captureSession.addOutput(photoOutput)
-//			}
-//		} catch {
-//			print(error.localizedDescription)
-//		}
+			let deviceInput = try AVCaptureDeviceInput(device: captureDevice)
+			if captureSession.canAddInput(deviceInput) {
+				captureSession.addInput(deviceInput)
+			}
+			if captureSession.canAddOutput(photoOutput) {
+				captureSession.addOutput(photoOutput)
+			}
+		} catch {
+			print(error.localizedDescription)
+		}
 		captureSession.commitConfiguration()
 
 		previewView = PreviewView(session: captureSession)
