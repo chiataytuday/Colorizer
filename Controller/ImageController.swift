@@ -8,11 +8,23 @@
 
 import UIKit
 
-class ImageController: UIViewController {
+protocol Notifiable {
+	
+	func colorChanged(to color: UIColor)
+}
 
-	private var pickerView: PickerView!
+class ImageController: UIViewController, Notifiable {
+
+	func colorChanged(to color: UIColor) {
+		colorInfoView.hexLabel.text = "#\(color.toHex()!)"
+		colorInfoView.squareView.backgroundColor = color
+	}
+
+	var pickerView: PickerView!
 
 	private var scrollView = UIScrollView()
+
+	private var colorInfoView: ColorInfoView!
 
 	var photoImageView: UIImageView = {
 		let imageView = UIImageView()
@@ -22,7 +34,7 @@ class ImageController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = .white
+		view.backgroundColor = UIColor(white: 0.95, alpha: 1)
 		setupSubviews()
 	}
 
@@ -30,8 +42,6 @@ class ImageController: UIViewController {
 		scrollView.delegate = self
 		scrollView.minimumZoomScale = 1.0
 		scrollView.maximumZoomScale = 8.0
-		scrollView.showsVerticalScrollIndicator = false
-		scrollView.showsHorizontalScrollIndicator = false
 
 		view.addSubview(scrollView)
 		scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -51,7 +61,18 @@ class ImageController: UIViewController {
 			photoImageView.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor)
 		])
 
+		colorInfoView = ColorInfoView(.black, "FFFFFF")
+		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(colorInfoView)
+		NSLayoutConstraint.activate([
+			colorInfoView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
+			colorInfoView.heightAnchor.constraint(equalToConstant: 50),
+			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
+		])
+
 		pickerView = PickerView(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
+		pickerView.delegate = self
 		photoImageView.addSubview(pickerView)
 		photoImageView.isUserInteractionEnabled = true
 		pickerView.center = view.center
