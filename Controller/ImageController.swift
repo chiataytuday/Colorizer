@@ -17,9 +17,10 @@ class ImageController: UIViewController, Notifiable {
 
 	func colorChanged(to color: UIColor) {
 		colorInfoView.set(color: color)
+		pickerView.color = color
 	}
 
-	var pickerView: PickerView!
+	var pickerView: Picker!
 
 	private var scrollView = UIScrollView()
 
@@ -41,6 +42,7 @@ class ImageController: UIViewController, Notifiable {
 		scrollView.delegate = self
 		scrollView.minimumZoomScale = 1.0
 		scrollView.maximumZoomScale = 8.0
+		scrollView.delaysContentTouches = false
 
 		view.addSubview(scrollView)
 		scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +72,7 @@ class ImageController: UIViewController, Notifiable {
 			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
 		])
 
-		pickerView = PickerView(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
+		pickerView = Picker(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
 		pickerView.delegate = self
 		photoImageView.addSubview(pickerView)
 		photoImageView.isUserInteractionEnabled = true
