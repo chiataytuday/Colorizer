@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos
 
 class LibraryViewController: UIViewController {
 
@@ -14,16 +15,47 @@ class LibraryViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = .systemGreen
+		view.backgroundColor = .white
+		fetchPhotos()
 		setupCollectionView()
+	}
+
+	var images = [UIImage]()
+
+	func fetchPhotos() {
+		let imageManager = PHImageManager()
+
+		let requestOptions = PHImageRequestOptions()
+		requestOptions.deliveryMode = .highQualityFormat
+		requestOptions.isSynchronous = true
+
+		let targetSize = CGSize(width: view.frame.width, height: view.frame.width)
+
+		let fetchOptions = PHFetchOptions()
+		fetchOptions.fetchLimit = 100
+		fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+
+		let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+		if fetchResult.count > 0 {
+			for i in 0..<fetchResult.count {
+				imageManager.requestImage(for: fetchResult.object(at: i), targetSize: targetSize, contentMode: .aspectFill, options: requestOptions) { image, _ in
+					self.images.append(image!)
+				}
+			}
+		} else {
+			print("You got no photos :(")
+			self.collectionView.reloadData()
+		}
 	}
 
 	func setupCollectionView() {
 		let layout = UICollectionViewFlowLayout()
 		collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+		collectionView.backgroundColor = .white
 		collectionView.delegate = self
 		collectionView.dataSource = self
-		collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+		collectionView.showsVerticalScrollIndicator = false
+		collectionView.register(ImageViewCell.self, forCellWithReuseIdentifier: "Cell")
 		collectionView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(collectionView)
 		NSLayoutConstraint.activate([
@@ -38,12 +70,21 @@ class LibraryViewController: UIViewController {
 extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return 20
+		return images.count
+	}
+
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		let cell = collectionView.cellForItem(at: indexPath) as! ImageViewCell
+		let image = cell.imageView.image!
+		let imageController = ImageController()
+		imageController.photoImageView.image = image
+		imageController.modalPresentationStyle = .fullScreen
+		present(imageController, animated: true)
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
-		cell.backgroundColor = indexPath.item % 3 == 0 ? .systemYellow : .systemBlue
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ImageViewCell
+		cell.imageView.image = images[indexPath.item]
 		return cell
 	}
 
