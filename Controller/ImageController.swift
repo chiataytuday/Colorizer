@@ -9,7 +9,6 @@
 import UIKit
 
 protocol Notifiable {
-	
 	func colorChanged(to color: UIColor)
 }
 
@@ -36,6 +35,12 @@ class ImageController: UIViewController, Notifiable {
 		super.viewDidLoad()
 		view.backgroundColor = UIColor(white: 0.95, alpha: 1)
 		setupSubviews()
+	}
+
+	override func viewWillAppear(_ animated: Bool) {
+		let color = photoImageView.layer.pickColor(at: view.center)
+		colorChanged(to: color!)
+		pickerView.shapeLayer.fillColor = color!.cgColor
 	}
 
 	private func setupSubviews() {

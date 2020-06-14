@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ColorInfoView: UIView {
+final class ColorInfoView: UIView {
 
 	private let colorView: UIView = {
 		let view = UIView()

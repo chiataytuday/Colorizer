@@ -9,7 +9,7 @@
 
 import UIKit
 
-class ImageViewCell: UICollectionViewCell {
+final class ImageViewCell: UICollectionViewCell {
 
 	let imageView: UIImageView
 

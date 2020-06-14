@@ -8,13 +8,13 @@
 
 import UIKit
 
-class Picker: UIView {
+final class Picker: UIView {
 
 	var delegate: Notifiable!
 	var color: UIColor = .systemYellow
 
-	private var lastLocation: CGPoint!
-	private let shapeLayer = CAShapeLayer()
+	var lastLocation: CGPoint!
+	let shapeLayer = CAShapeLayer()
 
 	private var defaultScale: CGFloat {
 		let scrollView = superview?.superview as! UIScrollView
@@ -37,7 +37,7 @@ class Picker: UIView {
 
 		let circlePath = UIBezierPath(ovalIn: frame.insetBy(dx: inset, dy: inset))
 		shapeLayer.path = circlePath.cgPath
-		shapeLayer.fillColor = UIColor.systemYellow.cgColor
+		shapeLayer.fillColor = UIColor.clear.cgColor
 		shapeLayer.strokeColor = UIColor.white.cgColor
 		shapeLayer.lineWidth = lineWidth
 		shapeLayer.shadowColor = UIColor.black.cgColor
