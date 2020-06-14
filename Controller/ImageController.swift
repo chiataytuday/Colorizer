@@ -16,8 +16,7 @@ protocol Notifiable {
 class ImageController: UIViewController, Notifiable {
 
 	func colorChanged(to color: UIColor) {
-		colorInfoView.hexLabel.text = "#\(color.toHex()!)"
-		colorInfoView.squareView.backgroundColor = color
+		colorInfoView.set(color: color)
 	}
 
 	var pickerView: PickerView!
@@ -61,7 +60,7 @@ class ImageController: UIViewController, Notifiable {
 			photoImageView.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor)
 		])
 
-		colorInfoView = ColorInfoView(.black, "FFFFFF")
+		colorInfoView = ColorInfoView()
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([

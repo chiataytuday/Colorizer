@@ -57,7 +57,7 @@ class ViewController: UIViewController {
         previewLayer.masksToBounds = true
         view.layer.insertSublayer(previewLayer, at: 0)
 
-		colorInfoView = ColorInfoView(.black, "FFFFFF")
+		colorInfoView = ColorInfoView()
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([
@@ -102,8 +102,7 @@ class ViewController: UIViewController {
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		let color = self.previewLayer.pickColor(at: self.view.center)!
-		colorInfoView.squareView.backgroundColor = color
-		colorInfoView.hexLabel.text = "#\(color.toHex()!)"
+		colorInfoView.set(color: color)
 		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.5)
 	}
 

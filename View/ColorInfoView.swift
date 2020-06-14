@@ -10,9 +10,10 @@ import UIKit
 
 class ColorInfoView: UIView {
 
-	let squareView: UIView = {
+	private let colorView: UIView = {
 		let view = UIView()
 		view.layer.cornerRadius = 10
+		view.backgroundColor = .black
 		NSLayoutConstraint.activate([
 			view.widthAnchor.constraint(equalToConstant: 20),
 			view.heightAnchor.constraint(equalToConstant: 20)
@@ -20,7 +21,7 @@ class ColorInfoView: UIView {
 		return view
 	}()
 
-	let hexLabel: UILabel = {
+	private let hexLabel: UILabel = {
 		let label = UILabel()
 		label.text = "#FFFFFF"
 		label.textColor = .lightGray
@@ -29,15 +30,12 @@ class ColorInfoView: UIView {
 	}()
 
 
-	init(_ color: UIColor, _ hex: String) {
+	init() {
 		super.init(frame: .zero)
 		backgroundColor = .white
 		layer.cornerRadius = 25
 
-		squareView.backgroundColor = color
-		hexLabel.text = "#\(hex)"
-
-		let stackView = UIStackView(arrangedSubviews: [squareView, hexLabel])
+		let stackView = UIStackView(arrangedSubviews: [colorView, hexLabel])
 		stackView.spacing = 12
 		addSubview(stackView)
 		stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -45,6 +43,11 @@ class ColorInfoView: UIView {
 			stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
 			stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
 		])
+	}
+
+	func set(color: UIColor) {
+		colorView.backgroundColor = color
+		hexLabel.text = "#\(color.toHex()!)"
 	}
 
 	required init?(coder: NSCoder) {
