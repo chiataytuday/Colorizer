@@ -20,31 +20,27 @@ class LibraryViewController: UIViewController {
 		setupCollectionView()
 	}
 
-	var images = [UIImage]()
+//	var images = [UIImage]()
+
+	var fetchResult: PHFetchResult<PHAsset>?
+	var imageManager = PHImageManager()
+	var requestOptions: PHImageRequestOptions!
+	var fetchOptions: PHFetchOptions!
+	var targetSize: CGSize!
 
 	func fetchPhotos() {
-		let imageManager = PHImageManager()
+		imageCache.countLimit = 200
+		imageManager = PHImageManager()
 
-		let requestOptions = PHImageRequestOptions()
+		requestOptions = PHImageRequestOptions()
 		requestOptions.deliveryMode = .highQualityFormat
-		requestOptions.isSynchronous = true
 
-		let targetSize = CGSize(width: view.frame.width, height: view.frame.width)
+		targetSize = CGSize(width: view.frame.width, height: view.frame.width)
 
-		let fetchOptions = PHFetchOptions()
+		fetchOptions = PHFetchOptions()
 		fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
 
-		let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-		if fetchResult.count > 0 {
-			for i in 0..<fetchResult.count {
-				imageManager.requestImage(for: fetchResult.object(at: i), targetSize: targetSize, contentMode: .aspectFill, options: requestOptions) { image, _ in
-					self.images.append(image!)
-				}
-			}
-		} else {
-			print("You got no photos :(")
-			self.collectionView.reloadData()
-		}
+		fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
 	}
 
 	func setupCollectionView() {
@@ -65,12 +61,14 @@ class LibraryViewController: UIViewController {
 			collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
 		])
 	}
+
+	var imageCache = NSCache<AnyObject, AnyObject>()
 }
 
 extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return images.count
+		return fetchResult?.count ?? 0
 	}
 
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -83,9 +81,21 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		#error("Async here: from library or cache")
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ImageViewCell
-		cell.imageView.image = images[indexPath.item]
+		cell.imageView.image = nil
+		cell.imageView.backgroundColor = .red
+		DispatchQueue.main.async {
+			if let image = self.imageCache.object(forKey: indexPath.item as NSNumber) {
+				cell.imageView.image = image as? UIImage
+				print("\(indexPath.item) cache")
+			} else {
+				self.imageManager.requestImage(for: self.fetchResult!.object(at: indexPath.item), targetSize: self.targetSize, contentMode: .aspectFill, options: self.requestOptions) { (image, _) in
+					self.imageCache.setObject(image!, forKey: indexPath.item as NSNumber)
+					cell.imageView.image = image!
+					print("\(indexPath.item) library")
+				}
+			}
+		}
 		return cell
 	}
 
