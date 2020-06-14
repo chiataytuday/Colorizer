@@ -32,7 +32,6 @@ class LibraryViewController: UIViewController {
 		let targetSize = CGSize(width: view.frame.width, height: view.frame.width)
 
 		let fetchOptions = PHFetchOptions()
-		fetchOptions.fetchLimit = 100
 		fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
 
 		let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
@@ -57,6 +56,7 @@ class LibraryViewController: UIViewController {
 		collectionView.showsVerticalScrollIndicator = false
 		collectionView.register(ImageViewCell.self, forCellWithReuseIdentifier: "Cell")
 		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		collectionView.alwaysBounceVertical = true
 		view.addSubview(collectionView)
 		NSLayoutConstraint.activate([
 			collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -83,6 +83,7 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+		#error("Async here: from library or cache")
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ImageViewCell
 		cell.imageView.image = images[indexPath.item]
 		return cell
@@ -97,8 +98,8 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	}
 
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		let half = view.frame.width/2
-		return CGSize(width: half, height: half)
+		let size = view.frame.width/3
+		return CGSize(width: size, height: size)
 	}
 
 }

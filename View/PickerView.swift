@@ -13,7 +13,7 @@ class PickerView: UIView {
 	var delegate: Notifiable!
 
 	var touchOffset: CGPoint?
-	var lastLocation = CGPoint(x: 0, y: 0)
+	var lastLocation: CGPoint!
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -37,13 +37,18 @@ class PickerView: UIView {
 				lastLocation = self.center
 			case .changed:
 				let translation = recognizer.translation(in: self.superview)
-				self.center = CGPoint(x: lastLocation.x + translation.x * 1.05, y: lastLocation.y + translation.y * 1.05)
-				let imageView = superview as! UIImageView
-				let color = imageView.layer.pickColor(at: center)
-				delegate.colorChanged(to: color!)
+				pickerLocationChanged(with: translation)
 			default:
 				break
 		}
+	}
+
+	func pickerLocationChanged(with translation: CGPoint = .zero) {
+		center = CGPoint(x: lastLocation.x + translation.x * 1.05,
+						 y: lastLocation.y + translation.y * 1.05)
+		let imageView = superview as! UIImageView
+		let color = imageView.layer.pickColor(at: center)
+		delegate.colorChanged(to: color!)
 	}
 	
 	required init?(coder: NSCoder) {
