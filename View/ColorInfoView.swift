@@ -25,7 +25,7 @@ final class ColorInfoView: UIView {
 		let label = UILabel()
 		label.text = "#FFFFFF"
 		label.textColor = .lightGray
-		label.font = UIFont.monospacedFont(ofSize: 18, weight: .regular)
+		label.font = UIFont.monospacedFont(ofSize: 19, weight: .light)
 		return label
 	}()
 
@@ -36,7 +36,7 @@ final class ColorInfoView: UIView {
 		layer.cornerRadius = 25
 
 		let stackView = UIStackView(arrangedSubviews: [colorView, hexLabel])
-		stackView.spacing = 12
+		stackView.spacing = 10
 		addSubview(stackView)
 		stackView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
