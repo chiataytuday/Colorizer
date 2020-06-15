@@ -68,6 +68,7 @@ final class Picker: UIView {
 	}
 
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		delegate.movementFinished()
 		turnToCircle()
 	}
 

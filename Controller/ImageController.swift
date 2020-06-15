@@ -19,12 +19,12 @@ protocol Notifiable {
 class ImageController: UIViewController, Notifiable {
 
 	func movementFinished() {
-		likeButton.isHidden = false
+		likeButton.setVisible(false)
 	}
 
 
 	func movementStarted() {
-		likeButton.isHidden = true
+		likeButton.setVisible(true)
 	}
 
 

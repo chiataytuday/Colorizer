@@ -10,7 +10,7 @@ import UIKit
 
 class FlatButton: UIButton {
 
-	var saved: Bool = false
+	private var saved = false
 
 	init(_ title: String, _ systemImageName: String) {
 		super.init(frame: .zero)
@@ -18,6 +18,7 @@ class FlatButton: UIButton {
 		layer.cornerRadius = 25
 		setTitle(title, for: .normal)
 		adjustsImageWhenHighlighted = false
+
 		let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
 		setPreferredSymbolConfiguration(config, forImageIn: .normal)
 		let image = UIImage(systemName: systemImageName)
@@ -31,13 +32,22 @@ class FlatButton: UIButton {
 		addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchUpOutside])
 	}
 
-	@objc func touchDown() {
+	@objc private func touchDown() {
 		UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .allowUserInteraction, animations: {
 			self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
 		})
 	}
 
-	@objc func touchUp() {
+	func setVisible(_ isVisible: Bool) {
+		UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .allowUserInteraction, animations: {
+			self.transform = isVisible ? CGAffineTransform(scaleX: 0.9, y: 0.9).translatedBy(x: 0, y: 10) : .identity
+		})
+		UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
+			self.alpha = isVisible ? 0 : 1
+		}.startAnimation()
+	}
+
+	@objc private func touchUp() {
 		UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
 			self.transform = .identity
 		})
@@ -46,7 +56,7 @@ class FlatButton: UIButton {
 		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.5)
 	}
 
-	@objc func setState(activated: Bool = false) {
+	@objc private func setState(activated: Bool = false) {
 		let image = UIImage(systemName: activated ? "suit.heart" : "suit.heart.fill")
 		setImage(image, for: .normal)
 		if !activated {
