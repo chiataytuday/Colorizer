@@ -63,6 +63,15 @@ class ImageController: UIViewController, Notifiable {
 		doubleTap.delaysTouchesBegan = false
 		doubleTap.delaysTouchesEnded = false
 		scrollView.addGestureRecognizer(doubleTap)
+		setupNavigationBar()
+	}
+
+	private func setupNavigationBar() {
+		let insets = UIEdgeInsets(top: 0, left: 0, bottom: 1.5, right: 0)
+		let image = UIImage(systemName: "chevron.left", withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .light))?.withAlignmentRectInsets(insets)
+		self.navigationController?.navigationBar.backIndicatorImage = image
+		self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = image
+		self.navigationController?.navigationBar.tintColor = .black
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -121,10 +130,12 @@ class ImageController: UIViewController, Notifiable {
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([
 			colorInfoView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
-			colorInfoView.heightAnchor.constraint(equalToConstant: 50),
+			colorInfoView.heightAnchor.constraint(equalToConstant: 40),
 			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
 		])
+
+		navigationItem.titleView = colorInfoView
 
 		pickerView = Picker(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
 		pickerView.delegate = self
@@ -151,6 +162,10 @@ class ImageController: UIViewController, Notifiable {
 		zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
 		zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
 		return zoomRect
+	}
+
+	override var prefersStatusBarHidden: Bool {
+		true
 	}
 }
 

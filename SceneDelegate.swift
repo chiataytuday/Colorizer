@@ -15,19 +15,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
-//		if let windowScene = scene as? UIWindowScene {
-//
-//			let window = UIWindow(windowScene: windowScene)
-//			let navController = UINavigationController()
-//			let viewController = LibraryViewController()
-//
-//			navController.setNavigationBarHidden(true, animated: false)
-//			navController.setToolbarHidden(true, animated: false)
-//			navController.viewControllers = [viewController]
-//			window.rootViewController = navController
-//			self.window = window
-//			window.makeKeyAndVisible()
-//        }
+		if let windowScene = scene as? UIWindowScene {
+
+			let window = UIWindow(windowScene: windowScene)
+			let navController = UINavigationController()
+			let viewController = LibraryViewController()
+
+			navController.navigationBar.barTintColor = UIColor(white: 0.98, alpha: 1)
+			navController.navigationBar.barStyle = .default
+			navController.setToolbarHidden(true, animated: false)
+			navController.viewControllers = [viewController]
+			window.rootViewController = navController
+			self.window = window
+			window.makeKeyAndVisible()
+        }
 
 		guard let _ = (scene as? UIWindowScene) else { return }
 	}
