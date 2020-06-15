@@ -62,7 +62,7 @@ class FlatButton: UIButton {
 		if !activated {
 			setTitle("Saved", for: .normal)
 			setTitleColor(.black, for: .normal)
-			imageView?.tintColor = .systemRed
+			imageView?.tintColor = .black
 		} else {
 			setTitle("Save", for: .normal)
 			setTitleColor(.lightGray, for: .normal)

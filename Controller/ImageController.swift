@@ -54,6 +54,8 @@ class ImageController: UIViewController, Notifiable {
 
 		let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
 		doubleTap.numberOfTapsRequired = 2
+		doubleTap.delaysTouchesBegan = false
+		doubleTap.delaysTouchesEnded = false
 		scrollView.addGestureRecognizer(doubleTap)
 	}
 
@@ -64,7 +66,7 @@ class ImageController: UIViewController, Notifiable {
 		let ratio = max(ratioH, ratioW)
 		scrollView.maximumZoomScale = max(ratio, 4)
 		print("\(ratioH)")
-		
+
 		let color = photoImageView.layer.pickColor(at: view.center)
 		colorChanged(to: color!)
 		pickerView.shapeLayer.fillColor = color!.cgColor
