@@ -55,6 +55,7 @@ final class Picker: UIView {
 				let translation = recognizer.translation(in: self.superview)
 				pickerLocationChanged(with: translation)
 			case .ended:
+				delegate.movementFinished()
 				turnToCircle()
 			default:
 				break
@@ -62,6 +63,7 @@ final class Picker: UIView {
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		delegate.movementStarted()
 		turnToRing()
 	}
 

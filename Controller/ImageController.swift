@@ -9,10 +9,24 @@
 import UIKit
 
 protocol Notifiable {
+	func movementStarted()
+
 	func colorChanged(to color: UIColor)
+
+	func movementFinished()
 }
 
 class ImageController: UIViewController, Notifiable {
+
+	func movementFinished() {
+		likeButton.isHidden = false
+	}
+
+
+	func movementStarted() {
+		likeButton.isHidden = true
+	}
+
 
 	func colorChanged(to color: UIColor) {
 		colorInfoView.set(color: color)
