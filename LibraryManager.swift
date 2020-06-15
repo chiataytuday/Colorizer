@@ -43,12 +43,16 @@ class LibraryManager {
 		imageCache.countLimit = 300
 	}
 
-	func fetchImage(at id: Int, handler: @escaping FetchHandler) {
-		if let imageInCache = imageCache.object(forKey: id as NSNumber) {
+	enum Quality {
+		case max, low
+	}
+
+	func fetchImage(at id: Int, quality: Quality, handler: @escaping FetchHandler) {
+		if let imageInCache = imageCache.object(forKey: id as NSNumber), quality != .max {
 			handler(imageInCache)
 //			print("\(id) cache")
 		} else {
-			imageManager.requestImage(for: fetchResult.object(at: id), targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { (image, _) in
+			imageManager.requestImage(for: fetchResult.object(at: id), targetSize: quality == .max ? PHImageManagerMaximumSize : targetSize, contentMode: .aspectFit, options: requestOptions) { (image, _) in
 				self.imageCache.setObject(image!, forKey: id as NSNumber)
 				handler(image!)
 //				print("\(id) library")

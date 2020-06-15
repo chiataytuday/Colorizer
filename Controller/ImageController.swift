@@ -127,7 +127,11 @@ extension ImageController: UIScrollViewDelegate {
 		let scale = scrollView.zoomScale
 		pickerView.transform = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
 
-		guard scale > 1 && scale <= scrollView.maximumZoomScale else { return }
+		guard scale <= scrollView.maximumZoomScale else { return }
+		guard scale > 1 else {
+			scrollView.contentInset = .zero
+			return
+		}
 
 		if let image = photoImageView.image {
 			let ratioW = photoImageView.frame.width / image.size.width

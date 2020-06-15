@@ -51,20 +51,19 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	}
 
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		let cell = collectionView.cellForItem(at: indexPath) as! ImageViewCell
-		guard let image = cell.imageView.image else { return }
-
-		let imageController = ImageController()
-		imageController.photoImageView.image = image
-		imageController.modalPresentationStyle = .fullScreen
-		present(imageController, animated: true)
+		libraryManager.fetchImage(at: indexPath.item, quality: .max) { (image) in
+			let imageController = ImageController()
+			imageController.photoImageView.image = image
+			imageController.modalPresentationStyle = .fullScreen
+			self.present(imageController, animated: true)
+		}
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ImageViewCell
 		
 		cell.imageView.image = nil
-		libraryManager.fetchImage(at: indexPath.item) { (image) in
+		libraryManager.fetchImage(at: indexPath.item, quality: .low) { (image) in
 			cell.imageView.image = image
 		}
 		return cell
