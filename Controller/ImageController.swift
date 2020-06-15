@@ -21,6 +21,8 @@ class ImageController: UIViewController, Notifiable {
 
 	var pickerView: Picker!
 
+	var likeButton: FlatButton!
+
 	private var scrollView = UIScrollView()
 
 	private var colorInfoView: ColorInfoView!
@@ -82,6 +84,16 @@ class ImageController: UIViewController, Notifiable {
 		photoImageView.addSubview(pickerView)
 		photoImageView.isUserInteractionEnabled = true
 		pickerView.center = view.center
+
+		likeButton = FlatButton("Save", "suit.heart")
+		likeButton.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(likeButton)
+		NSLayoutConstraint.activate([
+			likeButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+			likeButton.heightAnchor.constraint(equalToConstant: 50),
+			likeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			likeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
+		])
 	}
 }
 
