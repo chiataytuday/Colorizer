@@ -58,14 +58,21 @@ class ImageController: UIViewController, Notifiable {
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
+		let imageSize = photoImageView.image!.size
+		let ratioH = imageSize.height/(view.frame.height/4)
+		let ratioW = imageSize.width/(view.frame.width/4)
+		let ratio = max(ratioH, ratioW)
+		scrollView.maximumZoomScale = max(ratio, 4)
+		print("\(ratioH)")
+		
 		let color = photoImageView.layer.pickColor(at: view.center)
 		colorChanged(to: color!)
 		pickerView.shapeLayer.fillColor = color!.cgColor
 	}
 
-	@objc func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
+	@objc private func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
 		if scrollView.zoomScale == 1 {
-			scrollView.zoom(to: zoomRectForScale(scale: scrollView.maximumZoomScale/2, center: recognizer.location(in: recognizer.view)), animated: true)
+			scrollView.zoom(to: zoomRectForScale(scale: 4, center: recognizer.location(in: recognizer.view)), animated: true)
 		} else {
 			scrollView.setZoomScale(1, animated: true)
 		}
