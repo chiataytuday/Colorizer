@@ -51,12 +51,24 @@ class ImageController: UIViewController, Notifiable {
 		super.viewDidLoad()
 		view.backgroundColor = UIColor(white: 0.95, alpha: 1)
 		setupSubviews()
+
+		let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
+		doubleTap.numberOfTapsRequired = 2
+		scrollView.addGestureRecognizer(doubleTap)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		let color = photoImageView.layer.pickColor(at: view.center)
 		colorChanged(to: color!)
 		pickerView.shapeLayer.fillColor = color!.cgColor
+	}
+
+	@objc func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
+		if scrollView.zoomScale == 1 {
+			scrollView.zoom(to: zoomRectForScale(scale: scrollView.maximumZoomScale/2, center: recognizer.location(in: recognizer.view)), animated: true)
+		} else {
+			scrollView.setZoomScale(1, animated: true)
+		}
 	}
 
 	private func setupSubviews() {
@@ -114,6 +126,16 @@ class ImageController: UIViewController, Notifiable {
 			likeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			likeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
 		])
+	}
+
+	func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
+		var zoomRect: CGRect = .zero
+		zoomRect.size.height = photoImageView.frame.size.height / scale
+		zoomRect.size.width  = photoImageView.frame.size.width  / scale
+		let newCenter = scrollView.convert(center, from: photoImageView)
+		zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
+		zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
+		return zoomRect
 	}
 }
 
