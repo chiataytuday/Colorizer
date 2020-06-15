@@ -24,11 +24,9 @@ class ImageController: UIViewController, Notifiable {
 		likeButton.setVisible(false)
 	}
 
-
 	func movementStarted() {
 		likeButton.setVisible(true)
 	}
-
 
 	func colorChanged(to color: UIColor) {
 		colorInfoView.set(color: color)
@@ -46,7 +44,6 @@ class ImageController: UIViewController, Notifiable {
 	var photoImageView: UIImageView = {
 		let imageView = UIImageView()
 		imageView.contentMode = .scaleAspectFit
-		imageView.clipsToBounds = true
 		return imageView
 	}()
 
@@ -65,9 +62,9 @@ class ImageController: UIViewController, Notifiable {
 	private func setupSubviews() {
 		scrollView.delegate = self
 		scrollView.minimumZoomScale = 1.0
-		scrollView.maximumZoomScale = 8.0
-		scrollView.delaysContentTouches = false
+		scrollView.maximumZoomScale = 20.0
 		scrollView.contentInsetAdjustmentBehavior = .never
+		scrollView.delaysContentTouches = false
 		scrollView.showsVerticalScrollIndicator = false
 		scrollView.showsHorizontalScrollIndicator = false
 
@@ -130,20 +127,20 @@ extension ImageController: UIScrollViewDelegate {
 		let scale = scrollView.zoomScale
 		pickerView.transform = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
 
-		guard let image = photoImageView.image else { return }
-		let ratioW = photoImageView.frame.width / image.size.width
-		let ratioH = photoImageView.frame.height / image.size.height
-		let ratio = ratioW < ratioH ? ratioW : ratioH
+		guard scale > 1 && scale <= scrollView.maximumZoomScale else { return }
 
-		let newWidth = image.size.width * ratio
-		let newHeight = image.size.height * ratio
+		if let image = photoImageView.image {
+			let ratioW = photoImageView.frame.width / image.size.width
+			let ratioH = photoImageView.frame.height / image.size.height
+			let ratio = ratioW < ratioH ? ratioW : ratioH
 
-		let conditionLeft = newWidth * scale > photoImageView.frame.width
-		let left = 0.5 * (conditionLeft ? newWidth - photoImageView.frame.width : (scrollView.frame.width - scrollView.contentSize.width))
+			let newWidth = image.size.width*ratio
+			let newHeight = image.size.height*ratio
 
-		let conditionTop = newHeight * scale > photoImageView.frame.height
-		let top = 0.5 * (conditionTop ? newHeight - photoImageView.frame.height : (scrollView.frame.height - scrollView.contentSize.height))
+			let left = 0.5 * (newWidth * scale > photoImageView.frame.width ? (newWidth - photoImageView.frame.width) : (scrollView.frame.width - scrollView.contentSize.width))
+			let top = 0.5 * (newHeight * scale > photoImageView.frame.height ? (newHeight - photoImageView.frame.height) : (scrollView.frame.height - scrollView.contentSize.height))
 
-		scrollView.contentInset = UIEdgeInsets(top: top, left: left, bottom: top, right: left)
+			scrollView.contentInset = UIEdgeInsets(top: top, left: left, bottom: top, right: left)
+		}
 	}
 }

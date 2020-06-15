@@ -46,12 +46,12 @@ class LibraryManager {
 	func fetchImage(at id: Int, handler: @escaping FetchHandler) {
 		if let imageInCache = imageCache.object(forKey: id as NSNumber) {
 			handler(imageInCache)
-			print("\(id) cache")
+//			print("\(id) cache")
 		} else {
-			imageManager.requestImage(for: fetchResult.object(at: id), targetSize: targetSize, contentMode: .aspectFill, options: requestOptions) { (image, _) in
+			imageManager.requestImage(for: fetchResult.object(at: id), targetSize: targetSize, contentMode: .aspectFit, options: requestOptions) { (image, _) in
 				self.imageCache.setObject(image!, forKey: id as NSNumber)
 				handler(image!)
-				print("\(id) library")
+//				print("\(id) library")
 			}
 		}
 	}
