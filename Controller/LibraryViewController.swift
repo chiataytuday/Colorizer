@@ -51,7 +51,7 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	}
 
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		libraryManager.fetchImage(at: indexPath.item, quality: .max) { (image) in
+		libraryManager.fetchImage(at: indexPath.item, quality: .low) { (image) in
 			let imageController = ImageController()
 			imageController.photoImageView.image = image
 			imageController.modalPresentationStyle = .fullScreen

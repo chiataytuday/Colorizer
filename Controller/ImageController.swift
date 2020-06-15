@@ -21,10 +21,14 @@ class ImageController: UIViewController, Notifiable {
 
 	func movementFinished() {
 		#warning("Check if color is saved")
+		doubleTap.isEnabled = true
+		scrollView.isScrollEnabled = true
 		likeButton.setVisible(false)
 	}
 
 	func movementStarted() {
+		doubleTap.isEnabled = false
+		scrollView.isScrollEnabled = false
 		likeButton.setVisible(true)
 	}
 
@@ -47,12 +51,14 @@ class ImageController: UIViewController, Notifiable {
 		return imageView
 	}()
 
+	var doubleTap: UITapGestureRecognizer!
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		view.backgroundColor = UIColor(white: 0.95, alpha: 1)
 		setupSubviews()
 
-		let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
+		doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
 		doubleTap.numberOfTapsRequired = 2
 		doubleTap.delaysTouchesBegan = false
 		doubleTap.delaysTouchesEnded = false
