@@ -8,102 +8,64 @@
 
 import UIKit
 
-protocol Notifiable {
-
-	func movementStarted()
-
-	func colorChanged(to color: UIColor)
-
-	func movementFinished()
+protocol ColorPickerDelegate {
+	func beganMovement()
+	func moved(to color: UIColor)
+	func endedMovement()
 }
 
-class ImageController: UIViewController, Notifiable {
+class ImageController: UIViewController {
 
-	func movementFinished() {
-		#warning("Check if color is saved")
-		doubleTap.isEnabled = true
-		scrollView.isScrollEnabled = true
-		likeButton.setVisible(false)
-	}
+	private var pickerView: Picker!
 
-	func movementStarted() {
-		doubleTap.isEnabled = false
-		scrollView.isScrollEnabled = false
-		likeButton.setVisible(true)
-	}
+	private var scrollView = UIScrollView()
 
-	func colorChanged(to color: UIColor) {
-		colorInfoView.set(color: color)
-		pickerView.color = color
-	}
-
-	var pickerView: Picker!
-
-	var likeButton: FlatButton!
-
-	var scrollView = UIScrollView()
+	private var doubleTap = UITapGestureRecognizer()
 
 	private var colorInfoView: ColorInfoView!
 
-	var photoImageView: UIImageView = {
+	private var photoImageView: UIImageView = {
 		let imageView = UIImageView()
 		imageView.contentMode = .scaleAspectFit
 		return imageView
 	}()
 
-	var doubleTap: UITapGestureRecognizer!
+	var image: UIImage? {
+		get {
+			return photoImageView.image
+		}
+		set(newImage) {
+			photoImageView.image = newImage
+		}
+	}
+
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		view.backgroundColor = UIColor(white: 0.95, alpha: 1)
 		setupSubviews()
-
-		doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapScrollView(recognizer:)))
-		doubleTap.numberOfTapsRequired = 2
-		doubleTap.delaysTouchesBegan = false
-		doubleTap.delaysTouchesEnded = false
-		scrollView.addGestureRecognizer(doubleTap)
+		setupDoubleTapRecognizer()
 		setupNavigationBar()
-	}
-
-	private func setupNavigationBar() {
-		let insets = UIEdgeInsets(top: 0, left: 0, bottom: 1.5, right: 0)
-		let image = UIImage(systemName: "chevron.left", withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .light))?.withAlignmentRectInsets(insets)
-		self.navigationController?.navigationBar.backIndicatorImage = image
-		self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = image
-		self.navigationController?.navigationBar.tintColor = .black
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		let imageSize = photoImageView.image!.size
 		let ratioH = imageSize.height/(view.frame.height/4)
 		let ratioW = imageSize.width/(view.frame.width/4)
-		let ratio = max(ratioH, ratioW)
-		scrollView.maximumZoomScale = max(ratio, 4)
-		print("\(ratioH)")
+		scrollView.maximumZoomScale = max(max(ratioH, ratioW), 4)
 
 		let color = photoImageView.layer.pickColor(at: view.center)
-		colorChanged(to: color!)
 		pickerView.shapeLayer.fillColor = color!.cgColor
-	}
-
-	@objc private func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
-		if scrollView.zoomScale == 1 {
-			scrollView.zoom(to: zoomRectForScale(scale: 4, center: recognizer.location(in: recognizer.view)), animated: true)
-		} else {
-			scrollView.setZoomScale(1, animated: true)
-		}
+		moved(to: color!)
 	}
 
 	private func setupSubviews() {
 		scrollView.delegate = self
 		scrollView.minimumZoomScale = 1.0
-		scrollView.maximumZoomScale = 20.0
 		scrollView.contentInsetAdjustmentBehavior = .never
 		scrollView.delaysContentTouches = false
 		scrollView.showsVerticalScrollIndicator = false
 		scrollView.showsHorizontalScrollIndicator = false
-
 		view.addSubview(scrollView)
 		scrollView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
@@ -126,15 +88,6 @@ class ImageController: UIViewController, Notifiable {
 		])
 
 		colorInfoView = ColorInfoView()
-		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(colorInfoView)
-		NSLayoutConstraint.activate([
-			colorInfoView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
-			colorInfoView.heightAnchor.constraint(equalToConstant: 40),
-			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
-		])
-
 		navigationItem.titleView = colorInfoView
 
 		pickerView = Picker(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
@@ -142,22 +95,39 @@ class ImageController: UIViewController, Notifiable {
 		photoImageView.addSubview(pickerView)
 		photoImageView.isUserInteractionEnabled = true
 		pickerView.center = view.center
-
-		likeButton = FlatButton("Save", "suit.heart")
-		likeButton.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(likeButton)
-		NSLayoutConstraint.activate([
-			likeButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
-			likeButton.heightAnchor.constraint(equalToConstant: 50),
-			likeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			likeButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
-		])
 	}
 
-	func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
+	private func setupDoubleTapRecognizer() {
+		doubleTap.addTarget(self, action: #selector(handleDoubleTapScrollView(recognizer:)))
+		doubleTap.numberOfTapsRequired = 2
+		doubleTap.delaysTouchesBegan = false
+		doubleTap.delaysTouchesEnded = false
+		scrollView.addGestureRecognizer(doubleTap)
+	}
+
+	private func setupNavigationBar() {
+		let insets = UIEdgeInsets(top: 0, left: 0, bottom: 1.5, right: 0)
+		let image = UIImage(systemName: "chevron.left", withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .light))?.withAlignmentRectInsets(insets)
+		navigationController?.navigationBar.backIndicatorImage = image
+		navigationController?.navigationBar.backIndicatorTransitionMaskImage = image
+		navigationController?.navigationBar.tintColor = .black
+	}
+
+	@objc private func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
+		if scrollView.zoomScale == 1 {
+			let center = recognizer.location(in: recognizer.view)
+			scrollView.zoom(to: zoomRectForScale(scale: 4, center:
+				center), animated: true)
+		} else {
+			scrollView.setZoomScale(1, animated: true)
+		}
+	}
+
+	private func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
 		var zoomRect: CGRect = .zero
 		zoomRect.size.height = photoImageView.frame.size.height / scale
 		zoomRect.size.width  = photoImageView.frame.size.width  / scale
+
 		let newCenter = scrollView.convert(center, from: photoImageView)
 		zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
 		zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
@@ -168,6 +138,26 @@ class ImageController: UIViewController, Notifiable {
 		true
 	}
 }
+
+
+extension ImageController: ColorPickerDelegate {
+
+	func endedMovement() {
+		doubleTap.isEnabled = true
+		scrollView.isScrollEnabled = true
+	}
+
+	func beganMovement() {
+		doubleTap.isEnabled = false
+		scrollView.isScrollEnabled = false
+	}
+
+	func moved(to color: UIColor) {
+		colorInfoView.set(color: color)
+		pickerView.color = color
+	}
+}
+
 
 extension ImageController: UIScrollViewDelegate {
 
@@ -180,23 +170,21 @@ extension ImageController: UIScrollViewDelegate {
 		pickerView.transform = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
 
 		guard scale <= scrollView.maximumZoomScale else { return }
-		guard scale > 1 else {
+		if scale <= 1 {
 			scrollView.contentInset = .zero
 			return
 		}
 
-		if let image = photoImageView.image {
-			let ratioW = photoImageView.frame.width / image.size.width
-			let ratioH = photoImageView.frame.height / image.size.height
-			let ratio = ratioW < ratioH ? ratioW : ratioH
+		guard let image = photoImageView.image else { return }
+		let wRatio = photoImageView.frame.width / image.size.width
+		let hRatio = photoImageView.frame.height / image.size.height
+		let ratio = min(wRatio, hRatio)
 
-			let newWidth = image.size.width*ratio
-			let newHeight = image.size.height*ratio
+		let newSize = CGSize(width: image.size.width * ratio,
+							 height: image.size.height * ratio)
+		let left = 0.5 * (newSize.width * scale > photoImageView.frame.width ? (newSize.width - photoImageView.frame.width) : (scrollView.frame.width - scrollView.contentSize.width))
+		let top = 0.5 * (newSize.height * scale > photoImageView.frame.height ? (newSize.height - photoImageView.frame.height) : (scrollView.frame.height - scrollView.contentSize.height))
 
-			let left = 0.5 * (newWidth * scale > photoImageView.frame.width ? (newWidth - photoImageView.frame.width) : (scrollView.frame.width - scrollView.contentSize.width))
-			let top = 0.5 * (newHeight * scale > photoImageView.frame.height ? (newHeight - photoImageView.frame.height) : (scrollView.frame.height - scrollView.contentSize.height))
-
-			scrollView.contentInset = UIEdgeInsets(top: top, left: left, bottom: top, right: left)
-		}
+		scrollView.contentInset = UIEdgeInsets(top: top, left: left, bottom: top, right: left)
 	}
 }

@@ -22,10 +22,11 @@ class FlatButton: UIButton {
 		let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
 		setPreferredSymbolConfiguration(config, forImageIn: .normal)
 		let image = UIImage(systemName: systemImageName)
-		imageView?.tintColor = .lightGray
-		setTitleColor(.lightGray, for: .normal)
 		setImage(image!, for: .normal)
+		imageView?.tintColor = .lightGray
 		imageEdgeInsets.left = -7
+
+		setTitleColor(.lightGray, for: .normal)
 		titleEdgeInsets.right = -5
 
 		addTarget(self, action: #selector(touchDown), for: .touchDown)

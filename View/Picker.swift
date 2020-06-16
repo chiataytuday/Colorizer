@@ -10,7 +10,7 @@ import UIKit
 
 final class Picker: UIView {
 
-	var delegate: Notifiable!
+	var delegate: ColorPickerDelegate!
 	var color: UIColor = .systemYellow
 
 	var lastLocation: CGPoint!
@@ -55,7 +55,7 @@ final class Picker: UIView {
 				let translation = recognizer.translation(in: self.superview)
 				pickerLocationChanged(with: translation)
 			case .ended:
-				delegate.movementFinished()
+				delegate.endedMovement()
 				turnToCircle()
 			default:
 				break
@@ -63,12 +63,12 @@ final class Picker: UIView {
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		delegate.movementStarted()
+		delegate.beganMovement()
 		turnToRing()
 	}
 
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		delegate.movementFinished()
+		delegate.endedMovement()
 		turnToCircle()
 	}
 
@@ -110,7 +110,7 @@ final class Picker: UIView {
 		guard let imageView = superview as? UIImageView else { return }
 		let color = imageView.layer.pickColor(at: center)
 		set(color: color!)
-		delegate.colorChanged(to: color!)
+		delegate.moved(to: color!)
 	}
 
 	required init?(coder: NSCoder) {

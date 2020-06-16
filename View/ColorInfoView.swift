@@ -55,6 +55,7 @@ final class ColorInfoView: UIView {
 	}
 }
 
+
 extension UIFont {
 
 	static func monospacedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {

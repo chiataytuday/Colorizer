@@ -29,23 +29,6 @@ class LibraryViewController: UIViewController {
 		setupNavigationBar()
 	}
 
-	private func setupNavigationBar() {
-		let titleLabel: UILabel = UILabel()
-		titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .light)
-		titleLabel.text = "All Photos"
-		titleLabel.textColor = .black
-		let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .regular)
-		let chevronDown = UIImageView(image: UIImage(systemName: "chevron.down", withConfiguration: config))
-		chevronDown.tintColor = .black
-		let stackView = UIStackView(arrangedSubviews: [titleLabel, chevronDown])
-		stackView.distribution = .equalCentering
-		stackView.alignment = .center
-		stackView.spacing = 8
-		navigationItem.titleView = stackView
-
-		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-	}
-
 	private func setupCollectionView() {
 		imagesCollectionView.delegate = self
 		imagesCollectionView.dataSource = self
@@ -60,7 +43,27 @@ class LibraryViewController: UIViewController {
 		])
 	}
 
+	private func setupNavigationBar() {
+		let titleLabel: UILabel = UILabel()
+		titleLabel.font = UIFont.systemFont(ofSize: 19, weight: .light)
+		titleLabel.text = "All Photos"
+		titleLabel.textColor = .black
+
+		let config = UIImage.SymbolConfiguration(pointSize: 12, weight: .regular)
+		let chevronDown = UIImageView(image: UIImage(systemName: "chevron.down", withConfiguration: config))
+		chevronDown.tintColor = .black
+
+		let stackView = UIStackView(arrangedSubviews: [titleLabel, chevronDown])
+		stackView.distribution = .equalCentering
+		stackView.alignment = .center
+		stackView.spacing = 8
+
+		navigationItem.titleView = stackView
+		navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+	}
+
 }
+
 
 extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
@@ -71,16 +74,14 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		libraryManager.fetchImage(at: indexPath.item, quality: .low) { (image) in
 			let imageController = ImageController()
-			imageController.photoImageView.image = image
+			imageController.image = image
 			imageController.modalPresentationStyle = .fullScreen
 			self.navigationController?.pushViewController(imageController, animated: true)
-//			self.present(imageController, animated: true)
 		}
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ImageViewCell
-		
 		cell.imageView.image = nil
 		libraryManager.fetchImage(at: indexPath.item, quality: .low) { (image) in
 			cell.imageView.image = image
