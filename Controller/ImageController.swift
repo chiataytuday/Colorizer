@@ -24,6 +24,8 @@ class ImageController: UIViewController {
 
 	private var colorInfoView: ColorInfoView!
 
+	private var paletteView: PaletteView!
+
 	private var photoImageView: UIImageView = {
 		let imageView = UIImageView()
 		imageView.contentMode = .scaleAspectFit
@@ -60,6 +62,17 @@ class ImageController: UIViewController {
 	}
 
 	private func setupSubviews() {
+		paletteView = PaletteView()
+		view.addSubview(paletteView)
+		paletteView.translatesAutoresizingMaskIntoConstraints = false
+		paletteView.backgroundColor = .white
+		NSLayoutConstraint.activate([
+			paletteView.widthAnchor.constraint(equalTo: view.widthAnchor),
+			paletteView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+			paletteView.heightAnchor.constraint(equalToConstant: 70),
+			paletteView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+		])
+
 		scrollView.delegate = self
 		scrollView.minimumZoomScale = 1.0
 		scrollView.contentInsetAdjustmentBehavior = .never
@@ -70,9 +83,9 @@ class ImageController: UIViewController {
 		scrollView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
 			scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-			scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+			scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
 			scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+			scrollView.bottomAnchor.constraint(equalTo: paletteView.topAnchor)
 		])
 
 		scrollView.addSubview(photoImageView)

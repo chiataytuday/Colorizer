@@ -83,7 +83,7 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ImageViewCell
 		cell.imageView.image = nil
-		libraryManager.fetchImage(at: indexPath.item, quality: .low) { (image) in
+		libraryManager.fetchImage(at: indexPath.item, quality: .max) { (image) in
 			cell.imageView.image = image
 		}
 		return cell
@@ -98,7 +98,7 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	}
 
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		let size = view.frame.width/4
+		let size = view.frame.width/3
 		return CGSize(width: size, height: size)
 	}
 

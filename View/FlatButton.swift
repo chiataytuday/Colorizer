@@ -8,13 +8,13 @@
 
 import UIKit
 
-class FlatButton: UIButton {
+final class FlatButton: UIButton {
 
 	private var saved = false
 
 	init(_ title: String, _ systemImageName: String) {
 		super.init(frame: .zero)
-		backgroundColor = .white
+		backgroundColor = .black
 		layer.cornerRadius = 25
 		setTitle(title, for: .normal)
 		adjustsImageWhenHighlighted = false
@@ -23,10 +23,10 @@ class FlatButton: UIButton {
 		setPreferredSymbolConfiguration(config, forImageIn: .normal)
 		let image = UIImage(systemName: systemImageName)
 		setImage(image!, for: .normal)
-		imageView?.tintColor = .lightGray
+		imageView?.tintColor = .white
 		imageEdgeInsets.left = -7
 
-		setTitleColor(.lightGray, for: .normal)
+		setTitleColor(.white, for: .normal)
 		titleEdgeInsets.right = -5
 
 		addTarget(self, action: #selector(touchDown), for: .touchDown)

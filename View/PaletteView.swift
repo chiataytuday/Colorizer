@@ -8,15 +8,31 @@
 
 import UIKit
 
-class PaletteView: UIView {
+final class PaletteView: UIView {
 
-	private let chevron: UIImageView = {
-		let config = UIImage.SymbolConfiguration(pointSize: 11, weight: .medium)
-		let image = UIImage(systemName: "chevron.up", withConfiguration: config)
+	private let zoomLabel: UILabel = {
+		let label = UILabel()
+		label.text = "1.0x"
+		label.textColor = .black
+		return label
+	}()
+
+	private let saveImageView: UIImageView = {
+		let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+		let image = UIImage(systemName: "suit.heart", withConfiguration: config)
 		let imageView = UIImageView(image: image)
-		imageView.tintColor = .lightGray
+		imageView.tintColor = .black
 		return imageView
 	}()
+
+	private let infoImageView: UIImageView = {
+		let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+		let image = UIImage(systemName: "info", withConfiguration: config)
+		let imageView = UIImageView(image: image)
+		imageView.tintColor = .black
+		return imageView
+	}()
+
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -25,11 +41,15 @@ class PaletteView: UIView {
 	}
 
 	private func setupSubviews() {
-		addSubview(chevron)
-		chevron.translatesAutoresizingMaskIntoConstraints = false
+		let stackView = UIStackView(arrangedSubviews: [zoomLabel, saveImageView, infoImageView])
+		stackView.distribution = .equalCentering
+		stackView.alignment = .center
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		addSubview(stackView)
 		NSLayoutConstraint.activate([
-			chevron.centerXAnchor.constraint(equalTo: centerXAnchor),
-			chevron.topAnchor.constraint(equalTo: topAnchor, constant: 5)
+			stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25),
+			stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -25),
+			stackView.topAnchor.constraint(equalTo: topAnchor, constant: 15)
 		])
 	}
 
