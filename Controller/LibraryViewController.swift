@@ -72,7 +72,7 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	}
 
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		libraryManager.fetchImage(at: indexPath.item, quality: .low) { (image) in
+		libraryManager.fetchImage(at: indexPath.item, quality: .max) { (image) in
 			let imageController = ImageController()
 			imageController.image = image
 			imageController.modalPresentationStyle = .fullScreen
@@ -83,7 +83,7 @@ extension LibraryViewController: UICollectionViewDelegate, UICollectionViewDataS
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ImageViewCell
 		cell.imageView.image = nil
-		libraryManager.fetchImage(at: indexPath.item, quality: .max) { (image) in
+		libraryManager.fetchImage(at: indexPath.item, quality: .low) { (image) in
 			cell.imageView.image = image
 		}
 		return cell

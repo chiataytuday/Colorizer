@@ -182,11 +182,16 @@ extension ImageController: UIScrollViewDelegate {
 		let scale = scrollView.zoomScale
 		pickerView.transform = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
 
-		guard scale <= scrollView.maximumZoomScale else { return }
+		guard scale <= scrollView.maximumZoomScale else {
+			paletteView.zoomLabel.text = "\((scrollView.maximumZoomScale * 10).rounded()/10)x"
+			return
+		}
 		if scale <= 1 {
+			paletteView.zoomLabel.text = "\(scrollView.minimumZoomScale)x"
 			scrollView.contentInset = .zero
 			return
 		}
+		paletteView.zoomLabel.text = "\((scale * 10).rounded()/10)x"
 
 		guard let image = photoImageView.image else { return }
 		let wRatio = photoImageView.frame.width / image.size.width

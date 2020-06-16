@@ -10,7 +10,7 @@ import UIKit
 
 final class PaletteView: UIView {
 
-	private let zoomLabel: UILabel = {
+	let zoomLabel: UILabel = {
 		let label = UILabel()
 		label.text = "1.0x"
 		label.textColor = .black
