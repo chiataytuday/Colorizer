@@ -88,18 +88,12 @@ class ViewController: UIViewController {
 	}
 
 	private func setupSubviews() {
-//		previewLayer.frame = view.frame
-//		previewLayer.videoGravity = .resizeAspectFill
-//		previewLayer.contentsGravity = .resizeAspectFill
-//        previewLayer.masksToBounds = true
-//        view.layer.insertSublayer(previewLayer, at: 0)
-
 		colorInfoView = ColorInfoView()
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([
-			colorInfoView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.4),
-			colorInfoView.heightAnchor.constraint(equalToConstant: 50),
+			colorInfoView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.415),
+			colorInfoView.heightAnchor.constraint(equalToConstant: 70),
 			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
 		])
@@ -109,6 +103,10 @@ class ViewController: UIViewController {
 		let color = videoPreviewLayer?.pickColor(at: view.center)
 		colorInfoView.set(color: color!)
 		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.5)
+	}
+
+	override var prefersStatusBarHidden: Bool {
+		true
 	}
 
 }

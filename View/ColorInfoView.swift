@@ -29,23 +29,43 @@ final class ColorInfoView: UIView {
 		return label
 	}()
 
+	private let rgbLabel: UILabel = {
+		let label = UILabel()
+		label.text = "255 69 32"
+		label.textColor = .lightGray
+		label.font = UIFont.monospacedFont(ofSize: 14, weight: .regular)
+		return label
+	}()
+
 
 	init() {
 		super.init(frame: .zero)
 		backgroundColor = .white
-		layer.cornerRadius = 25
+		layer.cornerRadius = 35
 
-		let stackView = UIStackView(arrangedSubviews: [colorView, hexLabel])
-		stackView.spacing = 10
+		let hexStackView = UIStackView(arrangedSubviews: [colorView, hexLabel])
+		hexStackView.spacing = 10
+
+		let stackView = UIStackView(arrangedSubviews: [hexStackView, rgbLabel])
+		stackView.axis = .vertical
+		stackView.spacing = 6
+		stackView.alignment = .center
 		addSubview(stackView)
 		stackView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
 			stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-			stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
+			stackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 2)
 		])
 	}
 
 	func set(color: UIColor) {
+		let cgColor = color.cgColor
+		let values: (r: Int, g: Int, b: Int) = (
+			Int(cgColor.components![0] * 255),
+			Int(cgColor.components![1] * 255),
+			Int(cgColor.components![2] * 255)
+		)
+		rgbLabel.text = "\(values.r) \(values.g) \(values.b)"
 		colorView.backgroundColor = color
 		hexLabel.text = "#\(color.toHex()!)"
 	}
