@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 			let window = UIWindow(windowScene: windowScene)
 //			let navController = UINavigationController()
-			let viewController = ViewController()
+			let viewController = ColorsViewController()
 
 //			navController.navigationBar.barTintColor = UIColor(white: 0.98, alpha: 1)
 //			navController.navigationBar.barStyle = .default
