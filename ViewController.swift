@@ -28,34 +28,71 @@ class ViewController: UIViewController {
 		return imageView
 	}()
 
-	var backCamera, currentDevice: AVCaptureDevice?
+	private var colorInfoView: ColorInfoView!
 
-	let captureSession = AVCaptureSession()
-
-	let previewLayer = AVCaptureVideoPreviewLayer()
-
-	var colorInfoView: ColorInfoView!
+	private let captureSession = AVCaptureSession()
+	private var videoPreviewLayer: AVCaptureVideoPreviewLayer?
+	private var captureDevice: AVCaptureDevice?
+	private let queue = DispatchQueue(label: "com.camera.video.queue", attributes: .concurrent)
 
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
+		captureSession.sessionPreset = .hd1920x1080
+		let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInDualCamera, .builtInWideAngleCamera], mediaType: .video, position: .back)
+		guard !discoverySession.devices.isEmpty else { fatalError("Missing capture devices.") }
+		captureDevice = discoverySession.devices.first!
+
+		do {
+			let videoOutput = AVCaptureVideoDataOutput()
+			videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as AnyHashable : NSNumber(value: kCMPixelFormat_32BGRA)] as? [String : Any]
+			videoOutput.alwaysDiscardsLateVideoFrames = true
+			videoOutput.setSampleBufferDelegate(self, queue: queue)
+
+			if captureSession.canAddOutput(videoOutput) {
+				captureSession.addOutput(videoOutput)
+			}
+
+			let captureDeviceInput = try AVCaptureDeviceInput(device: captureDevice!)
+			captureSession.addInput(captureDeviceInput)
+		} catch {
+			print(error.localizedDescription)
+		}
+
+		for format in captureDevice!.formats {
+			if format.videoSupportedFrameRateRanges[0].maxFrameRate == 60 {
+				do {
+					try captureDevice?.lockForConfiguration()
+					captureDevice?.activeFormat = format
+					captureDevice?.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
+					captureDevice?.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
+					captureDevice?.unlockForConfiguration()
+				} catch {
+					print(error.localizedDescription)
+				}
+			}
+		}
+
+		videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+		view.layer.addSublayer(videoPreviewLayer!)
+		videoPreviewLayer?.videoGravity = .resizeAspectFill
+		videoPreviewLayer?.frame = view.frame
+		captureSession.startRunning()
+
 		setupSubviews()
-		setupCamera()
-
 		view.addSubview(dot)
-		view.addSubview(viewfinder)
-
 		dot.center = view.center
+		view.addSubview(viewfinder)
 		viewfinder.center = view.center
 	}
 
 	private func setupSubviews() {
-		previewLayer.frame = view.frame
-		previewLayer.videoGravity = .resizeAspectFill
-		previewLayer.contentsGravity = .resizeAspectFill
-        previewLayer.masksToBounds = true
-        view.layer.insertSublayer(previewLayer, at: 0)
+//		previewLayer.frame = view.frame
+//		previewLayer.videoGravity = .resizeAspectFill
+//		previewLayer.contentsGravity = .resizeAspectFill
+//        previewLayer.masksToBounds = true
+//        view.layer.insertSublayer(previewLayer, at: 0)
 
 		colorInfoView = ColorInfoView()
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
@@ -68,48 +105,16 @@ class ViewController: UIViewController {
 		])
 	}
 
-	let queue = DispatchQueue(label: "com.camera.video.queue", attributes: .concurrent)
-
-	private func setupCamera() {
-		self.captureSession.sessionPreset = .hd1280x720
-
-		let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .back)
-		let devices = discoverySession.devices
-        for device in devices {
-            if device.position == .back {
-                self.backCamera = device
-            }
-        }
-
-        currentDevice = backCamera
-        do {
-            let captureDeviceInput = try AVCaptureDeviceInput(device: currentDevice!)
-            let videoOutput = AVCaptureVideoDataOutput()
-            videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as AnyHashable: NSNumber(value: kCMPixelFormat_32BGRA)] as? [String : Any]
-            videoOutput.alwaysDiscardsLateVideoFrames = true
-            videoOutput.setSampleBufferDelegate(self, queue: queue)
-
-            if captureSession.canAddOutput(videoOutput) {
-                captureSession.addOutput(videoOutput)
-            }
-            captureSession.addInput(captureDeviceInput)
-        } catch {
-            print(error)
-            return
-        }
-        captureSession.startRunning()
-	}
-
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		let color = self.previewLayer.pickColor(at: self.view.center)!
-		colorInfoView.set(color: color)
+		let color = videoPreviewLayer?.pickColor(at: view.center)
+		colorInfoView.set(color: color!)
 		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.5)
 	}
 
 }
 
-extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 
+extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 	func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
 		connection.videoOrientation = .portrait
 
@@ -132,17 +137,13 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 		}
 		guard let cgImage = context.makeImage() else { return }
 		DispatchQueue.main.async {
-			self.previewLayer.contents = cgImage
-//			let color = self.previewLayer.pickColor(at: self.view.center)
-//			print(color?.toHex())
-//			self.circle.tintColor = color
+			self.videoPreviewLayer?.contents = cgImage
 		}
 	}
-
 }
 
-extension CALayer {
 
+extension CALayer {
     public func pickColor(at position: CGPoint) -> UIColor? {
         var pixel = [UInt8](repeatElement(0, count: 4))
         let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -160,8 +161,8 @@ extension CALayer {
     }
 }
 
-extension UIColor {
 
+extension UIColor {
 	func toHex(alpha: Bool = false) -> String? {
         guard let components = cgColor.components, components.count >= 3 else {
             return nil
@@ -182,5 +183,4 @@ extension UIColor {
             return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
         }
     }
-
 }

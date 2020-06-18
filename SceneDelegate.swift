@@ -18,14 +18,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		if let windowScene = scene as? UIWindowScene {
 
 			let window = UIWindow(windowScene: windowScene)
-			let navController = UINavigationController()
-			let viewController = LibraryViewController()
+//			let navController = UINavigationController()
+			let viewController = ViewController()
 
-			navController.navigationBar.barTintColor = UIColor(white: 0.98, alpha: 1)
-			navController.navigationBar.barStyle = .default
-			navController.setToolbarHidden(true, animated: false)
-			navController.viewControllers = [viewController]
-			window.rootViewController = navController
+//			navController.navigationBar.barTintColor = UIColor(white: 0.98, alpha: 1)
+//			navController.navigationBar.barStyle = .default
+//			navController.setToolbarHidden(true, animated: false)
+//			navController.viewControllers = [viewController]
+			window.rootViewController = viewController
 			self.window = window
 			window.makeKeyAndVisible()
         }
