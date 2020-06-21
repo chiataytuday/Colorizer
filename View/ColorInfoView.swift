@@ -31,11 +31,15 @@ final class ColorInfoView: UIView {
 
 	private let rgbLabel: UILabel = {
 		let label = UILabel()
-		label.text = "255 69 32"
+		label.text = "0 0 0"
 		label.textColor = .lightGray
 		label.font = UIFont.monospacedFont(ofSize: 14, weight: .regular)
 		return label
 	}()
+
+	var formattedString: String {
+		return "\(hexLabel.text!) (\(rgbLabel.text!.split(separator: " ").joined(separator: ", ")))"
+	}
 
 
 	init() {

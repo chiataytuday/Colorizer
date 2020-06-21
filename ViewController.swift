@@ -28,6 +28,19 @@ class ViewController: UIViewController {
 		return imageView
 	}()
 
+	private let copyButton: UIButton = {
+		let button = UIButton(type: .custom)
+		button.backgroundColor = .white
+		button.setTitle("Copy color", for: .normal)
+		button.setTitleColor(.lightGray, for: .normal)
+		button.imageView?.tintColor = .lightGray
+		button.imageEdgeInsets.left = -8
+		button.titleEdgeInsets.right = -8
+		button.layer.cornerRadius = 25
+		button.setImage(UIImage(systemName: "doc.fill"), for: .normal)
+		return button
+	}()
+
 	private var colorInfoView: ColorInfoView!
 
 	private let captureSession = AVCaptureSession()
@@ -91,22 +104,62 @@ class ViewController: UIViewController {
 		colorInfoView = ColorInfoView()
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
+		print(UIScreen.main.bounds.width * 0.415)
 		NSLayoutConstraint.activate([
-			colorInfoView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.415),
+			colorInfoView.widthAnchor.constraint(equalToConstant: 172),
 			colorInfoView.heightAnchor.constraint(equalToConstant: 70),
 			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
+		])
+
+		let buttonsView = ButtonsView()
+		buttonsView.delegate = self
+		buttonsView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(buttonsView)
+		NSLayoutConstraint.activate([
+			buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
 		])
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		let color = videoPreviewLayer?.pickColor(at: view.center)
 		colorInfoView.set(color: color!)
-		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.5)
+		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.35)
 	}
 
 	override var prefersStatusBarHidden: Bool {
 		true
+	}
+
+}
+
+
+extension ViewController: ButtonsMenuDelegate {
+
+	@objc func toggleTorch(sender: UIButton) {
+		do {
+			try captureDevice?.lockForConfiguration()
+			if captureDevice!.isTorchActive {
+				captureDevice?.torchMode = .off
+				sender.tintColor = .lightGray
+			} else {
+				captureDevice?.torchMode = .on
+				sender.tintColor = .darkGray
+			}
+			captureDevice?.unlockForConfiguration()
+		} catch {}
+		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.35)
+	}
+
+	func copyColorData(sender: UIButton) {
+		UIPasteboard.general.string = colorInfoView.formattedString
+		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.35)
+
+		sender.tintColor = .darkGray
+		UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveLinear, .allowUserInteraction], animations: {
+			sender.tintColor = .lightGray
+		})
 	}
 
 }

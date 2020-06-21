@@ -24,8 +24,6 @@ class ImageController: UIViewController {
 
 	private var colorInfoView: ColorInfoView!
 
-	private var paletteView: PaletteView!
-
 	private var photoImageView: UIImageView = {
 		let imageView = UIImageView()
 		imageView.contentMode = .scaleAspectFit
@@ -62,17 +60,6 @@ class ImageController: UIViewController {
 	}
 
 	private func setupSubviews() {
-		paletteView = PaletteView()
-		view.addSubview(paletteView)
-		paletteView.translatesAutoresizingMaskIntoConstraints = false
-		paletteView.backgroundColor = .white
-		NSLayoutConstraint.activate([
-			paletteView.widthAnchor.constraint(equalTo: view.widthAnchor),
-			paletteView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-			paletteView.heightAnchor.constraint(equalToConstant: 70),
-			paletteView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-		])
-
 		scrollView.delegate = self
 		scrollView.minimumZoomScale = 1.0
 		scrollView.contentInsetAdjustmentBehavior = .never
@@ -85,7 +72,7 @@ class ImageController: UIViewController {
 			scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
 			scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
 			scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			scrollView.bottomAnchor.constraint(equalTo: paletteView.topAnchor)
+			scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
 		])
 
 		scrollView.addSubview(photoImageView)
@@ -182,16 +169,16 @@ extension ImageController: UIScrollViewDelegate {
 		let scale = scrollView.zoomScale
 		pickerView.transform = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
 
-		guard scale <= scrollView.maximumZoomScale else {
-			paletteView.zoomLabel.text = "\((scrollView.maximumZoomScale * 10).rounded()/10)x"
-			return
-		}
-		if scale <= 1 {
-			paletteView.zoomLabel.text = "\(scrollView.minimumZoomScale)x"
-			scrollView.contentInset = .zero
-			return
-		}
-		paletteView.zoomLabel.text = "\((scale * 10).rounded()/10)x"
+//		guard scale <= scrollView.maximumZoomScale else {
+//			paletteView.zoomLabel.text = "\((scrollView.maximumZoomScale * 10).rounded()/10)x"
+//			return
+//		}
+//		if scale <= 1 {
+//			paletteView.zoomLabel.text = "\(scrollView.minimumZoomScale)x"
+//			scrollView.contentInset = .zero
+//			return
+//		}
+//		paletteView.zoomLabel.text = "\((scale * 10).rounded()/10)x"
 
 		guard let image = photoImageView.image else { return }
 		let wRatio = photoImageView.frame.width / image.size.width

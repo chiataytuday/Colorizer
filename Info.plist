@@ -21,9 +21,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>What?</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>What?</string>
+	<string>Access the camera to sip the colors</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
