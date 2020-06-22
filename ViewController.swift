@@ -38,6 +38,7 @@ class ViewController: UIViewController {
 	private let queue = DispatchQueue(label: "com.camera.video.queue", attributes: .concurrent)
 	private var captureDevice: AVCaptureDevice?
 
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setupCaptureSession()
@@ -102,7 +103,7 @@ class ViewController: UIViewController {
 			colorInfoView.widthAnchor.constraint(equalToConstant: 172),
 			colorInfoView.heightAnchor.constraint(equalToConstant: 70),
 			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
+			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15)
 		])
 
 		buttonsView.delegate = self
@@ -110,7 +111,7 @@ class ViewController: UIViewController {
 		view.addSubview(buttonsView)
 		NSLayoutConstraint.activate([
 			buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
 		])
 
 		view.addSubview(dot)
@@ -120,6 +121,7 @@ class ViewController: UIViewController {
 	}
 
 	@objc private func willResignActive() {
+		captureSession.stopRunning()
 		guard torchState == .on else { return }
 		do {
 			try captureDevice?.lockForConfiguration()
@@ -132,6 +134,7 @@ class ViewController: UIViewController {
 
 	@objc private func didBecomeActive() {
 		updateCopyButton()
+		captureSession.startRunning()
 		guard torchState == .on else { return }
 		do {
 			try captureDevice?.lockForConfiguration()
