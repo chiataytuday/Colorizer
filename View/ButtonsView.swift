@@ -13,39 +13,46 @@ import UIKit
 	func copyColorData(sender: UIButton)
 }
 
-class ButtonsView: UIView {
-
+final class ButtonsView: UIView {
 	var delegate: ButtonsMenuDelegate?
-
-	private let stackView: UIStackView
+	let torchButton: UIButton = {
+		let button = UIButton(type: .custom)
+		let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+		let image = UIImage(systemName: "bolt.fill", withConfiguration: config)
+		button.setImage(image, for: .normal)
+		return button
+	}()
+	let copyButton: UIButton = {
+		let button = UIButton(type: .custom)
+		let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+		let image = UIImage(systemName: "doc.text.fill", withConfiguration: config)
+		button.setImage(image, for: .normal)
+		return button
+	}()
+	private var stackView: UIStackView!
 
 	override init(frame: CGRect) {
-		let flashButton = UIButton(type: .custom)
-		flashButton.setImage(UIImage(systemName: "bolt.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
-		flashButton.addTarget(delegate, action: #selector(delegate?.toggleTorch(sender:)), for: .touchDown)
-		flashButton.adjustsImageWhenHighlighted = false
-
-		let copyButton = UIButton(type: .custom)
-		copyButton.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
-		copyButton.addTarget(delegate, action: #selector(delegate?.copyColorData(sender:)), for: .touchDown)
-		copyButton.adjustsImageWhenHighlighted = false
-
-		stackView = UIStackView(arrangedSubviews: [flashButton, copyButton])
-		stackView.translatesAutoresizingMaskIntoConstraints = false
-
 		super.init(frame: frame)
 		backgroundColor = .white
 		clipsToBounds = true
 		layer.cornerRadius = 25
-		for subview in stackView.arrangedSubviews {
-			NSLayoutConstraint.activate([
-				subview.widthAnchor.constraint(equalToConstant: 50),
-				subview.heightAnchor.constraint(equalToConstant: 50)
-			])
-			subview.tintColor = .lightGray
-//			(subview as! UIButton).adjustsImageWhenHighlighted = false
-		}
+		setupStackView()
+	}
 
+	private func setupStackView() {
+		torchButton.addTarget(delegate, action: #selector(delegate?.toggleTorch(sender:)), for: .touchDown)
+		copyButton.addTarget(delegate, action: #selector(delegate?.copyColorData(sender:)), for: .touchDown)
+
+		stackView = UIStackView(arrangedSubviews: [torchButton, copyButton])
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		for case let button as UIButton in stackView.arrangedSubviews {
+			NSLayoutConstraint.activate([
+				button.widthAnchor.constraint(equalToConstant: 50),
+				button.heightAnchor.constraint(equalToConstant: 50)
+			])
+			button.adjustsImageWhenHighlighted = false
+			button.tintColor = .lightGray
+		}
 		addSubview(stackView)
 		NSLayoutConstraint.activate([
 			stackView.centerXAnchor.constraint(equalTo: centerXAnchor),

@@ -10,7 +10,6 @@ import UIKit
 import AVFoundation
 
 class ViewController: UIViewController {
-
 	private let dot: UIImageView = {
 		let config = UIImage.SymbolConfiguration(pointSize: 9, weight: .bold)
 		let image = UIImage(systemName: "circle.fill", withConfiguration: config)
@@ -18,7 +17,6 @@ class ViewController: UIViewController {
 		imageView.tintColor = .white
 		return imageView
 	}()
-
 	private let viewfinder: UIImageView = {
 		let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
 		let image = UIImage(systemName: "viewfinder", withConfiguration: config)
@@ -27,31 +25,23 @@ class ViewController: UIViewController {
 		imageView.alpha = 0.25
 		return imageView
 	}()
-
-	private let copyButton: UIButton = {
-		let button = UIButton(type: .custom)
-		button.backgroundColor = .white
-		button.setTitle("Copy color", for: .normal)
-		button.setTitleColor(.lightGray, for: .normal)
-		button.imageView?.tintColor = .lightGray
-		button.imageEdgeInsets.left = -8
-		button.titleEdgeInsets.right = -8
-		button.layer.cornerRadius = 25
-		button.setImage(UIImage(systemName: "doc.fill"), for: .normal)
-		return button
-	}()
-
-	private var colorInfoView: ColorInfoView!
+	private var colorInfoView = ColorInfoView()
+	private let buttonsView = ButtonsView()
 
 	private let captureSession = AVCaptureSession()
 	private var videoPreviewLayer: AVCaptureVideoPreviewLayer?
-	private var captureDevice: AVCaptureDevice?
 	private let queue = DispatchQueue(label: "com.camera.video.queue", attributes: .concurrent)
-
+	private var captureDevice: AVCaptureDevice?
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		setupCaptureSession()
+		configureDeviceFormat()
+		prepareVideoLayer()
+		setupSubviews()
+	}
 
+	private func setupCaptureSession() {
 		captureSession.sessionPreset = .hd1920x1080
 		let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInDualCamera, .builtInWideAngleCamera], mediaType: .video, position: .back)
 		guard !discoverySession.devices.isEmpty else { fatalError("Missing capture devices.") }
@@ -62,17 +52,17 @@ class ViewController: UIViewController {
 			videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as AnyHashable : NSNumber(value: kCMPixelFormat_32BGRA)] as? [String : Any]
 			videoOutput.alwaysDiscardsLateVideoFrames = true
 			videoOutput.setSampleBufferDelegate(self, queue: queue)
-
 			if captureSession.canAddOutput(videoOutput) {
 				captureSession.addOutput(videoOutput)
 			}
-
 			let captureDeviceInput = try AVCaptureDeviceInput(device: captureDevice!)
 			captureSession.addInput(captureDeviceInput)
 		} catch {
 			print(error.localizedDescription)
 		}
+	}
 
+	private func configureDeviceFormat() {
 		for format in captureDevice!.formats {
 			if format.videoSupportedFrameRateRanges[0].maxFrameRate == 60 {
 				do {
@@ -86,18 +76,14 @@ class ViewController: UIViewController {
 				}
 			}
 		}
+	}
 
+	private func prepareVideoLayer() {
 		videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
 		view.layer.addSublayer(videoPreviewLayer!)
 		videoPreviewLayer?.videoGravity = .resizeAspectFill
 		videoPreviewLayer?.frame = view.frame
 		captureSession.startRunning()
-
-		setupSubviews()
-		view.addSubview(dot)
-		dot.center = view.center
-		view.addSubview(viewfinder)
-		viewfinder.center = view.center
 	}
 
 	private func setupSubviews() {
@@ -112,7 +98,6 @@ class ViewController: UIViewController {
 			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
 		])
 
-		let buttonsView = ButtonsView()
 		buttonsView.delegate = self
 		buttonsView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(buttonsView)
@@ -120,64 +105,63 @@ class ViewController: UIViewController {
 			buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
 		])
+
+		view.addSubview(dot)
+		dot.center = view.center
+		view.addSubview(viewfinder)
+		viewfinder.center = view.center
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		let color = videoPreviewLayer?.pickColor(at: view.center)
-		colorInfoView.set(color: color!)
+		let pickedColor = videoPreviewLayer?.pickColor(at: view.center)
+		colorInfoView.set(color: pickedColor!)
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-//		updateCopyButton()
 	}
 
 	override var prefersStatusBarHidden: Bool {
 		true
 	}
-
 }
 
-
 extension ViewController: ButtonsMenuDelegate {
-
-	@objc func toggleTorch(sender: UIButton) {
+	func toggleTorch(sender: UIButton) {
 		do {
 			try captureDevice?.lockForConfiguration()
-			if captureDevice!.isTorchActive {
-				captureDevice?.torchMode = .off
-				sender.tintColor = .lightGray
-			} else {
-				captureDevice?.torchMode = .on
-				sender.tintColor = .darkGray
+			defer { captureDevice?.unlockForConfiguration() }
+			switch captureDevice!.isTorchActive {
+				case true:
+					captureDevice?.torchMode = .off
+					sender.tintColor = .lightGray
+				case false:
+					captureDevice?.torchMode = .on
+					sender.tintColor = .darkGray
 			}
-			captureDevice?.unlockForConfiguration()
-		} catch {}
+		} catch {
+			print(error.localizedDescription)
+		}
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
 	}
 
 	func copyColorData(sender: UIButton) {
+		let copiedString = UIPasteboard.general.string ?? ""
+		guard !copiedString.elementsEqual(colorInfoView.formattedString) else { return }
 		UIPasteboard.general.string = colorInfoView.formattedString
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
-//		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.35)
-		updateCopyButton(sender: sender)
+		updateCopyButton()
 	}
 
-	private func updateCopyButton(sender: UIButton) {
-		let pasteboardString = UIPasteboard.general.string ?? ""
-		print(pasteboardString, colorInfoView.formattedString, pasteboardString == colorInfoView.formattedString)
-		if pasteboardString == colorInfoView.formattedString {
-			sender.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)), for: .normal)
-			sender.tintColor = .darkGray
-//			sender.isEnabled = false
-			print("CHECKMARK")
-		} else {
-			sender.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
-			sender.tintColor = .lightGray
-			sender.isEnabled = true
-			print("DOC.FILL")
+	private func updateCopyButton() {
+		let copiedString = UIPasteboard.general.string ?? ""
+		switch copiedString == colorInfoView.formattedString {
+			case true:
+				buttonsView.copyButton.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)), for: .normal)
+				buttonsView.copyButton.tintColor = .darkGray
+			case false:
+				buttonsView.copyButton.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
+				buttonsView.copyButton.tintColor = .lightGray
 		}
 	}
-
 }
-
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 	func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -207,7 +191,6 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 	}
 }
 
-
 extension CALayer {
     public func pickColor(at position: CGPoint) -> UIColor? {
         var pixel = [UInt8](repeatElement(0, count: 4))
@@ -225,7 +208,6 @@ extension CALayer {
                        alpha: CGFloat(pixel[3]) / 255.0)
     }
 }
-
 
 extension UIColor {
 	func toHex(alpha: Bool = false) -> String? {

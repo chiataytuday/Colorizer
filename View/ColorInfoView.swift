@@ -9,8 +9,7 @@
 import UIKit
 
 final class ColorInfoView: UIView {
-
-	private let colorView: UIView = {
+	private let filledCircle: UIView = {
 		let view = UIView()
 		view.layer.cornerRadius = 10
 		view.backgroundColor = .black
@@ -20,7 +19,6 @@ final class ColorInfoView: UIView {
 		])
 		return view
 	}()
-
 	private let hexLabel: UILabel = {
 		let label = UILabel()
 		label.text = "#FFFFFF"
@@ -28,7 +26,6 @@ final class ColorInfoView: UIView {
 		label.font = UIFont.monospacedFont(ofSize: 19, weight: .light)
 		return label
 	}()
-
 	private let rgbLabel: UILabel = {
 		let label = UILabel()
 		label.text = "0 0 0"
@@ -36,18 +33,19 @@ final class ColorInfoView: UIView {
 		label.font = UIFont.monospacedFont(ofSize: 14, weight: .regular)
 		return label
 	}()
-
 	var formattedString: String {
 		return "\(hexLabel.text!) (\(rgbLabel.text!.split(separator: " ").joined(separator: ", ")))"
 	}
-
 
 	init() {
 		super.init(frame: .zero)
 		backgroundColor = .white
 		layer.cornerRadius = 35
+		setupStackViews()
+	}
 
-		let hexStackView = UIStackView(arrangedSubviews: [colorView, hexLabel])
+	private func setupStackViews() {
+		let hexStackView = UIStackView(arrangedSubviews: [filledCircle, hexLabel])
 		hexStackView.spacing = 10
 
 		let stackView = UIStackView(arrangedSubviews: [hexStackView, rgbLabel])
@@ -70,7 +68,7 @@ final class ColorInfoView: UIView {
 			Int(cgColor.components![2] * 255)
 		)
 		rgbLabel.text = "\(values.r) \(values.g) \(values.b)"
-		colorView.backgroundColor = color
+		filledCircle.backgroundColor = color
 		hexLabel.text = "#\(color.toHex()!)"
 	}
 
@@ -79,9 +77,7 @@ final class ColorInfoView: UIView {
 	}
 }
 
-
 extension UIFont {
-
 	static func monospacedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
 		if let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.monospaced) {
 			return UIFont(descriptor: descriptor, size: size)
