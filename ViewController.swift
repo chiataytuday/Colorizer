@@ -125,7 +125,8 @@ class ViewController: UIViewController {
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		let color = videoPreviewLayer?.pickColor(at: view.center)
 		colorInfoView.set(color: color!)
-		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.35)
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
+//		updateCopyButton()
 	}
 
 	override var prefersStatusBarHidden: Bool {
@@ -149,17 +150,30 @@ extension ViewController: ButtonsMenuDelegate {
 			}
 			captureDevice?.unlockForConfiguration()
 		} catch {}
-		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.35)
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
 	}
 
 	func copyColorData(sender: UIButton) {
 		UIPasteboard.general.string = colorInfoView.formattedString
-		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.35)
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
+//		UIImpactFeedbackGenerator().impactOccurred(intensity: 0.35)
+		updateCopyButton(sender: sender)
+	}
 
-		sender.tintColor = .darkGray
-		UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveLinear, .allowUserInteraction], animations: {
+	private func updateCopyButton(sender: UIButton) {
+		let pasteboardString = UIPasteboard.general.string ?? ""
+		print(pasteboardString, colorInfoView.formattedString, pasteboardString == colorInfoView.formattedString)
+		if pasteboardString == colorInfoView.formattedString {
+			sender.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)), for: .normal)
+			sender.tintColor = .darkGray
+//			sender.isEnabled = false
+			print("CHECKMARK")
+		} else {
+			sender.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
 			sender.tintColor = .lightGray
-		})
+			sender.isEnabled = true
+			print("DOC.FILL")
+		}
 	}
 
 }

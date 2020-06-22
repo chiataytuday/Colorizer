@@ -23,10 +23,12 @@ class ButtonsView: UIView {
 		let flashButton = UIButton(type: .custom)
 		flashButton.setImage(UIImage(systemName: "bolt.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
 		flashButton.addTarget(delegate, action: #selector(delegate?.toggleTorch(sender:)), for: .touchDown)
+		flashButton.adjustsImageWhenHighlighted = false
 
 		let copyButton = UIButton(type: .custom)
 		copyButton.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
 		copyButton.addTarget(delegate, action: #selector(delegate?.copyColorData(sender:)), for: .touchDown)
+		copyButton.adjustsImageWhenHighlighted = false
 
 		stackView = UIStackView(arrangedSubviews: [flashButton, copyButton])
 		stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +43,7 @@ class ButtonsView: UIView {
 				subview.heightAnchor.constraint(equalToConstant: 50)
 			])
 			subview.tintColor = .lightGray
-			(subview as! UIButton).adjustsImageWhenHighlighted = false
+//			(subview as! UIButton).adjustsImageWhenHighlighted = false
 		}
 
 		addSubview(stackView)
