@@ -9,6 +9,10 @@
 import UIKit
 import AVFoundation
 
+enum TorchState {
+	case on, off
+}
+
 class ViewController: UIViewController {
 	private let dot: UIImageView = {
 		let config = UIImage.SymbolConfiguration(pointSize: 9, weight: .bold)
@@ -27,6 +31,7 @@ class ViewController: UIViewController {
 	}()
 	private var colorInfoView = ColorInfoView()
 	private let buttonsView = ButtonsView()
+	private var torchState: TorchState = .off
 
 	private let captureSession = AVCaptureSession()
 	private var videoPreviewLayer: AVCaptureVideoPreviewLayer?
@@ -39,6 +44,9 @@ class ViewController: UIViewController {
 		configureDeviceFormat()
 		prepareVideoLayer()
 		setupSubviews()
+
+		NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
 	}
 
 	private func setupCaptureSession() {
@@ -90,7 +98,6 @@ class ViewController: UIViewController {
 		colorInfoView = ColorInfoView()
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
-		print(UIScreen.main.bounds.width * 0.415)
 		NSLayoutConstraint.activate([
 			colorInfoView.widthAnchor.constraint(equalToConstant: 172),
 			colorInfoView.heightAnchor.constraint(equalToConstant: 70),
@@ -112,10 +119,34 @@ class ViewController: UIViewController {
 		viewfinder.center = view.center
 	}
 
+	@objc private func willResignActive() {
+		guard torchState == .on else { return }
+		do {
+			try captureDevice?.lockForConfiguration()
+			defer { captureDevice?.unlockForConfiguration() }
+			captureDevice?.torchMode = .off
+		} catch {
+			print(error.localizedDescription)
+		}
+	}
+
+	@objc private func didBecomeActive() {
+		updateCopyButton()
+		guard torchState == .on else { return }
+		do {
+			try captureDevice?.lockForConfiguration()
+			defer { captureDevice?.unlockForConfiguration() }
+			captureDevice?.torchMode = .on
+		} catch {
+			print(error.localizedDescription)
+		}
+	}
+
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		let pickedColor = videoPreviewLayer?.pickColor(at: view.center)
 		colorInfoView.set(color: pickedColor!)
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
+		updateCopyButton()
 	}
 
 	override var prefersStatusBarHidden: Bool {
@@ -131,9 +162,11 @@ extension ViewController: ButtonsMenuDelegate {
 			switch captureDevice!.isTorchActive {
 				case true:
 					captureDevice?.torchMode = .off
+					torchState = .off
 					sender.tintColor = .lightGray
 				case false:
 					captureDevice?.torchMode = .on
+					torchState = .on
 					sender.tintColor = .darkGray
 			}
 		} catch {
