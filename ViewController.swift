@@ -213,10 +213,10 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 		guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
 		CVPixelBufferLockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: CVOptionFlags(0)))
 		guard let baseAddress = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0) else { return }
+		CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: CVOptionFlags(0)))
 
 		let width = CVPixelBufferGetWidthOfPlane(imageBuffer, 0)
 		let height = CVPixelBufferGetHeightOfPlane(imageBuffer, 0)
-		print()
 		let bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 0)
 		let colorSpace = CGColorSpaceCreateDeviceRGB()
 		let bitmapInfo: CGBitmapInfo = [
