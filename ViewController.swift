@@ -33,8 +33,17 @@ class ViewController: UIViewController {
 	private let buttonsView = ButtonsView()
 	private var torchState: TorchState = .off
 
-	private let captureSession = AVCaptureSession()
-	private var videoPreviewLayer: AVCaptureVideoPreviewLayer?
+	private lazy var captureSession: AVCaptureSession = {
+		let session = AVCaptureSession()
+		session.sessionPreset = .inputPriority
+		return session
+	}()
+	private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
+		let layer = AVCaptureVideoPreviewLayer(session: self.captureSession)
+		layer.videoGravity = .resizeAspectFill
+		layer.frame = self.view.bounds
+		return layer
+	}()
 	private let queue = DispatchQueue(label: "com.camera.video.queue", attributes: .concurrent)
 	private var captureDevice: AVCaptureDevice?
 
@@ -43,7 +52,8 @@ class ViewController: UIViewController {
 		super.viewDidLoad()
 		setupCaptureSession()
 		configureDeviceFormat()
-		prepareVideoLayer()
+		view.layer.addSublayer(previewLayer)
+		captureSession.startRunning()
 		setupSubviews()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
@@ -51,48 +61,46 @@ class ViewController: UIViewController {
 	}
 
 	private func setupCaptureSession() {
-		captureSession.sessionPreset = .hd1920x1080
 		let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInDualCamera, .builtInWideAngleCamera], mediaType: .video, position: .back)
 		guard !discoverySession.devices.isEmpty else { fatalError("Missing capture devices.") }
 		captureDevice = discoverySession.devices.first!
-
 		do {
-			let videoOutput = AVCaptureVideoDataOutput()
-			videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as AnyHashable : NSNumber(value: kCMPixelFormat_32BGRA)] as? [String : Any]
-			videoOutput.alwaysDiscardsLateVideoFrames = true
-			videoOutput.setSampleBufferDelegate(self, queue: queue)
-			if captureSession.canAddOutput(videoOutput) {
-				captureSession.addOutput(videoOutput)
+			let deviceInput = try AVCaptureDeviceInput(device: captureDevice!)
+			captureSession.beginConfiguration()
+			if captureSession.canAddInput(deviceInput) {
+				captureSession.addInput(deviceInput)
 			}
-			let captureDeviceInput = try AVCaptureDeviceInput(device: captureDevice!)
-			captureSession.addInput(captureDeviceInput)
+
+			let dataOutput = AVCaptureVideoDataOutput()
+			dataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey : NSNumber(value: kCVPixelFormatType_32BGRA)] as [String : Any]
+			dataOutput.alwaysDiscardsLateVideoFrames = true
+			if captureSession.canAddOutput(dataOutput) {
+				captureSession.addOutput(dataOutput)
+			}
+			captureSession.commitConfiguration()
+			let queue = DispatchQueue(label: "com.camera.video.queue", attributes: [])
+			dataOutput.setSampleBufferDelegate(self, queue: queue)
 		} catch {
 			print(error.localizedDescription)
 		}
 	}
 
 	private func configureDeviceFormat() {
-		for format in captureDevice!.formats {
-			if format.videoSupportedFrameRateRanges[0].maxFrameRate == 60 {
-				do {
-					try captureDevice?.lockForConfiguration()
-					captureDevice?.activeFormat = format
-					captureDevice?.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
-					captureDevice?.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
-					captureDevice?.unlockForConfiguration()
-				} catch {
-					print(error.localizedDescription)
-				}
-			}
+		let formats = captureDevice?.formats.filter {
+			$0.videoSupportedFrameRateRanges[0].maxFrameRate == 60
 		}
-	}
+		do {
+			try captureDevice?.lockForConfiguration()
+			defer { captureDevice?.unlockForConfiguration() }
 
-	private func prepareVideoLayer() {
-		videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-		view.layer.addSublayer(videoPreviewLayer!)
-		videoPreviewLayer?.videoGravity = .resizeAspectFill
-		videoPreviewLayer?.frame = view.frame
-		captureSession.startRunning()
+			let formatId = formats!.count/2
+			captureDevice?.activeFormat = formats![formatId]
+			let duration = CMTime(value: 1, timescale: 60)
+			captureDevice?.activeVideoMinFrameDuration = duration
+			captureDevice?.activeVideoMaxFrameDuration = duration
+		} catch {
+			print(error.localizedDescription)
+		}
 	}
 
 	private func setupSubviews() {
@@ -146,7 +154,7 @@ class ViewController: UIViewController {
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		let pickedColor = videoPreviewLayer?.pickColor(at: view.center)
+		let pickedColor = previewLayer.pickColor(at: view.center)
 		colorInfoView.set(color: pickedColor!)
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
 		updateCopyButton()
@@ -201,7 +209,6 @@ extension ViewController: ButtonsMenuDelegate {
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 	func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-		connection.videoOrientation = .portrait
 
 		guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
 		CVPixelBufferLockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: CVOptionFlags(0)))
@@ -222,7 +229,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 		}
 		guard let cgImage = context.makeImage() else { return }
 		DispatchQueue.main.async {
-			self.videoPreviewLayer?.contents = cgImage
+			self.previewLayer.contents = cgImage
 		}
 	}
 }
