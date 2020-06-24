@@ -77,6 +77,9 @@ class ViewController: UIViewController {
 			if captureSession.canAddOutput(dataOutput) {
 				captureSession.addOutput(dataOutput)
 			}
+			if let connection = dataOutput.connection(with: .video) {
+				connection.preferredVideoStabilizationMode = .standard
+			}
 			captureSession.commitConfiguration()
 			let queue = DispatchQueue(label: "com.camera.video.queue", attributes: [])
 			dataOutput.setSampleBufferDelegate(self, queue: queue)
