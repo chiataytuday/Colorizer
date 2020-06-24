@@ -113,6 +113,9 @@ class ViewController: UIViewController {
 			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15)
 		])
+		if let color = UserDefaults.standard.colorForKey("lastColor") {
+			colorInfoView.set(color: color)
+		}
 
 		buttonsView.delegate = self
 		buttonsView.translatesAutoresizingMaskIntoConstraints = false
@@ -155,6 +158,7 @@ class ViewController: UIViewController {
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		let pickedColor = previewLayer.pickColor(at: view.center)
+		UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
 		colorInfoView.set(color: pickedColor!)
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
 		updateCopyButton()
@@ -273,4 +277,27 @@ extension UIColor {
             return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
         }
     }
+}
+
+extension UserDefaults {
+	func setColor(_ color: UIColor, forKey key: String) {
+		var colorData: NSData?
+		do {
+			colorData = try NSKeyedArchiver.archivedData(withRootObject: color, requiringSecureCoding: false) as NSData
+		} catch {
+			print(error.localizedDescription)
+		}
+		set(colorData, forKey: key)
+	}
+
+	func colorForKey(_ key: String) -> UIColor? {
+		var colorToReturn: UIColor?
+		guard let colorData = data(forKey: key) else { return nil }
+		do {
+			colorToReturn = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(colorData) as? UIColor
+		} catch {
+			print(error.localizedDescription)
+		}
+		return colorToReturn
+	}
 }
