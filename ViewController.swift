@@ -193,6 +193,21 @@ extension ViewController: ButtonsMenuDelegate {
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
 	}
 
+	func zoomInOut(sender: UIButton) {
+		let isZoomed = captureDevice?.videoZoomFactor == 6
+		let zoomScale: CGFloat = isZoomed ? 1 : 6
+		sender.tintColor = isZoomed ? .lightGray : .darkGray
+
+		do {
+			try captureDevice?.lockForConfiguration()
+			defer { captureDevice?.unlockForConfiguration() }
+			captureDevice?.videoZoomFactor = zoomScale
+		} catch {
+			print(error.localizedDescription)
+		}
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
+	}
+
 	func copyColorData(sender: UIButton) {
 		let copiedString = UIPasteboard.general.string ?? ""
 		guard !copiedString.elementsEqual(colorInfoView.formattedString) else { return }
