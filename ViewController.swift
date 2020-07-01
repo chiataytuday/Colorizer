@@ -15,14 +15,14 @@ enum State {
 
 class ViewController: UIViewController {
 	private let dot: UIImageView = {
-		let config = UIImage.SymbolConfiguration(pointSize: 9, weight: .bold)
+		let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
 		let image = UIImage(systemName: "circle.fill", withConfiguration: config)
 		let imageView = UIImageView(image: image)
 		imageView.tintColor = .white
 		return imageView
 	}()
 	private let viewfinder: UIImageView = {
-		let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
+		let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
 		let image = UIImage(systemName: "viewfinder", withConfiguration: config)
 		let imageView = UIImageView(image: image)
 		imageView.tintColor = .white
@@ -32,7 +32,6 @@ class ViewController: UIViewController {
 	private var colorInfoView = ColorInfoView()
 	private let buttonsView = ButtonsView()
 	private var torchState: State = .disabled
-	private var autoModeState: State = .disabled
 
 	private lazy var captureSession: AVCaptureSession = {
 		let session = AVCaptureSession()
@@ -168,9 +167,6 @@ class ViewController: UIViewController {
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-		if autoModeState == .enabled {
-			tapAutoMode(sender: buttonsView.autoModeButton)
-		}
 		let pickedColor = previewLayer.pickColor(at: view.center)
 		UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
 		colorInfoView.set(color: pickedColor!)
@@ -204,16 +200,9 @@ extension ViewController: ButtonsMenuDelegate {
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
 	}
 
-	func tapAutoMode(sender: UIButton) {
-		let enabled = autoModeState == .enabled
-		sender.tintColor = enabled ? .lightGray : .darkGray
-		autoModeState = enabled ? .disabled : .enabled
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
-	}
-
 	func zoomInOut(sender: UIButton) {
-		let isZoomed = captureDevice?.videoZoomFactor == 8
-		let zoomScale: CGFloat = isZoomed ? 1 : 8
+		let isZoomed = captureDevice?.videoZoomFactor == 3
+		let zoomScale: CGFloat = isZoomed ? 1 : 3
 		sender.tintColor = isZoomed ? .lightGray : .darkGray
 
 		do {
@@ -238,7 +227,7 @@ extension ViewController: ButtonsMenuDelegate {
 		let copiedString = UIPasteboard.general.string ?? ""
 		switch copiedString == colorInfoView.formattedString {
 			case true:
-				buttonsView.copyButton.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)), for: .normal)
+				buttonsView.copyButton.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
 				buttonsView.copyButton.tintColor = .darkGray
 			case false:
 				buttonsView.copyButton.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
@@ -270,15 +259,8 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 		guard let cgImage = context.makeImage() else { return }
 		DispatchQueue.main.async {
 			self.previewLayer.contents = cgImage
-			guard self.autoModeState == .enabled else { return }
-
-			let pickedColor = self.previewLayer.pickColor(at: self.view.center)
-			UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
-			self.colorInfoView.set(color: pickedColor!)
-		}
-//		DispatchQueue.main.async {
 //			self.previewLayer.contentsGravity = .resizeAspectFill
-//		}
+		}
 	}
 }
 
@@ -344,55 +326,4 @@ extension UserDefaults {
 		}
 		return colorToReturn
 	}
-}
-
-public extension UIImage {
-    func getPixelColor(_ point: CGPoint) -> UIColor {
-        guard let cgImage = self.cgImage else {
-            return UIColor.clear
-        }
-        return cgImage.getPixelColor(point)
-    }
-}
-public extension CGBitmapInfo {
-    var isAlphaPremultiplied: Bool {
-        let alphaInfo = CGImageAlphaInfo(rawValue: rawValue & Self.alphaInfoMask.rawValue)
-        return alphaInfo == .premultipliedFirst || alphaInfo == .premultipliedLast
-    }
-}
-
-public extension CGImage {
-
-    func getPixelColor(_ point: CGPoint) -> UIColor {
-		guard let pixelData = dataProvider?.data, let data = CFDataGetBytePtr(pixelData) else {
-			return .clear
-		}
-        let x = Int(point.x)
-        let y = Int(point.y)
-        let w = self.width
-        let h = self.height
-        let index = w * y + x
-        let numBytes = CFDataGetLength(pixelData)
-        let numComponents = 4
-        if numBytes != w * h * numComponents {
-            NSLog("Unexpected size: \(numBytes) != \(w)x\(h)x\(numComponents)")
-            return .clear
-        }
-        let isAlphaPremultiplied = bitmapInfo.isAlphaPremultiplied
-		let c0 = CGFloat((data[4*index])) / 255
-		let c1 = CGFloat((data[4*index+1])) / 255
-		let c2 = CGFloat((data[4*index+2])) / 255
-		let c3 = CGFloat((data[4*index+3])) / 255
-		var r: CGFloat = 0
-		var g: CGFloat = 0
-		var b: CGFloat = 0
-		var a: CGFloat = 0
-			b = c0; g = c1; r = c2; a = c3
-		if isAlphaPremultiplied && a > 0 {
-			r = r / a
-			g = g / a
-			b = b / a
-		}
-		return UIColor(red: r, green: g, blue: b, alpha: a)
-    }
 }

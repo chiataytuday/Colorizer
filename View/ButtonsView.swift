@@ -12,7 +12,6 @@ import UIKit
 	func toggleTorch(sender: UIButton)
 	func copyColorData(sender: UIButton)
 	func zoomInOut(sender: UIButton)
-	func tapAutoMode(sender: UIButton)
 }
 
 final class ButtonsView: UIView {
@@ -21,13 +20,6 @@ final class ButtonsView: UIView {
 		let button = UIButton(type: .custom)
 		let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
 		let image = UIImage(systemName: "bolt.fill", withConfiguration: config)
-		button.setImage(image, for: .normal)
-		return button
-	}()
-	let autoModeButton: UIButton = {
-		let button = UIButton(type: .custom)
-		let config = UIImage.SymbolConfiguration(pointSize: 21, weight: .medium)
-		let image = UIImage(systemName: "viewfinder", withConfiguration: config)
 		button.setImage(image, for: .normal)
 		return button
 	}()
@@ -57,11 +49,10 @@ final class ButtonsView: UIView {
 
 	private func setupStackView() {
 		torchButton.addTarget(delegate, action: #selector(delegate?.toggleTorch(sender:)), for: .touchDown)
-		autoModeButton.addTarget(delegate, action: #selector(delegate?.tapAutoMode(sender:)), for: .touchDown)
 		zoomButton.addTarget(delegate, action: #selector(delegate?.zoomInOut(sender:)), for: .touchDown)
 		copyButton.addTarget(delegate, action: #selector(delegate?.copyColorData(sender:)), for: .touchDown)
 
-		stackView = UIStackView(arrangedSubviews: [torchButton, autoModeButton,zoomButton, copyButton])
+		stackView = UIStackView(arrangedSubviews: [torchButton, zoomButton, copyButton])
 		stackView.translatesAutoresizingMaskIntoConstraints = false
 		stackView.distribution = .equalCentering
 		for case let button as UIButton in stackView.arrangedSubviews {
