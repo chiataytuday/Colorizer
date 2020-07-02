@@ -10,14 +10,10 @@ import UIKit
 
 class LibraryController: UIViewController {
 
-	private let plusImageView: UIImageView = {
-		let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-		let image = UIImage(systemName: "plus", withConfiguration: config)
-		let imageView = UIImageView(image: image)
-		imageView.tintColor = .lightGray
-		return imageView
-	}()
+	private var tipStackView: UIStackView!
 	private let scrollView = UIScrollView()
+	private var colorPickerView: ColorPicker!
+	private var colorInfoView = ColorInfoView()
 	private let doubleTapGesture = UITapGestureRecognizer()
 	private var photoImageView: UIImageView = {
 		let imageView = UIImageView()
@@ -31,15 +27,21 @@ class LibraryController: UIViewController {
 		}
 		set(newImage) {
 			photoImageView.image = newImage
+			scrollView.isUserInteractionEnabled = true
+			colorPickerView.isHidden = false
+			tipStackView.isHidden = true
+
+			let color = photoImageView.layer.pickColor(at: view.center)
+			colorPickerView.shapeLayer.fillColor = color!.cgColor
+			moved(to: color!)
 		}
 	}
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		view.backgroundColor = UIColor(white: 0.95, alpha: 1)
-		view.addSubview(plusImageView)
-		plusImageView.center = view.center
 
+		setupTipViews()
 		setupSubviews()
 		setupDoubleTapRecognizer()
 		setupImagePicker()
@@ -49,18 +51,47 @@ class LibraryController: UIViewController {
 		present(imagePicker, animated: true)
 	}
 
+	fileprivate func setupTipViews() {
+		let plusImageView: UIImageView = {
+			let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+			let image = UIImage(systemName: "plus", withConfiguration: config)
+			let imageView = UIImageView(image: image)
+			imageView.contentMode = .center
+			imageView.tintColor = .lightGray
+			return imageView
+		}()
+		let tipLabel: UILabel = {
+			let label = UILabel()
+			label.text = "Tap anywhere to open a photo"
+			label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+			label.textColor = .lightGray
+			return label
+		}()
+
+		tipStackView = UIStackView(arrangedSubviews: [plusImageView, tipLabel])
+		tipStackView.translatesAutoresizingMaskIntoConstraints = false
+		tipStackView.axis = .vertical
+		tipStackView.spacing = 10
+		view.addSubview(tipStackView)
+		NSLayoutConstraint.activate([
+			tipStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			tipStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+		])
+	}
+
 	fileprivate func setupSubviews() {
 		scrollView.delegate = self
 		scrollView.isUserInteractionEnabled = false
 		scrollView.contentInsetAdjustmentBehavior = .never
 		scrollView.delaysContentTouches = false
+		scrollView.maximumZoomScale = 4
 		view.addSubview(scrollView)
 		scrollView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
 			scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-			scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+			scrollView.topAnchor.constraint(equalTo: view.topAnchor),
 			scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-			scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+			scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
 		])
 
 		scrollView.addSubview(photoImageView)
@@ -73,6 +104,23 @@ class LibraryController: UIViewController {
 			photoImageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
 			photoImageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
 			photoImageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+		])
+
+		colorPickerView = ColorPicker(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
+		colorPickerView.delegate = self
+		colorPickerView.isHidden = true
+		photoImageView.addSubview(colorPickerView)
+		photoImageView.isUserInteractionEnabled = true
+		colorPickerView.center = view.center
+
+		colorInfoView = ColorInfoView()
+		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(colorInfoView)
+		NSLayoutConstraint.activate([
+			colorInfoView.widthAnchor.constraint(equalToConstant: 172),
+			colorInfoView.heightAnchor.constraint(equalToConstant: 70),
+			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15)
 		])
 	}
 
@@ -123,17 +171,17 @@ extension LibraryController: UIScrollViewDelegate {
 
 	func scrollViewDidZoom(_ scrollView: UIScrollView) {
 		let scale = scrollView.zoomScale
-//		pickerView.transform = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
+		colorPickerView.transform = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
 
-//		guard scale <= scrollView.maximumZoomScale else {
+		guard scale <= scrollView.maximumZoomScale else {
 //			paletteView.zoomLabel.text = "\((scrollView.maximumZoomScale * 10).rounded()/10)x"
-//			return
-//		}
-//		if scale <= 1 {
+			return
+		}
+		if scale <= 1 {
 //			paletteView.zoomLabel.text = "\(scrollView.minimumZoomScale)x"
-//			scrollView.contentInset = .zero
-//			return
-//		}
+			scrollView.contentInset = .zero
+			return
+		}
 //		paletteView.zoomLabel.text = "\((scale * 10).rounded()/10)x"
 
 		guard let image = photoImageView.image else { return }
@@ -154,5 +202,22 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
 	func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
 		dismiss(animated: true)
 		image = info[.originalImage] as? UIImage
+	}
+}
+
+extension LibraryController: ColorPickerDelegate {
+	func endedMovement() {
+		doubleTapGesture.isEnabled = true
+		scrollView.isScrollEnabled = true
+	}
+
+	func beganMovement() {
+		doubleTapGesture.isEnabled = false
+		scrollView.isScrollEnabled = false
+	}
+
+	func moved(to color: UIColor) {
+		colorInfoView.set(color: color)
+		colorPickerView.color = color
 	}
 }
