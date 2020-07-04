@@ -15,6 +15,20 @@ class LibraryController: UIViewController {
 	private var colorPickerView: ColorPicker!
 	private var colorInfoView = ColorInfoView()
 	private let doubleTapGesture = UITapGestureRecognizer()
+	private var backButton: UIButton = {
+		let button = UIButton(type: .custom)
+		button.backgroundColor = .white
+		let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .regular)
+		let image = UIImage(systemName: "chevron.left", withConfiguration: config)
+		button.setImage(image, for: .normal)
+		button.layer.cornerRadius = 22.5
+		button.tintColor = .lightGray
+		NSLayoutConstraint.activate([
+			button.widthAnchor.constraint(equalToConstant: 47.5),
+			button.heightAnchor.constraint(equalToConstant: 45)
+		])
+		return button
+	}()
 	private var photoImageView: UIImageView = {
 		let imageView = UIImageView()
 		imageView.contentMode = .scaleAspectFit
@@ -113,7 +127,16 @@ class LibraryController: UIViewController {
 		photoImageView.isUserInteractionEnabled = true
 		colorPickerView.center = view.center
 
+		backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
+		view.addSubview(backButton)
+		backButton.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+			backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
+		])
+
 		colorInfoView = ColorInfoView()
+		colorInfoView.isHidden = true
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([
@@ -122,6 +145,10 @@ class LibraryController: UIViewController {
 			colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15)
 		])
+	}
+
+	@objc private func backToCamera() {
+		dismiss(animated: true, completion: nil)
 	}
 
 	fileprivate func setupDoubleTapRecognizer() {

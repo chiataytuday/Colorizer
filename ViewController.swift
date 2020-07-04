@@ -32,6 +32,20 @@ class ViewController: UIViewController {
 	private var colorInfoView = ColorInfoView()
 	private let buttonsView = ButtonsView()
 	private var torchState: State = .disabled
+	private var libraryButton: UIButton = {
+		let button = UIButton(type: .custom)
+		button.backgroundColor = .white
+		let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .regular)
+		let image = UIImage(systemName: "photo", withConfiguration: config)
+		button.setImage(image, for: .normal)
+		button.layer.cornerRadius = 25
+		button.tintColor = .lightGray
+		NSLayoutConstraint.activate([
+			button.widthAnchor.constraint(equalToConstant: 52.5),
+			button.heightAnchor.constraint(equalToConstant: 50)
+		])
+		return button
+	}()
 
 	private lazy var captureSession: AVCaptureSession = {
 		let session = AVCaptureSession()
@@ -131,14 +145,28 @@ class ViewController: UIViewController {
 		buttonsView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(buttonsView)
 		NSLayoutConstraint.activate([
-			buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+			buttonsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
 			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
+		])
+
+		libraryButton.addTarget(self, action: #selector(presentLibraryController), for: .touchUpInside)
+		libraryButton.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(libraryButton)
+		NSLayoutConstraint.activate([
+			libraryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+			libraryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
 		])
 
 		view.addSubview(dot)
 		dot.center = view.center
 		view.addSubview(viewfinder)
 		viewfinder.center = view.center
+	}
+
+	@objc private func presentLibraryController() {
+		let libraryController = LibraryController()
+		libraryController.modalPresentationStyle = .fullScreen
+		present(libraryController, animated: true)
 	}
 
 	@objc private func willResignActive() {

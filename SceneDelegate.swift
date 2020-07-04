@@ -12,20 +12,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 	var window: UIWindow?
 
-
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-
 		if let windowScene = scene as? UIWindowScene {
-
 			let window = UIWindow(windowScene: windowScene)
-//			let navController = UINavigationController()
-			let viewController = LibraryController()
-
-//			navController.navigationBar.barTintColor = UIColor(white: 0.98, alpha: 1)
-//			navController.navigationBar.barStyle = .default
-//			navController.setToolbarHidden(true, animated: false)
-//			navController.viewControllers = [viewController]
-			window.rootViewController = viewController
+//			let viewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
+			window.rootViewController = ViewController()
 			self.window = window
 			window.makeKeyAndVisible()
         }
