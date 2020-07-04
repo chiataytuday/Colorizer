@@ -256,6 +256,6 @@ extension LibraryController: UIViewControllerTransitioningDelegate {
 	}
 
 	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		return AnimationController(duration: 0.3, type: .dismiss)
+		return AnimationController(duration: 0.4, type: .dismiss)
 	}
 }
