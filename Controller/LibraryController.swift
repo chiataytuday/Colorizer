@@ -54,6 +54,7 @@ class LibraryController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		view.backgroundColor = UIColor(white: 0.95, alpha: 1)
+		transitioningDelegate = self
 
 		setupTipViews()
 		setupSubviews()
@@ -246,5 +247,15 @@ extension LibraryController: ColorPickerDelegate {
 	func moved(to color: UIColor) {
 		colorInfoView.set(color: color)
 		colorPickerView.color = color
+	}
+}
+
+extension LibraryController: UIViewControllerTransitioningDelegate {
+	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		return AnimationController(duration: 0.4, type: .present)
+	}
+
+	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		return AnimationController(duration: 0.3, type: .dismiss)
 	}
 }
