@@ -129,6 +129,7 @@ class ViewController: UIViewController {
 
 	@objc private func openColorController() {
 		let colorController = ColorController()
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		colorController.color = colorInfoView.color
 		colorController.modalPresentationStyle = .fullScreen
 		present(colorController, animated: true)
@@ -180,6 +181,7 @@ class ViewController: UIViewController {
 	}
 
 	@objc private func presentLibraryController() {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		let libraryController = LibraryController()
 		libraryController.modalPresentationStyle = .fullScreen
 		present(libraryController, animated: true)

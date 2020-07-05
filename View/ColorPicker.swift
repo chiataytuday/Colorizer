@@ -69,11 +69,13 @@ final class ColorPicker: UIView {
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		delegate.beganMovement()
 		turnToRing()
 	}
 
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		delegate.endedMovement()
 		turnToCircle()
 	}

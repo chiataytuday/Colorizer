@@ -65,6 +65,7 @@ class LibraryController: UIViewController {
 	}
 
 	@objc private func openColorController() {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		let colorController = ColorController()
 		colorController.color = colorInfoView.color
 		colorController.modalPresentationStyle = .fullScreen
@@ -159,6 +160,7 @@ class LibraryController: UIViewController {
 	}
 
 	@objc private func backToCamera() {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		dismiss(animated: true, completion: nil)
 	}
 

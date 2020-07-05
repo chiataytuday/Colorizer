@@ -57,6 +57,7 @@ class ColorController: UIViewController {
 	}
 
 	@objc private func backToCamera() {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		dismiss(animated: true, completion: nil)
 	}
 
