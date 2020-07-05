@@ -171,35 +171,55 @@ class ViewController: UIViewController {
 		viewfinder.center = view.center
 	}
 
+	override func viewWillAppear(_ animated: Bool) {
+		restartCaptureSession()
+	}
+
+	override func viewWillDisappear(_ animated: Bool) {
+		stopCaptureSession()
+	}
+
 	@objc private func presentLibraryController() {
 		let libraryController = LibraryController()
 		libraryController.modalPresentationStyle = .fullScreen
 		present(libraryController, animated: true)
 	}
 
-	@objc private func willResignActive() {
-		captureSession.stopRunning()
-		guard torchState == .enabled else { return }
-		do {
-			try captureDevice?.lockForConfiguration()
-			defer { captureDevice?.unlockForConfiguration() }
-			captureDevice?.torchMode = .off
-		} catch {
-			print(error.localizedDescription)
+	fileprivate func stopCaptureSession() {
+		DispatchQueue.main.async {
+			self.previewLayer.connection?.isEnabled = false
+			guard self.torchState == .enabled else { return }
+			do {
+				try self.captureDevice?.lockForConfiguration()
+				defer { self.captureDevice?.unlockForConfiguration() }
+				self.captureDevice?.torchMode = .off
+			} catch {
+				print(error.localizedDescription)
+			}
 		}
 	}
 
-	@objc private func didBecomeActive() {
-		updateCopyButton()
-		captureSession.startRunning()
-		guard torchState == .enabled else { return }
-		do {
-			try captureDevice?.lockForConfiguration()
-			defer { captureDevice?.unlockForConfiguration() }
-			captureDevice?.torchMode = .on
-		} catch {
-			print(error.localizedDescription)
+	fileprivate func restartCaptureSession() {
+		DispatchQueue.main.async {
+			self.updateCopyButton()
+			self.previewLayer.connection?.isEnabled = true
+			guard self.torchState == .enabled else { return }
+			do {
+				try self.captureDevice?.lockForConfiguration()
+				defer { self.captureDevice?.unlockForConfiguration() }
+				self.captureDevice?.torchMode = .on
+			} catch {
+				print(error.localizedDescription)
+			}
 		}
+	}
+
+	@objc private func willResignActive() {
+		stopCaptureSession()
+	}
+
+	@objc private func didBecomeActive() {
+		restartCaptureSession()
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
