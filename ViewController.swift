@@ -127,6 +127,13 @@ class ViewController: UIViewController {
 		}
 	}
 
+//	@objc private func openColorController() {
+//		let colorController = ColorController()
+//		colorController.view.backgroundColor = colorInfoView.color
+//		colorController.modalPresentationStyle = .fullScreen
+//		present(colorController, animated: true)
+//	}
+
 	private func setupSubviews() {
 		colorInfoView = ColorInfoView()
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false

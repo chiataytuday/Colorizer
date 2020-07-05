@@ -41,8 +41,10 @@ class LibraryController: UIViewController {
 		}
 		set(newImage) {
 			photoImageView.image = newImage
+			photoImageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
 			scrollView.isUserInteractionEnabled = true
 			colorPickerView.isHidden = false
+			colorInfoView.isHidden = false
 			tipStackView.isHidden = true
 
 			let color = photoImageView.layer.pickColor(at: view.center)
@@ -252,10 +254,10 @@ extension LibraryController: ColorPickerDelegate {
 
 extension LibraryController: UIViewControllerTransitioningDelegate {
 	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		return AnimationController(duration: 0.4, type: .present)
+		return AnimationController(duration: 0.4, type: .present, direction: .horizontal)
 	}
 
 	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		return AnimationController(duration: 0.4, type: .dismiss)
+		return AnimationController(duration: 0.4, type: .dismiss, direction: .horizontal)
 	}
 }

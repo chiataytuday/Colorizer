@@ -11,15 +11,22 @@ import UIKit
 class AnimationController: NSObject {
 	private let animationDuration: Double
 	private let animationType: AnimationType
+	private let animationDirection: AnimationDirection
 
 	enum AnimationType {
 		case present
 		case dismiss
 	}
 
-	init(duration: Double, type: AnimationType) {
+	enum AnimationDirection {
+		case horizontal
+		case vertical
+	}
+
+	init(duration: Double, type: AnimationType, direction: AnimationDirection) {
 		animationDuration = duration
 		animationType = type
+		animationDirection = direction
 	}
 }
 
@@ -45,24 +52,46 @@ extension AnimationController: UIViewControllerAnimatedTransitioning {
 	}
 
 	private func presentAnimation(with transitionContext: UIViewControllerContextTransitioning, viewToAnimate: UIView, viewFromAnimate: UIView) {
-		viewToAnimate.clipsToBounds = true
-		viewToAnimate.transform = CGAffineTransform(translationX: viewToAnimate.frame.width, y: 0)
 		let duration = transitionDuration(using: transitionContext)
-		UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
-			viewToAnimate.transform = .identity
-			viewFromAnimate.transform = CGAffineTransform(translationX: -viewFromAnimate.frame.width, y: 0)
-		}) { _ in
-			transitionContext.completeTransition(true)
+		viewToAnimate.clipsToBounds = true
+		switch animationDirection {
+			case .horizontal:
+				viewToAnimate.transform = CGAffineTransform(translationX: viewToAnimate.frame.width, y: 0)
+				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+					viewToAnimate.transform = .identity
+					viewFromAnimate.transform = CGAffineTransform(translationX: -viewFromAnimate.frame.width, y: 0)
+				}) { _ in
+					transitionContext.completeTransition(true)
+				}
+			case .vertical:
+				viewToAnimate.transform = CGAffineTransform(translationX: 0, y: -viewToAnimate.frame.height)
+				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+					viewToAnimate.transform = .identity
+					viewFromAnimate.transform = CGAffineTransform(translationX: 0, y: viewFromAnimate.frame.height)
+				}) { _ in
+					transitionContext.completeTransition(true)
+				}
 		}
 	}
 
 	private func dismissAnimation(with transitionContext: UIViewControllerContextTransitioning, viewToAnimate: UIView, viewFromAnimate: UIView) {
 		let duration = transitionDuration(using: transitionContext)
-		UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
-			viewToAnimate.transform = CGAffineTransform(translationX: viewToAnimate.frame.width, y: 0)
-			viewFromAnimate.transform = .identity
-		}) { _ in
-			transitionContext.completeTransition(true)
+		switch animationDirection {
+			case .horizontal:
+				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+					viewToAnimate.transform = CGAffineTransform(translationX: viewToAnimate.frame.width, y: 0)
+					viewFromAnimate.transform = .identity
+				}) { _ in
+					transitionContext.completeTransition(true)
+				}
+			case .vertical:
+				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+					viewToAnimate.transform = CGAffineTransform(translationX: 0, y: -viewToAnimate.frame.height)
+					viewFromAnimate.transform = .identity
+				}) { _ in
+					transitionContext.completeTransition(true)
+			}
 		}
+
 	}
 }
