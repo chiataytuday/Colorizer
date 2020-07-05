@@ -64,6 +64,13 @@ class LibraryController: UIViewController {
 		setupImagePicker()
 	}
 
+	@objc private func openColorController() {
+		let colorController = ColorController()
+		colorController.color = colorInfoView.color
+		colorController.modalPresentationStyle = .fullScreen
+		present(colorController, animated: true)
+	}
+
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		present(imagePicker, animated: true)
 	}
@@ -140,6 +147,7 @@ class LibraryController: UIViewController {
 
 		colorInfoView = ColorInfoView()
 		colorInfoView.isHidden = true
+		colorInfoView.delegate = openColorController
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([

@@ -127,15 +127,16 @@ class ViewController: UIViewController {
 		}
 	}
 
-//	@objc private func openColorController() {
-//		let colorController = ColorController()
-//		colorController.view.backgroundColor = colorInfoView.color
-//		colorController.modalPresentationStyle = .fullScreen
-//		present(colorController, animated: true)
-//	}
+	@objc private func openColorController() {
+		let colorController = ColorController()
+		colorController.color = colorInfoView.color
+		colorController.modalPresentationStyle = .fullScreen
+		present(colorController, animated: true)
+	}
 
 	private func setupSubviews() {
 		colorInfoView = ColorInfoView()
+		colorInfoView.delegate = openColorController
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([
@@ -318,16 +319,14 @@ extension CALayer {
 }
 
 extension UIColor {
-	func toHex(alpha: Bool = false) -> String? {
+	func toHEX(alpha: Bool = false) -> String? {
         guard let components = cgColor.components, components.count >= 3 else {
             return nil
         }
-
         let r = Float(components[0])
         let g = Float(components[1])
         let b = Float(components[2])
         var a = Float(1.0)
-
         if components.count >= 4 {
             a = Float(components[3])
         }
@@ -338,6 +337,34 @@ extension UIColor {
             return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
         }
     }
+
+	func toRGB() -> String {
+		let values: (r: Int, g: Int, b: Int) = (
+			Int(cgColor.components![0] * 255),
+			Int(cgColor.components![1] * 255),
+			Int(cgColor.components![2] * 255)
+		)
+		return "\(values.r) \(values.g) \(values.b)"
+	}
+
+	func toHSB() -> String {
+		var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+		getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+		return "\((h*1000).rounded()/10) \((s*1000).rounded()/10) \((b*1000).rounded()/10)"
+	}
+
+	func toCMYK() -> String {
+		let r = cgColor.components![0]
+		let g = cgColor.components![1]
+		let b = cgColor.components![2]
+
+		var c = 1 - r, m = 1 - g, y = 1 - b
+		let minCMY = min(c, m, y)
+		c = (c - minCMY) / (1 - minCMY)
+		m = (m - minCMY) / (1 - minCMY)
+		y = (y - minCMY) / (1 - minCMY)
+		return "\((c*1000).rounded()/10) \((m*1000).rounded()/10) \((y*1000).rounded()/10) \((minCMY*1000).rounded()/10)"
+	}
 }
 
 extension UserDefaults {

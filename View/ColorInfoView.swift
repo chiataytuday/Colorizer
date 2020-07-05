@@ -8,7 +8,8 @@
 
 import UIKit
 
-final class ColorInfoView: UIView {
+final class ColorInfoView: UIButton {
+	var delegate: (() -> ())?
 	private let filledCircle: UIView = {
 		let view = UIView()
 		view.layer.cornerRadius = 10
@@ -36,12 +37,20 @@ final class ColorInfoView: UIView {
 	var formattedString: String {
 		return "\(hexLabel.text!) (\(rgbLabel.text!.split(separator: " ").joined(separator: ", ")))"
 	}
+	var color: UIColor? {
+		return filledCircle.backgroundColor
+	}
 
 	init() {
 		super.init(frame: .zero)
 		backgroundColor = .white
 		layer.cornerRadius = 35
 		setupStackViews()
+		addTarget(self, action: #selector(openColorController), for: .touchUpInside)
+	}
+
+	@objc private func openColorController() {
+		delegate?()
 	}
 
 	private func setupStackViews() {
@@ -53,6 +62,7 @@ final class ColorInfoView: UIView {
 		stackView.spacing = 6
 		stackView.alignment = .center
 		addSubview(stackView)
+		stackView.isUserInteractionEnabled = false
 		stackView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
 			stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -61,15 +71,9 @@ final class ColorInfoView: UIView {
 	}
 
 	func set(color: UIColor) {
-		let cgColor = color.cgColor
-		let values: (r: Int, g: Int, b: Int) = (
-			Int(cgColor.components![0] * 255),
-			Int(cgColor.components![1] * 255),
-			Int(cgColor.components![2] * 255)
-		)
-		rgbLabel.text = "\(values.r) \(values.g) \(values.b)"
+		rgbLabel.text = color.toRGB()
 		filledCircle.backgroundColor = color
-		hexLabel.text = "#\(color.toHex()!)"
+		hexLabel.text = "#\(color.toHEX()!)"
 	}
 
 	required init?(coder: NSCoder) {
