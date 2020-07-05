@@ -362,18 +362,22 @@ extension UIColor {
     }
 
 	func toRGB() -> String {
-		let values: (r: Int, g: Int, b: Int) = (
-			Int(cgColor.components![0] * 255),
-			Int(cgColor.components![1] * 255),
-			Int(cgColor.components![2] * 255)
+		let values: (r: CGFloat, g: CGFloat, b: CGFloat) = (
+			(cgColor.components![0] * 255).rounded(),
+			(cgColor.components![1] * 255).rounded(),
+			(cgColor.components![2] * 255).rounded()
 		)
-		return "\(values.r) \(values.g) \(values.b)"
+		return "\(Int(values.r)) \(Int(values.g)) \(Int(values.b))"
 	}
 
 	func toHSB() -> String {
 		var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
 		getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-		return "\((h*1000).rounded()/10) \((s*1000).rounded()/10) \((b*1000).rounded()/10)"
+		#warning("Find out why hue value is wrong")
+		let rounded: (h: CGFloat, s: CGFloat, b: CGFloat) = (
+			(h*100).rounded(), (s*100).rounded(), (b*100).rounded()
+		)
+		return "\(Int(rounded.h)) \(Int(rounded.s)) \(Int(rounded.b))"
 	}
 
 	func toCMYK() -> String {
@@ -386,7 +390,11 @@ extension UIColor {
 		c = (c - minCMY) / (1 - minCMY)
 		m = (m - minCMY) / (1 - minCMY)
 		y = (y - minCMY) / (1 - minCMY)
-		return "\((c*1000).rounded()/10) \((m*1000).rounded()/10) \((y*1000).rounded()/10) \((minCMY*1000).rounded()/10)"
+
+		let rounded: (c: CGFloat, m: CGFloat, y: CGFloat, k: CGFloat) = (
+			(c*100).rounded(), (m*100).rounded(), (y*100).rounded(), (minCMY*100).rounded()
+		)
+		return "\(Int(rounded.c)) \(Int(rounded.m)) \(Int(rounded.y)) \(Int(rounded.k))"
 	}
 }
 
