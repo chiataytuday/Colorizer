@@ -63,31 +63,16 @@ class ColorController: UIViewController {
 	fileprivate func setupSubviews() {
 		let stackView = UIStackView()
 		stackView.translatesAutoresizingMaskIntoConstraints = false
+		stackView.alignment = .leading
 		stackView.axis = .vertical
-		stackView.spacing = 15
 		for color in colorData! {
-			let spaceNameLabel: UILabel = {
-				let label = UILabel()
-				label.text = "\(color.spaceName)"
-				label.textColor = .white
-				label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-				return label
-			}()
-			let valueLabel: UILabel = {
-				let label = UILabel()
-				label.text = "\(color.value)"
-				label.textColor = .white
-				label.font = UIFont.monospacedFont(ofSize: 18, weight: .light)
-				return label
-			}()
-			let blockStackView = UIStackView(arrangedSubviews: [spaceNameLabel, valueLabel])
-			blockStackView.axis = .vertical
-			stackView.addArrangedSubview(blockStackView)
+			let colorRowView = ColorRowView(title: color.spaceName, value: color.value)
+			stackView.addArrangedSubview(colorRowView)
 		}
 		view.addSubview(stackView)
 		NSLayoutConstraint.activate([
-			stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
-			stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
+			stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 17.5),
+			stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22.5)
 		])
 	}
 
