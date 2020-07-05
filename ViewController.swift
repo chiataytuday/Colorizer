@@ -225,6 +225,7 @@ class ViewController: UIViewController {
 	}
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		guard presentedViewController == nil else { return }
 		let pickedColor = previewLayer.pickColor(at: view.center)
 		UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
 		colorInfoView.set(color: pickedColor!)

@@ -72,7 +72,8 @@ class LibraryController: UIViewController {
 		present(colorController, animated: true)
 	}
 
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		present(imagePicker, animated: true)
 	}
 

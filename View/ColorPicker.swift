@@ -15,7 +15,6 @@ protocol ColorPickerDelegate {
 }
 
 final class ColorPicker: UIView {
-
 	var delegate: ColorPickerDelegate!
 	var color: UIColor = .systemYellow
 
@@ -124,5 +123,4 @@ final class ColorPicker: UIView {
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
-
 }

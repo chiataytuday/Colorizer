@@ -45,7 +45,7 @@ class ColorRowView: UIView {
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-		UIPasteboard.general.string = valueLabel.text
+		UIPasteboard.general.string = "\(titleLabel.text!)(\(valueLabel.text!.split(separator: " ").joined(separator: ", ")))"
 		backgroundColor = .init(white: 1.0, alpha: 0.2)
 		UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
 			self.backgroundColor = .clear
