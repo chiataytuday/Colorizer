@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ColorRowView: UIView {
+final class ColorRowView: UIView {
 	var titleLabel: UILabel = {
 		let label = UILabel()
 		label.textColor = .white

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Color {
+final class Color {
 	let spaceName: String
 	let value: String
 

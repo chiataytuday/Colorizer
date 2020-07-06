@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LibraryController: UIViewController {
+final class LibraryController: UIViewController {
 
 	private var tipStackView: UIStackView!
 	private let scrollView = UIScrollView()
@@ -212,18 +212,11 @@ extension LibraryController: UIScrollViewDelegate {
 	func scrollViewDidZoom(_ scrollView: UIScrollView) {
 		let scale = scrollView.zoomScale
 		colorPickerView.transform = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
-
-		guard scale <= scrollView.maximumZoomScale else {
-//			paletteView.zoomLabel.text = "\((scrollView.maximumZoomScale * 10).rounded()/10)x"
-			return
-		}
+		guard scale <= scrollView.maximumZoomScale else { return }
 		if scale <= 1 {
-//			paletteView.zoomLabel.text = "\(scrollView.minimumZoomScale)x"
 			scrollView.contentInset = .zero
 			return
 		}
-//		paletteView.zoomLabel.text = "\((scale * 10).rounded()/10)x"
-
 		guard let image = photoImageView.image else { return }
 		let wRatio = photoImageView.frame.width / image.size.width
 		let hRatio = photoImageView.frame.height / image.size.height

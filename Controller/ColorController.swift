@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ColorController: UIViewController {
+final class ColorController: UIViewController {
 
 	private var colorData: [Color]? {
 		didSet {

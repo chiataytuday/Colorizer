@@ -13,7 +13,7 @@ enum State {
 	case enabled, disabled
 }
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
 	private let dot: UIImageView = {
 		let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
 		let image = UIImage(systemName: "circle.fill", withConfiguration: config)
@@ -68,10 +68,6 @@ class ViewController: UIViewController {
 		super.viewDidLoad()
 		setupCaptureSession()
 		configureDeviceFormat()
-
-//		previewView = UIView(frame: view.frame)
-//		previewView!.layer.addSublayer(previewLayer)
-//		view.addSubview(previewView!)
 
 		view.layer.addSublayer(previewLayer)
 		captureSession.startRunning()
@@ -203,7 +199,6 @@ class ViewController: UIViewController {
 
 	fileprivate func restartCaptureSession() {
 		DispatchQueue.main.async {
-//			self.updateCopyButton()
 			self.previewLayer.connection?.isEnabled = true
 			guard self.torchState == .enabled else { return }
 			do {
@@ -230,7 +225,6 @@ class ViewController: UIViewController {
 		UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
 		colorInfoView.set(color: pickedColor!)
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-//		updateCopyButton()
 	}
 
 	override var prefersStatusBarHidden: Bool {
@@ -273,26 +267,6 @@ extension ViewController: ButtonsMenuDelegate {
 		}
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
 	}
-
-//	func copyColorData(sender: UIButton) {
-//		let copiedString = UIPasteboard.general.string ?? ""
-//		guard !copiedString.elementsEqual(colorInfoView.formattedString) else { return }
-//		UIPasteboard.general.string = colorInfoView.formattedString
-//		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
-//		updateCopyButton()
-//	}
-
-//	private func updateCopyButton() {
-//		let copiedString = UIPasteboard.general.string ?? ""
-//		switch copiedString == colorInfoView.formattedString {
-//			case true:
-//				buttonsView.copyButton.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
-//				buttonsView.copyButton.tintColor = .darkGray
-//			case false:
-//				buttonsView.copyButton.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
-//				buttonsView.copyButton.tintColor = .lightGray
-//		}
-//	}
 }
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -318,7 +292,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 		guard let cgImage = context.makeImage() else { return }
 		DispatchQueue.main.async {
 			self.previewLayer.contents = cgImage
-//			self.previewLayer.contentsGravity = .resizeAspectFill
+//			previewLayer.contentsGravity = .resizeAspectFill
 		}
 	}
 }

@@ -17,10 +17,8 @@ protocol ColorPickerDelegate {
 final class ColorPicker: UIView {
 	var delegate: ColorPickerDelegate!
 	var color: UIColor = .systemYellow
-
 	var lastLocation: CGPoint!
 	let shapeLayer = CAShapeLayer()
-
 	private var defaultScale: CGFloat {
 		let scrollView = superview?.superview as! UIScrollView
 		return 1/scrollView.zoomScale
@@ -34,7 +32,6 @@ final class ColorPicker: UIView {
 		panRecognizer.delaysTouchesBegan = false
 		self.gestureRecognizers = [panRecognizer]
 	}
-
 
 	private func setupShapeLayer() {
 		let lineWidth: CGFloat = 1.25

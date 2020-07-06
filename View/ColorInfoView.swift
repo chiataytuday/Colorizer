@@ -34,9 +34,6 @@ final class ColorInfoView: UIButton {
 		label.font = UIFont.monospacedFont(ofSize: 14, weight: .regular)
 		return label
 	}()
-	var formattedString: String {
-		return "\(hexLabel.text!) (\(rgbLabel.text!.split(separator: " ").joined(separator: ", ")))"
-	}
 	var color: UIColor? {
 		return filledCircle.backgroundColor
 	}
