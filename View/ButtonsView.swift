@@ -10,7 +10,7 @@ import UIKit
 
 @objc protocol ButtonsMenuDelegate {
 	func toggleTorch(sender: UIButton)
-	func copyColorData(sender: UIButton)
+//	func copyColorData(sender: UIButton)
 	func zoomInOut(sender: UIButton)
 }
 
@@ -30,13 +30,13 @@ final class ButtonsView: UIView {
 		button.setImage(image, for: .normal)
 		return button
 	}()
-	let copyButton: UIButton = {
-		let button = UIButton(type: .custom)
-		let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
-		let image = UIImage(systemName: "doc.text.fill", withConfiguration: config)
-		button.setImage(image, for: .normal)
-		return button
-	}()
+//	let copyButton: UIButton = {
+//		let button = UIButton(type: .custom)
+//		let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+//		let image = UIImage(systemName: "doc.text.fill", withConfiguration: config)
+//		button.setImage(image, for: .normal)
+//		return button
+//	}()
 	private var stackView: UIStackView!
 
 	override init(frame: CGRect) {
@@ -50,9 +50,10 @@ final class ButtonsView: UIView {
 	private func setupStackView() {
 		torchButton.addTarget(delegate, action: #selector(delegate?.toggleTorch(sender:)), for: .touchDown)
 		zoomButton.addTarget(delegate, action: #selector(delegate?.zoomInOut(sender:)), for: .touchDown)
-		copyButton.addTarget(delegate, action: #selector(delegate?.copyColorData(sender:)), for: .touchDown)
+//		copyButton.addTarget(delegate, action: #selector(delegate?.copyColorData(sender:)), for: .touchDown)
 
-		stackView = UIStackView(arrangedSubviews: [torchButton, zoomButton, copyButton])
+//		stackView = UIStackView(arrangedSubviews: [torchButton, zoomButton, copyButton])
+		stackView = UIStackView(arrangedSubviews: [torchButton, zoomButton])
 		stackView.translatesAutoresizingMaskIntoConstraints = false
 		stackView.distribution = .equalCentering
 		for case let button as UIButton in stackView.arrangedSubviews {

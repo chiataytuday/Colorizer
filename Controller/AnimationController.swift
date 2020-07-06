@@ -57,7 +57,7 @@ extension AnimationController: UIViewControllerAnimatedTransitioning {
 		switch animationDirection {
 			case .horizontal:
 				viewToAnimate.transform = CGAffineTransform(translationX: viewToAnimate.frame.width, y: 0)
-				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
 					viewToAnimate.transform = .identity
 					viewFromAnimate.transform = CGAffineTransform(translationX: -viewFromAnimate.frame.width, y: 0)
 				}) { _ in
@@ -65,7 +65,7 @@ extension AnimationController: UIViewControllerAnimatedTransitioning {
 				}
 			case .vertical:
 				viewToAnimate.transform = CGAffineTransform(translationX: 0, y: -viewToAnimate.frame.height)
-				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
 					viewToAnimate.transform = .identity
 					viewFromAnimate.transform = CGAffineTransform(translationX: 0, y: viewFromAnimate.frame.height)
 				}) { _ in
@@ -78,14 +78,14 @@ extension AnimationController: UIViewControllerAnimatedTransitioning {
 		let duration = transitionDuration(using: transitionContext)
 		switch animationDirection {
 			case .horizontal:
-				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
 					viewToAnimate.transform = CGAffineTransform(translationX: viewToAnimate.frame.width, y: 0)
 					viewFromAnimate.transform = .identity
 				}) { _ in
 					transitionContext.completeTransition(true)
 				}
 			case .vertical:
-				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+				UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
 					viewToAnimate.transform = CGAffineTransform(translationX: 0, y: -viewToAnimate.frame.height)
 					viewFromAnimate.transform = .identity
 				}) { _ in

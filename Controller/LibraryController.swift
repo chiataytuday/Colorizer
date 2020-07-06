@@ -73,7 +73,6 @@ class LibraryController: UIViewController {
 	}
 
 	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		present(imagePicker, animated: true)
 	}
 

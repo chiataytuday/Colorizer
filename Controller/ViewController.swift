@@ -203,7 +203,7 @@ class ViewController: UIViewController {
 
 	fileprivate func restartCaptureSession() {
 		DispatchQueue.main.async {
-			self.updateCopyButton()
+//			self.updateCopyButton()
 			self.previewLayer.connection?.isEnabled = true
 			guard self.torchState == .enabled else { return }
 			do {
@@ -230,7 +230,7 @@ class ViewController: UIViewController {
 		UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
 		colorInfoView.set(color: pickedColor!)
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-		updateCopyButton()
+//		updateCopyButton()
 	}
 
 	override var prefersStatusBarHidden: Bool {
@@ -274,25 +274,25 @@ extension ViewController: ButtonsMenuDelegate {
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
 	}
 
-	func copyColorData(sender: UIButton) {
-		let copiedString = UIPasteboard.general.string ?? ""
-		guard !copiedString.elementsEqual(colorInfoView.formattedString) else { return }
-		UIPasteboard.general.string = colorInfoView.formattedString
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
-		updateCopyButton()
-	}
+//	func copyColorData(sender: UIButton) {
+//		let copiedString = UIPasteboard.general.string ?? ""
+//		guard !copiedString.elementsEqual(colorInfoView.formattedString) else { return }
+//		UIPasteboard.general.string = colorInfoView.formattedString
+//		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.35)
+//		updateCopyButton()
+//	}
 
-	private func updateCopyButton() {
-		let copiedString = UIPasteboard.general.string ?? ""
-		switch copiedString == colorInfoView.formattedString {
-			case true:
-				buttonsView.copyButton.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
-				buttonsView.copyButton.tintColor = .darkGray
-			case false:
-				buttonsView.copyButton.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
-				buttonsView.copyButton.tintColor = .lightGray
-		}
-	}
+//	private func updateCopyButton() {
+//		let copiedString = UIPasteboard.general.string ?? ""
+//		switch copiedString == colorInfoView.formattedString {
+//			case true:
+//				buttonsView.copyButton.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
+//				buttonsView.copyButton.tintColor = .darkGray
+//			case false:
+//				buttonsView.copyButton.setImage(UIImage(systemName: "doc.text.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)), for: .normal)
+//				buttonsView.copyButton.tintColor = .lightGray
+//		}
+//	}
 }
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -384,6 +384,9 @@ extension UIColor {
 		let r = cgColor.components![0]
 		let g = cgColor.components![1]
 		let b = cgColor.components![2]
+		guard r != 0 && g != 0 && b != 0 else {
+			return "0 0 0 100"
+		}
 
 		var c = 1 - r, m = 1 - g, y = 1 - b
 		let minCMY = min(c, m, y)
