@@ -54,6 +54,7 @@ final class ViewController: UIViewController {
 	}()
 	private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
 		let layer = AVCaptureVideoPreviewLayer(session: self.captureSession)
+//		let layer = AVCaptureVideoPreviewLayer()
 		layer.videoGravity = .resizeAspectFill
 		layer.frame = self.view.bounds
 		return layer
@@ -94,9 +95,9 @@ final class ViewController: UIViewController {
 			if captureSession.canAddOutput(dataOutput) {
 				captureSession.addOutput(dataOutput)
 			}
-			if let connection = dataOutput.connection(with: .video) {
-				connection.preferredVideoStabilizationMode = .standard
-			}
+//			if let connection = dataOutput.connection(with: .video) {
+//				connection.preferredVideoStabilizationMode = .auto
+//			}
 			captureSession.commitConfiguration()
 			let queue = DispatchQueue(label: "com.camera.video.queue", attributes: [])
 			dataOutput.setSampleBufferDelegate(self, queue: queue)
@@ -292,7 +293,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 		guard let cgImage = context.makeImage() else { return }
 		DispatchQueue.main.async {
 			self.previewLayer.contents = cgImage
-//			previewLayer.contentsGravity = .resizeAspectFill
+//			self.previewLayer.contentsGravity = .resizeAspectFill
 		}
 	}
 }
@@ -347,7 +348,7 @@ extension UIColor {
 	func toHSB() -> String {
 		var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
 		getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-		#warning("Find out why hue value is wrong")
+		#warning("Why hue value is incorrect?")
 		let rounded: (h: CGFloat, s: CGFloat, b: CGFloat) = (
 			(h*100).rounded(), (s*100).rounded(), (b*100).rounded()
 		)
