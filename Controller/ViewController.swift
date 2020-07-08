@@ -32,17 +32,17 @@ final class ViewController: UIViewController {
 	private var colorInfoView = ColorInfoView()
 	private let buttonsView = ButtonsView()
 	private var torchState: State = .disabled
-	private var libraryButton: UIButton = {
+	private var backButton: UIButton = {
 		let button = UIButton(type: .custom)
 		button.backgroundColor = .white
 		let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .regular)
-		let image = UIImage(systemName: "photo", withConfiguration: config)
+		let image = UIImage(systemName: "chevron.left", withConfiguration: config)
 		button.setImage(image, for: .normal)
-		button.layer.cornerRadius = 25
+		button.layer.cornerRadius = 22.5
 		button.tintColor = .lightGray
 		NSLayoutConstraint.activate([
-			button.widthAnchor.constraint(equalToConstant: 52.5),
-			button.heightAnchor.constraint(equalToConstant: 50)
+			button.widthAnchor.constraint(equalToConstant: 47.5),
+			button.heightAnchor.constraint(equalToConstant: 45)
 		])
 		return button
 	}()
@@ -69,6 +69,7 @@ final class ViewController: UIViewController {
 		super.viewDidLoad()
 		setupCaptureSession()
 		configureDeviceFormat()
+		transitioningDelegate = self
 
 		view.layer.addSublayer(previewLayer)
 		captureSession.startRunning()
@@ -151,22 +152,27 @@ final class ViewController: UIViewController {
 		buttonsView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(buttonsView)
 		NSLayoutConstraint.activate([
-			buttonsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
+			buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
-		])
-
-		libraryButton.addTarget(self, action: #selector(presentLibraryController), for: .touchUpInside)
-		libraryButton.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(libraryButton)
-		NSLayoutConstraint.activate([
-			libraryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-			libraryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
 		])
 
 		view.addSubview(dot)
 		dot.center = view.center
 		view.addSubview(viewfinder)
 		viewfinder.center = view.center
+
+		backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
+		view.addSubview(backButton)
+		backButton.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+			backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
+		])
+	}
+
+	@objc private func backToCamera() {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
+		dismiss(animated: true, completion: nil)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -175,13 +181,6 @@ final class ViewController: UIViewController {
 
 	override func viewWillDisappear(_ animated: Bool) {
 		stopCaptureSession()
-	}
-
-	@objc private func presentLibraryController() {
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
-		let libraryController = LibraryController()
-		libraryController.modalPresentationStyle = .fullScreen
-		present(libraryController, animated: true)
 	}
 
 	fileprivate func stopCaptureSession() {
@@ -396,5 +395,15 @@ extension UserDefaults {
 			print(error.localizedDescription)
 		}
 		return colorToReturn
+	}
+}
+
+extension ViewController: UIViewControllerTransitioningDelegate {
+	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		return AnimationController(duration: 0.4, type: .present, direction: .horizontal)
+	}
+
+	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		return AnimationController(duration: 0.4, type: .dismiss, direction: .horizontal)
 	}
 }
