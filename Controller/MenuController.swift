@@ -8,44 +8,54 @@
 
 import UIKit
 
-class MenuController: UIViewController {
+class MenuController: UITabBarController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = UIColor(white: 0.95, alpha: 1)
-		setupStackView()
+		tabBar.isTranslucent = false
+		tabBar.barTintColor = UIColor(white: 0.95, alpha: 1)
+		tabBar.tintColor = .darkGray
+		setupTabBar()
 	}
 
-	fileprivate func setupStackView() {
-		let cameraButton = MenuButton(text: "Camera", imageName: "camera.fill")
-		cameraButton.delegate = openCameraController
-		let libraryButton = MenuButton(text: "Library", imageName: "photo.fill")
-		libraryButton.delegate = openLibraryController
-		let folderButton = MenuButton(text: "Collections", imageName: "folder.fill")
-		let stackView = UIStackView(arrangedSubviews: [cameraButton, libraryButton, folderButton])
-		stackView.axis = .vertical
+	fileprivate func setupTabBar() {
+		let config = UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)
+		let randomController = UINavigationController(rootViewController: UIViewController())
+		randomController.setNavigationBarHidden(true, animated: false)
+		randomController.tabBarItem.image = UIImage(systemName: "icloud", withConfiguration: config)
+		randomController.tabBarItem.selectedImage = UIImage(systemName: "icloud.fill", withConfiguration: config)
 
-		view.addSubview(stackView)
-		stackView.translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-			stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
-		])
-	}
+		let cameraController = UINavigationController(rootViewController: ViewController())
+		cameraController.setNavigationBarHidden(true, animated: false)
+		cameraController.tabBarItem.image = UIImage(systemName: "camera", withConfiguration: config)
+		cameraController.tabBarItem.selectedImage = UIImage(systemName: "camera.fill", withConfiguration: config)
 
-	fileprivate func openCameraController() {
-		let cameraController = ViewController()
-		cameraController.modalPresentationStyle = .fullScreen
-		present(cameraController, animated: true)
-	}
+		let libraryController = UINavigationController(rootViewController: LibraryController())
+		libraryController.setNavigationBarHidden(true, animated: false)
+		libraryController.tabBarItem.image = UIImage(systemName: "photo", withConfiguration: config)
+		libraryController.tabBarItem.selectedImage = UIImage(systemName: "photo.fill", withConfiguration: config)
 
-	fileprivate func openLibraryController() {
-		let libraryController = LibraryController()
-		libraryController.modalPresentationStyle = .fullScreen
-		present(libraryController, animated: true)
-	}
+		let foldersController = UINavigationController(rootViewController: UIViewController())
+		foldersController.setNavigationBarHidden(true, animated: false)
+		foldersController.tabBarItem.image = UIImage(systemName: "folder", withConfiguration: config)
+		foldersController.tabBarItem.selectedImage = UIImage(systemName: "folder.fill", withConfiguration: config)
 
-	override var prefersStatusBarHidden: Bool {
-		true
+		viewControllers = [randomController, libraryController, cameraController, foldersController]
 	}
+}
+
+extension UIImage {
+    class func colorForNavBar(color: UIColor) -> UIImage {
+        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()
+
+		context!.setFillColor(color.cgColor)
+		context!.fill(rect)
+
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return image!
+    }
 }

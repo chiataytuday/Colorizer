@@ -32,20 +32,6 @@ final class ViewController: UIViewController {
 	private var colorInfoView = ColorInfoView()
 	private let buttonsView = ButtonsView()
 	private var torchState: State = .disabled
-	private var backButton: UIButton = {
-		let button = UIButton(type: .custom)
-		button.backgroundColor = .white
-		let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .regular)
-		let image = UIImage(systemName: "chevron.left", withConfiguration: config)
-		button.setImage(image, for: .normal)
-		button.layer.cornerRadius = 22.5
-		button.tintColor = .lightGray
-		NSLayoutConstraint.activate([
-			button.widthAnchor.constraint(equalToConstant: 47.5),
-			button.heightAnchor.constraint(equalToConstant: 45)
-		])
-		return button
-	}()
 
 	private lazy var captureSession: AVCaptureSession = {
 		let session = AVCaptureSession()
@@ -160,19 +146,6 @@ final class ViewController: UIViewController {
 		dot.center = view.center
 		view.addSubview(viewfinder)
 		viewfinder.center = view.center
-
-		backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
-		view.addSubview(backButton)
-		backButton.translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
-			backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
-		])
-	}
-
-	@objc private func backToCamera() {
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
-		dismiss(animated: true, completion: nil)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {

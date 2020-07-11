@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		if let windowScene = scene as? UIWindowScene {
 			let window = UIWindow(windowScene: windowScene)
 //			let viewController = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
-			window.rootViewController = MenuController()
+			window.rootViewController = ScrollViewController()
 			self.window = window
 			window.makeKeyAndVisible()
         }
