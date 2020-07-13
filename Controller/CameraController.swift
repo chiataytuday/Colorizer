@@ -162,7 +162,7 @@ final class CameraController: UIViewController {
 			zoomButton.widthAnchor.constraint(equalToConstant: 45),
 			zoomButton.heightAnchor.constraint(equalToConstant: 45)
 		])
-		delegate?.setViews([flashButton, zoomButton], with: 0)
+		delegate?.setViews([flashButton, zoomButton], with: 1)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {

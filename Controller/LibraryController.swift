@@ -54,16 +54,16 @@ final class LibraryController: UIViewController {
 
 	private func setupButtons() {
 		let photoButton = UIButton(type: .custom)
+		photoButton.tintColor = .lightGray
+		let config = UIImage.SymbolConfiguration(pointSize: 23, weight: .medium)
 		photoButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
-		photoButton.setImage(UIImage(systemName: "plus"), for: .normal)
-		photoButton.backgroundColor = UIColor(white: 0.8, alpha: 1)
-		photoButton.layer.cornerRadius = 17.5
+		photoButton.setImage(UIImage(systemName: "plus", withConfiguration: config), for: .normal)
 		photoButton.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
 			photoButton.widthAnchor.constraint(equalToConstant: 45),
 			photoButton.heightAnchor.constraint(equalToConstant: 45)
 		])
-		delegate?.setViews([photoButton], with: 1)
+		delegate?.setViews([photoButton], with: 0)
 	}
 
 	@objc private func openColorController() {

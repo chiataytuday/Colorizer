@@ -43,6 +43,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 			stackView.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 15)
 		])
 
+		dict[tag] = stackView
 		guard tag != currentPage else { return }
 		stackView.isHidden = true
 //		dict[tag] = views
@@ -153,8 +154,8 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	@objc private func animateScroll(sender: UIButton) {
 		guard sender.tag != currentPage else { return }
 
-//		_ = dict[currentPage]?.map { $0.isHidden = true }
-//		_ = dict[sender.tag]?.map { $0.isHidden = false }
+		dict[currentPage]?.isHidden = true
+		dict[sender.tag]?.isHidden = false
 
 		let direction: Direction = sender.tag >= currentPage ? .right : .left
 		let newOffset = scrollView.contentOffset.x + (direction == .right ?
