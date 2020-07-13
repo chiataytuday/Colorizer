@@ -12,7 +12,6 @@ class ScrollViewController: UIViewController {
 	private lazy var scrollView: UIScrollView = {
 		let scrollView = UIScrollView(frame: view.frame)
 		scrollView.isScrollEnabled = false
-		scrollView.backgroundColor = .systemRed
 		return scrollView
 	}()
 	private var buttonsStackView = UIStackView()
@@ -22,32 +21,68 @@ class ScrollViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setupPages()
+		setupBottom()
 		setupButtons()
 	}
 
 	fileprivate func setupPages() {
 		view.addSubview(scrollView)
 
-		let cameraController = ViewController()
-		cameraController.view.tag = 0
-		addPage(cameraController)
+		let viewController = ViewController()
+		viewController.bottomView = bottomView
+		viewController.view.backgroundColor = UIColor(white: 0.95, alpha: 1)
+		viewController.view.tag = 0
+		addPage(viewController)
 		appendButton()
 
+//		let cameraController = UIViewController()
+//		cameraController.view.frame.origin.x = view.frame.width
+//		cameraController.view.tag = 1
+//		addPage(cameraController)
+//		appendButton()
+
 		let libraryController = LibraryController()
-		libraryController.view.frame.origin.x = cameraController.view.frame.width
-		libraryController.view.tag = 1
+		libraryController.view.frame.origin.x = view.frame.width
+		libraryController.view.tag = 2
 		addPage(libraryController)
 		appendButton()
 	}
 
 	fileprivate func setupButtons() {
 		buttonsStackView.spacing = 10
-		view.addSubview(buttonsStackView)
+		bottomView.addSubview(buttonsStackView)
 		buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
-			buttonsStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			buttonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+			buttonsStackView.centerXAnchor.constraint(equalTo: bottomView.centerXAnchor),
+			buttonsStackView.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor)
 		])
+	}
+
+	let bottomView = UIView()
+
+	fileprivate func setupBottom() {
+		bottomView.backgroundColor = .white
+		bottomView.layer.cornerRadius = 25
+		bottomView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(bottomView)
+		NSLayoutConstraint.activate([
+			bottomView.widthAnchor.constraint(equalTo: view.widthAnchor),
+			bottomView.heightAnchor.constraint(equalToConstant: 65),
+			bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+			bottomView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+		])
+
+		let backView = UIView()
+		backView.backgroundColor = .white
+		backView.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(backView)
+		NSLayoutConstraint.activate([
+			backView.widthAnchor.constraint(equalTo: view.widthAnchor),
+			backView.topAnchor.constraint(equalTo: bottomView.centerYAnchor),
+			backView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+			backView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+		])
+		view.bringSubviewToFront(bottomView)
 	}
 
 	fileprivate func addPage(_ viewController: UIViewController) {
@@ -60,13 +95,14 @@ class ScrollViewController: UIViewController {
 
 	fileprivate func appendButton() {
 		let button = UIButton(type: .custom)
-		button.backgroundColor = .red
+		button.backgroundColor = UIColor(white: 0.8, alpha: 1)
 		button.tag = pages.count - 1
+		button.layer.cornerRadius = 17.5
 		button.addTarget(self, action: #selector(animateScroll(sender:)), for: .touchDown)
 		button.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
-			button.widthAnchor.constraint(equalToConstant: 50),
-			button.heightAnchor.constraint(equalToConstant: 50)
+			button.widthAnchor.constraint(equalToConstant: 45),
+			button.heightAnchor.constraint(equalToConstant: 45)
 		])
 		buttonsStackView.addArrangedSubview(button)
 	}
@@ -93,4 +129,16 @@ class ScrollViewController: UIViewController {
 	override var prefersStatusBarHidden: Bool {
 		true
 	}
+}
+
+extension UIView {
+    func rounded() {
+        let maskPath1 = UIBezierPath(roundedRect: bounds,
+            byRoundingCorners: [.topLeft , .topRight],
+            cornerRadii: CGSize(width: 25, height: 25))
+        let maskLayer1 = CAShapeLayer()
+        maskLayer1.frame = bounds
+        maskLayer1.path = maskPath1.cgPath
+        layer.mask = maskLayer1
+    }
 }

@@ -14,6 +14,8 @@ enum State {
 }
 
 final class ViewController: UIViewController {
+	var bottomView: UIView!
+	
 	private let dot: UIImageView = {
 		let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
 		let image = UIImage(systemName: "circle.fill", withConfiguration: config)
@@ -22,7 +24,7 @@ final class ViewController: UIViewController {
 		return imageView
 	}()
 	private let viewfinder: UIImageView = {
-		let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+		let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
 		let image = UIImage(systemName: "viewfinder", withConfiguration: config)
 		let imageView = UIImageView(image: image)
 		imageView.tintColor = .white
@@ -134,13 +136,13 @@ final class ViewController: UIViewController {
 			colorInfoView.set(color: color)
 		}
 
-		buttonsView.delegate = self
-		buttonsView.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(buttonsView)
-		NSLayoutConstraint.activate([
-			buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
-		])
+//		buttonsView.delegate = self
+//		buttonsView.translatesAutoresizingMaskIntoConstraints = false
+//		view.addSubview(buttonsView)
+//		NSLayoutConstraint.activate([
+//			buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
+//		])
 
 		view.addSubview(dot)
 		dot.center = view.center
