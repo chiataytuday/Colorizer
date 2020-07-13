@@ -21,7 +21,10 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	private var buttonsStackView = UIStackView()
 	private var pages = [UIView]()
 	private var currentPage = 0
-	private var dict = [Int : [UIView]]()
+	private var dict = [Int : UIStackView]()
+	private var images: [String] = [
+		"photo.fill", "camera.fill"
+	]
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -32,50 +35,60 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 
 	func setViews(_ views: [UIView], with tag: Int) {
 		// [uiview].count <= 2
-		dict[tag] = views
-		if tag != currentPage {
-			views.map { $0.isHidden = true }
-		}
-		bottomView.addSubview(views[0])
-		views[0].translatesAutoresizingMaskIntoConstraints = false
+		let stackView = UIStackView(arrangedSubviews: views)
+		bottomView.addSubview(stackView)
+		stackView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
-			views[0].centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
-			views[0].leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 10)
+			stackView.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
+			stackView.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 15)
 		])
 
-		guard views.count > 1 else { return }
-		bottomView.addSubview(views[1])
-		views[1].translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			views[1].centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
-			views[1].trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -10)
-		])
+		guard tag != currentPage else { return }
+		stackView.isHidden = true
+//		dict[tag] = views
+//		if tag != currentPage {
+//			views.map { $0.isHidden = true }
+//		}
+//		bottomView.addSubview(views[0])
+//		views[0].translatesAutoresizingMaskIntoConstraints = false
+//		NSLayoutConstraint.activate([
+//			views[0].centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
+//			views[0].leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 10)
+//		])
+//
+//		guard views.count > 1 else { return }
+//		bottomView.addSubview(views[1])
+//		views[1].translatesAutoresizingMaskIntoConstraints = false
+//		NSLayoutConstraint.activate([
+//			views[1].centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
+//			views[1].trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -10)
+//		])
 	}
 
 	fileprivate func setupPages() {
 		view.addSubview(scrollView)
 
-		let cameraController = CameraController()
-		cameraController.delegate = self
-		cameraController.view.backgroundColor = UIColor(white: 0.95, alpha: 1)
-		cameraController.view.tag = 0
-		addPage(cameraController)
-		appendButton()
-
 		let libraryController = LibraryController()
 		libraryController.delegate = self
-		libraryController.view.frame.origin.x = view.frame.width
-		libraryController.view.tag = 1
+		libraryController.view.tag = 0
 		addPage(libraryController)
+		appendButton()
+
+		let cameraController = CameraController()
+		cameraController.delegate = self
+		cameraController.view.frame.origin.x = view.frame.width
+		cameraController.view.backgroundColor = UIColor(white: 0.95, alpha: 1)
+		cameraController.view.tag = 1
+		addPage(cameraController)
 		appendButton()
 	}
 
 	fileprivate func setupButtons() {
-		buttonsStackView.spacing = 8
+		buttonsStackView.spacing = 2
 		bottomView.addSubview(buttonsStackView)
 		buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
-			buttonsStackView.centerXAnchor.constraint(equalTo: bottomView.centerXAnchor),
+			buttonsStackView.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -20),
 			buttonsStackView.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor)
 		])
 	}
@@ -117,9 +130,12 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 
 	fileprivate func appendButton() {
 		let button = UIButton(type: .custom)
-		button.backgroundColor = UIColor(white: 0.8, alpha: 1)
+//		button.backgroundColor = UIColor(white: 0.8, alpha: 1)
+		let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+		button.setImage(UIImage(systemName: images[pages.count - 1], withConfiguration: config), for: .normal)
 		button.tag = pages.count - 1
 		button.layer.cornerRadius = 17.5
+		button.tintColor = .lightGray
 		button.addTarget(self, action: #selector(animateScroll(sender:)), for: .touchDown)
 		button.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
@@ -137,8 +153,8 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	@objc private func animateScroll(sender: UIButton) {
 		guard sender.tag != currentPage else { return }
 
-		_ = dict[currentPage]?.map { $0.isHidden = true }
-		_ = dict[sender.tag]?.map { $0.isHidden = false }
+//		_ = dict[currentPage]?.map { $0.isHidden = true }
+//		_ = dict[sender.tag]?.map { $0.isHidden = false }
 
 		let direction: Direction = sender.tag >= currentPage ? .right : .left
 		let newOffset = scrollView.contentOffset.x + (direction == .right ?

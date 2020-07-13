@@ -55,7 +55,7 @@ final class LibraryController: UIViewController {
 	private func setupButtons() {
 		let photoButton = UIButton(type: .custom)
 		photoButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
-		photoButton.setImage(UIImage(systemName: "photo.fill"), for: .normal)
+		photoButton.setImage(UIImage(systemName: "plus"), for: .normal)
 		photoButton.backgroundColor = UIColor(white: 0.8, alpha: 1)
 		photoButton.layer.cornerRadius = 17.5
 		photoButton.translatesAutoresizingMaskIntoConstraints = false

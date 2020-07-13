@@ -142,21 +142,21 @@ final class CameraController: UIViewController {
 
 	private func setupButtons() {
 		let flashButton = UIButton(type: .custom)
-		flashButton.setImage(UIImage(systemName: "bolt.fill"), for: .normal)
+		flashButton.tintColor = .lightGray
+		let config1 = UIImage.SymbolConfiguration(pointSize: 21, weight: .medium)
+		flashButton.setImage(UIImage(systemName: "bolt.fill", withConfiguration: config1), for: .normal)
 		flashButton.addTarget(self, action: #selector(toggleTorch(sender:)), for: .touchDown)
-		flashButton.backgroundColor = UIColor(white: 0.8, alpha: 1)
-		flashButton.layer.cornerRadius = 17.5
 		flashButton.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
 			flashButton.widthAnchor.constraint(equalToConstant: 45),
 			flashButton.heightAnchor.constraint(equalToConstant: 45)
 		])
 
+		let config2 = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
 		let zoomButton = UIButton(type: .custom)
-		zoomButton.setImage(UIImage(systemName: "arrow.down.right.and.arrow.up.left"), for: .normal)
+		zoomButton.tintColor = .lightGray
+		zoomButton.setImage(UIImage(systemName: "arrow.down.right.and.arrow.up.left", withConfiguration: config2), for: .normal)
 		zoomButton.addTarget(self, action: #selector(zoomInOut(sender:)), for: .touchDown)
-		zoomButton.backgroundColor = UIColor(white: 0.8, alpha: 1)
-		zoomButton.layer.cornerRadius = 17.5
 		zoomButton.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
 			zoomButton.widthAnchor.constraint(equalToConstant: 45),
