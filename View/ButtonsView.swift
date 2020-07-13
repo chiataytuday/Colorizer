@@ -10,7 +10,6 @@ import UIKit
 
 @objc protocol ButtonsMenuDelegate {
 	func toggleTorch(sender: UIButton)
-//	func copyColorData(sender: UIButton)
 	func zoomInOut(sender: UIButton)
 }
 

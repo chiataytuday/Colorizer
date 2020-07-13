@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CameraController.swift
 //  Colorizer
 //
 //  Created by debavlad on 13.06.2020.
@@ -13,7 +13,7 @@ enum State {
 	case enabled, disabled
 }
 
-final class ViewController: UIViewController {
+final class CameraController: UIViewController {
 	var bottomView: UIView!
 	
 	private let dot: UIImageView = {
@@ -42,7 +42,6 @@ final class ViewController: UIViewController {
 	}()
 	private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
 		let layer = AVCaptureVideoPreviewLayer(session: self.captureSession)
-//		let layer = AVCaptureVideoPreviewLayer()
 		layer.videoGravity = .resizeAspectFill
 		layer.frame = self.view.bounds
 		return layer
@@ -136,14 +135,6 @@ final class ViewController: UIViewController {
 			colorInfoView.set(color: color)
 		}
 
-//		buttonsView.delegate = self
-//		buttonsView.translatesAutoresizingMaskIntoConstraints = false
-//		view.addSubview(buttonsView)
-//		NSLayoutConstraint.activate([
-//			buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//			buttonsView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15)
-//		])
-
 		view.addSubview(dot)
 		dot.center = view.center
 		view.addSubview(viewfinder)
@@ -207,7 +198,7 @@ final class ViewController: UIViewController {
 	}
 }
 
-extension ViewController: ButtonsMenuDelegate {
+extension CameraController: ButtonsMenuDelegate {
 	func toggleTorch(sender: UIButton) {
 		do {
 			try captureDevice?.lockForConfiguration()
@@ -244,7 +235,7 @@ extension ViewController: ButtonsMenuDelegate {
 	}
 }
 
-extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
+extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
 	func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
 		connection.videoOrientation = .portrait
 		guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
@@ -267,7 +258,6 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 		guard let cgImage = context.makeImage() else { return }
 		DispatchQueue.main.async {
 			self.previewLayer.contents = cgImage
-//			self.previewLayer.contentsGravity = .resizeAspectFill
 		}
 	}
 }
@@ -373,7 +363,7 @@ extension UserDefaults {
 	}
 }
 
-extension ViewController: UIViewControllerTransitioningDelegate {
+extension CameraController: UIViewControllerTransitioningDelegate {
 	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return AnimationController(duration: 0.4, type: .present, direction: .horizontal)
 	}

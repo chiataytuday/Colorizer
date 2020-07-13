@@ -28,18 +28,12 @@ class ScrollViewController: UIViewController {
 	fileprivate func setupPages() {
 		view.addSubview(scrollView)
 
-		let viewController = ViewController()
-		viewController.bottomView = bottomView
-		viewController.view.backgroundColor = UIColor(white: 0.95, alpha: 1)
-		viewController.view.tag = 0
-		addPage(viewController)
+		let cameraController = CameraController()
+		cameraController.bottomView = bottomView
+		cameraController.view.backgroundColor = UIColor(white: 0.95, alpha: 1)
+		cameraController.view.tag = 0
+		addPage(cameraController)
 		appendButton()
-
-//		let cameraController = UIViewController()
-//		cameraController.view.frame.origin.x = view.frame.width
-//		cameraController.view.tag = 1
-//		addPage(cameraController)
-//		appendButton()
 
 		let libraryController = LibraryController()
 		libraryController.view.frame.origin.x = view.frame.width
