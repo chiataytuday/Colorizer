@@ -9,7 +9,6 @@
 import UIKit
 
 final class ColorController: UIViewController {
-
 	private var colorData: [Color]? {
 		didSet {
 			setupSubviews()

@@ -9,6 +9,7 @@
 import UIKit
 
 final class LibraryController: UIViewController {
+	var delegate: ScrollViewDelegate?
 
 	private var tipStackView: UIStackView!
 	private let scrollView = UIScrollView()
@@ -48,6 +49,21 @@ final class LibraryController: UIViewController {
 		setupSubviews()
 		setupDoubleTapRecognizer()
 		setupImagePicker()
+		setupButtons()
+	}
+
+	private func setupButtons() {
+		let photoButton = UIButton(type: .custom)
+		photoButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
+		photoButton.setImage(UIImage(systemName: "photo.fill"), for: .normal)
+		photoButton.backgroundColor = UIColor(white: 0.8, alpha: 1)
+		photoButton.layer.cornerRadius = 17.5
+		photoButton.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			photoButton.widthAnchor.constraint(equalToConstant: 45),
+			photoButton.heightAnchor.constraint(equalToConstant: 45)
+		])
+		delegate?.setViews([photoButton], with: 1)
 	}
 
 	@objc private func openColorController() {
@@ -58,8 +74,12 @@ final class LibraryController: UIViewController {
 		present(colorController, animated: true)
 	}
 
-	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+	@objc private func openImagePicker() {
 		present(imagePicker, animated: true)
+	}
+
+	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+		openImagePicker()
 	}
 
 	fileprivate func setupTipViews() {

@@ -14,7 +14,7 @@ enum State {
 }
 
 final class CameraController: UIViewController {
-	var bottomView: UIView!
+	var delegate: ScrollViewDelegate?
 	
 	private let dot: UIImageView = {
 		let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
@@ -32,7 +32,7 @@ final class CameraController: UIViewController {
 		return imageView
 	}()
 	private var colorInfoView = ColorInfoView()
-	private let buttonsView = ButtonsView()
+//	private let buttonsView = ButtonsView()
 	private var torchState: State = .disabled
 
 	private lazy var captureSession: AVCaptureSession = {
@@ -48,9 +48,7 @@ final class CameraController: UIViewController {
 	}()
 	private let queue = DispatchQueue(label: "com.camera.video.queue", attributes: .concurrent)
 	private var captureDevice: AVCaptureDevice?
-
 	var previewView: UIView?
-
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -61,6 +59,7 @@ final class CameraController: UIViewController {
 		view.layer.addSublayer(previewLayer)
 		captureSession.startRunning()
 		setupSubviews()
+		setupButtons()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -139,6 +138,31 @@ final class CameraController: UIViewController {
 		dot.center = view.center
 		view.addSubview(viewfinder)
 		viewfinder.center = view.center
+	}
+
+	private func setupButtons() {
+		let flashButton = UIButton(type: .custom)
+		flashButton.setImage(UIImage(systemName: "bolt.fill"), for: .normal)
+		flashButton.addTarget(self, action: #selector(toggleTorch(sender:)), for: .touchDown)
+		flashButton.backgroundColor = UIColor(white: 0.8, alpha: 1)
+		flashButton.layer.cornerRadius = 17.5
+		flashButton.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			flashButton.widthAnchor.constraint(equalToConstant: 45),
+			flashButton.heightAnchor.constraint(equalToConstant: 45)
+		])
+
+		let zoomButton = UIButton(type: .custom)
+		zoomButton.setImage(UIImage(systemName: "arrow.down.right.and.arrow.up.left"), for: .normal)
+		zoomButton.addTarget(self, action: #selector(zoomInOut(sender:)), for: .touchDown)
+		zoomButton.backgroundColor = UIColor(white: 0.8, alpha: 1)
+		zoomButton.layer.cornerRadius = 17.5
+		zoomButton.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			zoomButton.widthAnchor.constraint(equalToConstant: 45),
+			zoomButton.heightAnchor.constraint(equalToConstant: 45)
+		])
+		delegate?.setViews([flashButton, zoomButton], with: 0)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {

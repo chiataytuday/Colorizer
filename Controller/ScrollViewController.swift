@@ -8,7 +8,11 @@
 
 import UIKit
 
-class ScrollViewController: UIViewController {
+protocol ScrollViewDelegate {
+	func setViews(_ views: [UIView], with tag: Int)
+}
+
+class ScrollViewController: UIViewController, ScrollViewDelegate {
 	private lazy var scrollView: UIScrollView = {
 		let scrollView = UIScrollView(frame: view.frame)
 		scrollView.isScrollEnabled = false
@@ -17,6 +21,7 @@ class ScrollViewController: UIViewController {
 	private var buttonsStackView = UIStackView()
 	private var pages = [UIView]()
 	private var currentPage = 0
+	private var dict = [Int : [UIView]]()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -25,25 +30,48 @@ class ScrollViewController: UIViewController {
 		setupButtons()
 	}
 
+	func setViews(_ views: [UIView], with tag: Int) {
+		// [uiview].count <= 2
+		dict[tag] = views
+		if tag != currentPage {
+			views.map { $0.isHidden = true }
+		}
+		bottomView.addSubview(views[0])
+		views[0].translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			views[0].centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
+			views[0].leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 10)
+		])
+
+		guard views.count > 1 else { return }
+		bottomView.addSubview(views[1])
+		views[1].translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			views[1].centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
+			views[1].trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -10)
+		])
+	}
+
 	fileprivate func setupPages() {
 		view.addSubview(scrollView)
 
 		let cameraController = CameraController()
-		cameraController.bottomView = bottomView
+		cameraController.delegate = self
 		cameraController.view.backgroundColor = UIColor(white: 0.95, alpha: 1)
 		cameraController.view.tag = 0
 		addPage(cameraController)
 		appendButton()
 
 		let libraryController = LibraryController()
+		libraryController.delegate = self
 		libraryController.view.frame.origin.x = view.frame.width
-		libraryController.view.tag = 2
+		libraryController.view.tag = 1
 		addPage(libraryController)
 		appendButton()
 	}
 
 	fileprivate func setupButtons() {
-		buttonsStackView.spacing = 10
+		buttonsStackView.spacing = 8
 		bottomView.addSubview(buttonsStackView)
 		buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
@@ -108,6 +136,10 @@ class ScrollViewController: UIViewController {
 
 	@objc private func animateScroll(sender: UIButton) {
 		guard sender.tag != currentPage else { return }
+
+		_ = dict[currentPage]?.map { $0.isHidden = true }
+		_ = dict[sender.tag]?.map { $0.isHidden = false }
+
 		let direction: Direction = sender.tag >= currentPage ? .right : .left
 		let newOffset = scrollView.contentOffset.x + (direction == .right ?
 			view.frame.width : -view.frame.width)
