@@ -49,29 +49,22 @@ final class LibraryController: UIViewController {
 		setupSubviews()
 		setupDoubleTapRecognizer()
 		setupImagePicker()
-		setupButtons()
+		setupBarButtons()
 	}
 
-	private func setupButtons() {
-		let photoButton = UIButton(type: .custom)
-		photoButton.tintColor = .lightGray
-		let config = UIImage.SymbolConfiguration(pointSize: 23, weight: .medium)
+	private func setupBarButtons() {
+		let photoButton = BarButton("plus")
+		photoButton.set(size: 23, weight: .medium)
 		photoButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
-		photoButton.setImage(UIImage(systemName: "plus", withConfiguration: config), for: .normal)
-		photoButton.translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			photoButton.widthAnchor.constraint(equalToConstant: 45),
-			photoButton.heightAnchor.constraint(equalToConstant: 45)
-		])
 		#warning("Переместить присвоение делегата в init()")
 		// ... = LibraryController(self)
-		delegate?.setViews([photoButton], with: 1)
+		delegate?.setPageButtons([photoButton], with: 1)
 	}
 
 	@objc private func openColorController() {
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		let colorController = ColorController()
-		colorController.color = colorInfoView.color
+		colorController.set(color: colorInfoView.color!)
 		colorController.modalPresentationStyle = .fullScreen
 		present(colorController, animated: true)
 	}

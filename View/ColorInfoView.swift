@@ -68,9 +68,9 @@ final class ColorInfoView: UIButton {
 	}
 
 	func set(color: UIColor) {
-		rgbLabel.text = color.toRGB()
+		rgbLabel.text = color.rgb
 		filledCircle.backgroundColor = color
-		hexLabel.text = "#\(color.toHEX()!)"
+		hexLabel.text = color.hex
 	}
 
 	required init?(coder: NSCoder) {

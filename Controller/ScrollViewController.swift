@@ -9,7 +9,7 @@
 import UIKit
 
 protocol ScrollViewDelegate {
-	func setViews(_ views: [UIView], with tag: Int)
+	func setPageButtons(_ views: [UIView], with tag: Int)
 }
 
 class ScrollViewController: UIViewController, ScrollViewDelegate {
@@ -33,8 +33,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 		setupButtons()
 	}
 
-	func setViews(_ views: [UIView], with tag: Int) {
-		// [uiview].count <= 2
+	func setPageButtons(_ views: [UIView], with tag: Int) {
 		let stackView = UIStackView(arrangedSubviews: views)
 		bottomView.addSubview(stackView)
 		stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -49,24 +48,6 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 			view.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
 			view.alpha = 0
 		}
-//		dict[tag] = views
-//		if tag != currentPage {
-//			views.map { $0.isHidden = true }
-//		}
-//		bottomView.addSubview(views[0])
-//		views[0].translatesAutoresizingMaskIntoConstraints = false
-//		NSLayoutConstraint.activate([
-//			views[0].centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
-//			views[0].leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 10)
-//		])
-//
-//		guard views.count > 1 else { return }
-//		bottomView.addSubview(views[1])
-//		views[1].translatesAutoresizingMaskIntoConstraints = false
-//		NSLayoutConstraint.activate([
-//			views[1].centerYAnchor.constraint(equalTo: bottomView.centerYAnchor),
-//			views[1].trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -10)
-//		])
 	}
 
 	fileprivate func setupPages() {
@@ -134,21 +115,12 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	}
 
 	fileprivate func appendButton() {
-		let button = UIButton(type: .custom)
-//		button.backgroundColor = UIColor(white: 0.8, alpha: 1)
-		let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
-		button.setImage(UIImage(systemName: images[pages.count - 1], withConfiguration: config), for: .normal)
-		button.adjustsImageWhenHighlighted = false
-		button.tag = pages.count - 1
-		button.layer.cornerRadius = 17.5
-		button.tintColor = .lightGray
-		button.addTarget(self, action: #selector(animateScroll(sender:)), for: .touchDown)
-		button.translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			button.widthAnchor.constraint(equalToConstant: 45),
-			button.heightAnchor.constraint(equalToConstant: 45)
-		])
-		buttonsStackView.addArrangedSubview(button)
+		let index = pages.count - 1
+		let pageButton = BarButton(images[index])
+		pageButton.set(size: 22, weight: .medium)
+		pageButton.tag = index
+		pageButton.addTarget(self, action: #selector(animateScroll(sender:)), for: .touchDown)
+		buttonsStackView.addArrangedSubview(pageButton)
 	}
 
 	enum Direction {

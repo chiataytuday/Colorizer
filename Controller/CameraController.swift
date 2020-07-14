@@ -64,7 +64,7 @@ final class CameraController: UIViewController {
 		view.layer.addSublayer(previewLayer)
 		captureSession.startRunning()
 		setupSubviews()
-		setupButtons()
+		setupBarButtons()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -119,7 +119,7 @@ final class CameraController: UIViewController {
 	@objc private func openColorController() {
 		let colorController = ColorController()
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
-		colorController.color = colorInfoView.color
+		colorController.set(color: colorInfoView.color!)
 		colorController.modalPresentationStyle = .fullScreen
 		present(colorController, animated: true)
 	}
@@ -145,31 +145,16 @@ final class CameraController: UIViewController {
 		viewfinder.center = view.center
 	}
 
-	private func setupButtons() {
-		let flashButton = UIButton(type: .custom)
-		flashButton.tintColor = .lightGray
-		flashButton.contentVerticalAlignment = .center
-		let config1 = UIImage.SymbolConfiguration(pointSize: 21, weight: .medium)
-		flashButton.setImage(UIImage(systemName: "bolt.fill", withConfiguration: config1), for: .normal)
-		flashButton.addTarget(self, action: #selector(toggleTorch(sender:)), for: .touchDown)
-		flashButton.translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			flashButton.widthAnchor.constraint(equalToConstant: 45),
-			flashButton.heightAnchor.constraint(equalToConstant: 45)
-		])
+	private func setupBarButtons() {
+		let torchButton = BarButton("bolt.fill")
+		torchButton.set(size: 21, weight: .medium)
+		torchButton.addTarget(self, action: #selector(toggleTorch(sender:)), for: .touchDown)
 
-		let config2 = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
-		let zoomButton = UIButton(type: .custom)
-		zoomButton.contentVerticalAlignment = .center
-		zoomButton.tintColor = .lightGray
-		zoomButton.setImage(UIImage(systemName: "arrow.down.right.and.arrow.up.left", withConfiguration: config2), for: .normal)
+		let zoomButton = BarButton("arrow.down.right.and.arrow.up.left")
+		zoomButton.set(size: 22, weight: .medium)
 		zoomButton.addTarget(self, action: #selector(zoomInOut(sender:)), for: .touchDown)
-		zoomButton.translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			zoomButton.widthAnchor.constraint(equalToConstant: 45),
-			zoomButton.heightAnchor.constraint(equalToConstant: 45)
-		])
-		delegate?.setViews([flashButton, zoomButton], with: 0)
+
+		delegate?.setPageButtons([torchButton, zoomButton], with: 0)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -312,26 +297,17 @@ extension CALayer {
 }
 
 extension UIColor {
-	func toHEX(alpha: Bool = false) -> String? {
-        guard let components = cgColor.components, components.count >= 3 else {
-            return nil
-        }
-        let r = Float(components[0])
-        let g = Float(components[1])
-        let b = Float(components[2])
-        var a = Float(1.0)
-        if components.count >= 4 {
-            a = Float(components[3])
-        }
+	var hex: String {
+		guard let components = cgColor.components, components.count >= 3 else {
+			return "#FFFFFF"
+		}
+		let r = Float(components[0])
+		let g = Float(components[1])
+		let b = Float(components[2])
+		return String(format: "#%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
+	}
 
-        if alpha {
-            return String(format: "%02lX%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
-        } else {
-            return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
-        }
-    }
-
-	func toRGB() -> String {
+	var rgb: String {
 		let values: (r: CGFloat, g: CGFloat, b: CGFloat) = (
 			(cgColor.components![0] * 255).rounded(),
 			(cgColor.components![1] * 255).rounded(),
@@ -340,7 +316,7 @@ extension UIColor {
 		return "\(Int(values.r)) \(Int(values.g)) \(Int(values.b))"
 	}
 
-	func toHSB() -> String {
+	var hsb: String {
 		var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
 		getHue(&h, saturation: &s, brightness: &b, alpha: &a)
 		#warning("Why hue value is incorrect?")
@@ -350,7 +326,7 @@ extension UIColor {
 		return "\(Int(rounded.h)) \(Int(rounded.s)) \(Int(rounded.b))"
 	}
 
-	func toCMYK() -> String {
+	var cmyk: String {
 		let r = cgColor.components![0]
 		let g = cgColor.components![1]
 		let b = cgColor.components![2]

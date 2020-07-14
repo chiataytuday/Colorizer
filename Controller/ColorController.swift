@@ -9,36 +9,16 @@
 import UIKit
 
 final class ColorController: UIViewController {
-	private var colorData: [Color]? {
-		didSet {
-			setupSubviews()
-		}
-	}
-	var color: UIColor? {
-		didSet {
-			view.backgroundColor = color
-			backButton.tintColor = color
-			colorData = [
-				Color(spaceName: "HEX", value: "#\(color!.toHEX()!)"),
-				Color(spaceName: "RGB", value: color!.toRGB()),
-				Color(spaceName: "HSB", value: color!.toHSB()),
-				Color(spaceName: "CMYK", value: color!.toCMYK())
-			]
-			var white: CGFloat = 0
-			color!.getWhite(&white, alpha: nil)
-			let tintColor: UIColor = white > 0.65 ? .black : .white
-			backButton.backgroundColor = tintColor
-			_ = colorRows.map { $0.textColor = tintColor }
-		}
-	}
+	private var colorData: [Color]?
 	private let backButton: UIButton = {
 		let button = UIButton(type: .custom)
-		button.backgroundColor = .white
 		let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)
-		let image = UIImage(systemName: "chevron.down", withConfiguration: config)
+		button.setPreferredSymbolConfiguration(config, forImageIn: .normal)
+		let image = UIImage(systemName: "chevron.down")
 		button.setImage(image, for: .normal)
-		button.layer.cornerRadius = 22.5
+		button.backgroundColor = .white
 		button.tintColor = .lightGray
+		button.layer.cornerRadius = 22.5
 		button.imageEdgeInsets.top = 2.5
 		button.alpha = 0.75
 		NSLayoutConstraint.activate([
@@ -47,6 +27,7 @@ final class ColorController: UIViewController {
 		])
 		return button
 	}()
+	private var rowViews = [ColorRowView]()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -61,28 +42,55 @@ final class ColorController: UIViewController {
 		])
 	}
 
-	@objc private func backToCamera() {
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
-		dismiss(animated: true, completion: nil)
+	func set(color: UIColor) {
+		view.backgroundColor = color
+		backButton.tintColor = color
+		colorData = [
+			Color(spaceName: "HEX", value: color.hex),
+			Color(spaceName: "RGB", value: color.rgb),
+			Color(spaceName: "HSB", value: color.hsb),
+			Color(spaceName: "CMYK", value: color.cmyk)
+		]
+		setupStackView()
+		defineReadableColor(on: color)
 	}
 
-	var colorRows = [ColorRowView]()
+	private func defineReadableColor(on color: UIColor) {
+		var white: CGFloat = 0
+		color.getWhite(&white, alpha: nil)
+		let readableColor: UIColor
+		if white > 0.65 {
+			readableColor = UIColor.black.withAlphaComponent(0.5)
+		} else {
+			readableColor = UIColor.white.withAlphaComponent(0.8)
+		}
+		backButton.backgroundColor = readableColor
+		rowViews.forEach { $0.textColor = readableColor }
+	}
 
-	fileprivate func setupSubviews() {
+	private func setupStackView() {
 		let stackView = UIStackView()
 		stackView.translatesAutoresizingMaskIntoConstraints = false
 		stackView.alignment = .leading
 		stackView.axis = .vertical
-		for color in colorData! {
-			let colorRowView = ColorRowView(title: color.spaceName, value: color.value)
-			colorRows.append(colorRowView)
-			stackView.addArrangedSubview(colorRowView)
+
+		guard let data = colorData else { return }
+		for color in data {
+			let rowView = ColorRowView(title: color.spaceName, value: color.value)
+			stackView.addArrangedSubview(rowView)
+			rowViews.append(rowView)
 		}
+		
 		view.addSubview(stackView)
 		NSLayoutConstraint.activate([
 			stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 17.5),
 			stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22.5)
 		])
+	}
+
+	@objc private func backToCamera() {
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
+		dismiss(animated: true, completion: nil)
 	}
 
 	override var prefersStatusBarHidden: Bool {
