@@ -63,7 +63,9 @@ final class LibraryController: UIViewController {
 			photoButton.widthAnchor.constraint(equalToConstant: 45),
 			photoButton.heightAnchor.constraint(equalToConstant: 45)
 		])
-		delegate?.setViews([photoButton], with: 0)
+		#warning("Переместить присвоение делегата в init()")
+		// ... = LibraryController(self)
+		delegate?.setViews([photoButton], with: 1)
 	}
 
 	@objc private func openColorController() {

@@ -23,7 +23,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	private var currentPage = 0
 	private var dict = [Int : UIStackView]()
 	private var images: [String] = [
-		"photo.fill", "camera.fill"
+		"camera.fill", "photo.fill"
 	]
 
 	override func viewDidLoad() {
@@ -45,7 +45,10 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 
 		dict[tag] = stackView
 		guard tag != currentPage else { return }
-		stackView.isHidden = true
+		stackView.arrangedSubviews.forEach { view in
+			view.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
+			view.alpha = 0
+		}
 //		dict[tag] = views
 //		if tag != currentPage {
 //			views.map { $0.isHidden = true }
@@ -69,23 +72,24 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	fileprivate func setupPages() {
 		view.addSubview(scrollView)
 
-		let libraryController = LibraryController()
-		libraryController.delegate = self
-		libraryController.view.tag = 0
-		addPage(libraryController)
-		appendButton()
-
 		let cameraController = CameraController()
 		cameraController.delegate = self
-		cameraController.view.frame.origin.x = view.frame.width
 		cameraController.view.backgroundColor = UIColor(white: 0.95, alpha: 1)
-		cameraController.view.tag = 1
+		cameraController.view.tag = 0
 		addPage(cameraController)
+		appendButton()
+
+		let libraryController = LibraryController()
+		libraryController.delegate = self
+		libraryController.view.frame.origin.x = view.frame.width
+		libraryController.view.tag = 1
+		addPage(libraryController)
 		appendButton()
 	}
 
 	fileprivate func setupButtons() {
 		buttonsStackView.spacing = 2
+		buttonsStackView.arrangedSubviews.first?.tintColor = .darkGray
 		bottomView.addSubview(buttonsStackView)
 		buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activate([
@@ -104,7 +108,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 		NSLayoutConstraint.activate([
 			bottomView.widthAnchor.constraint(equalTo: view.widthAnchor),
 			bottomView.heightAnchor.constraint(equalToConstant: 65),
-			bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+			bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 15),
 			bottomView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
 		])
 
@@ -134,6 +138,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 //		button.backgroundColor = UIColor(white: 0.8, alpha: 1)
 		let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
 		button.setImage(UIImage(systemName: images[pages.count - 1], withConfiguration: config), for: .normal)
+		button.adjustsImageWhenHighlighted = false
 		button.tag = pages.count - 1
 		button.layer.cornerRadius = 17.5
 		button.tintColor = .lightGray
@@ -154,8 +159,24 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	@objc private func animateScroll(sender: UIButton) {
 		guard sender.tag != currentPage else { return }
 
-		dict[currentPage]?.isHidden = true
-		dict[sender.tag]?.isHidden = false
+		dict[currentPage]?.arrangedSubviews.forEach { view in
+			UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseOut], animations: {
+				view.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
+				view.isHidden = true
+				view.alpha = 0
+			})
+		}
+		dict[sender.tag]?.arrangedSubviews.forEach { view in
+			UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseOut], animations: {
+				view.transform = .identity
+				view.isHidden = false
+				view.alpha = 1
+			})
+		}
+		UIView.animate(withDuration: 0.15, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: [.curveEaseOut, .allowUserInteraction], animations: {
+			self.buttonsStackView.arrangedSubviews[self.currentPage].tintColor = .lightGray
+			self.buttonsStackView.arrangedSubviews[sender.tag].tintColor = .darkGray
+		})
 
 		let direction: Direction = sender.tag >= currentPage ? .right : .left
 		let newOffset = scrollView.contentOffset.x + (direction == .right ?

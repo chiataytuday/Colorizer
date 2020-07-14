@@ -13,6 +13,11 @@ enum State {
 	case enabled, disabled
 }
 
+@objc protocol ButtonsMenuDelegate {
+	func toggleTorch(sender: UIButton)
+	func zoomInOut(sender: UIButton)
+}
+
 final class CameraController: UIViewController {
 	var delegate: ScrollViewDelegate?
 	
@@ -143,6 +148,7 @@ final class CameraController: UIViewController {
 	private func setupButtons() {
 		let flashButton = UIButton(type: .custom)
 		flashButton.tintColor = .lightGray
+		flashButton.contentVerticalAlignment = .center
 		let config1 = UIImage.SymbolConfiguration(pointSize: 21, weight: .medium)
 		flashButton.setImage(UIImage(systemName: "bolt.fill", withConfiguration: config1), for: .normal)
 		flashButton.addTarget(self, action: #selector(toggleTorch(sender:)), for: .touchDown)
@@ -154,6 +160,7 @@ final class CameraController: UIViewController {
 
 		let config2 = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
 		let zoomButton = UIButton(type: .custom)
+		zoomButton.contentVerticalAlignment = .center
 		zoomButton.tintColor = .lightGray
 		zoomButton.setImage(UIImage(systemName: "arrow.down.right.and.arrow.up.left", withConfiguration: config2), for: .normal)
 		zoomButton.addTarget(self, action: #selector(zoomInOut(sender:)), for: .touchDown)
@@ -162,7 +169,7 @@ final class CameraController: UIViewController {
 			zoomButton.widthAnchor.constraint(equalToConstant: 45),
 			zoomButton.heightAnchor.constraint(equalToConstant: 45)
 		])
-		delegate?.setViews([flashButton, zoomButton], with: 1)
+		delegate?.setViews([flashButton, zoomButton], with: 0)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {

@@ -9,18 +9,25 @@
 import UIKit
 
 final class ColorRowView: UIView {
-	var titleLabel: UILabel = {
+	private var titleLabel: UILabel = {
 		let label = UILabel()
-		label.textColor = .white
-		label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+		label.font = UIFont.roundedFont(ofSize: 20, weight: .semibold)
+		label.alpha = 0.75
 		return label
 	}()
-	var valueLabel: UILabel = {
+	private var valueLabel: UILabel = {
 		let label = UILabel()
-		label.textColor = .white
-		label.font = UIFont.monospacedFont(ofSize: 18, weight: .light)
+		label.font = UIFont.monospacedFont(ofSize: 18, weight: .regular)
+		label.alpha = 0.75
 		return label
 	}()
+	var textColor: UIColor = .white {
+		didSet {
+			titleLabel.textColor = textColor
+			valueLabel.textColor = textColor
+		}
+	}
+
 
 	init(title: String, value: String) {
 		super.init(frame: .zero)
@@ -46,8 +53,8 @@ final class ColorRowView: UIView {
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
 		UIPasteboard.general.string = "\(titleLabel.text!)(\(valueLabel.text!.split(separator: " ").joined(separator: ", ")))"
-		backgroundColor = .init(white: 1.0, alpha: 0.2)
-		UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
+		backgroundColor = titleLabel.textColor.withAlphaComponent(0.12)
+		UIView.animate(withDuration: 0.5, delay: 0.12, options: [.curveEaseOut, .allowUserInteraction], animations: {
 			self.backgroundColor = .clear
 		}, completion: nil)
 	}

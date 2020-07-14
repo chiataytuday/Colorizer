@@ -24,17 +24,23 @@ final class ColorController: UIViewController {
 				Color(spaceName: "HSB", value: color!.toHSB()),
 				Color(spaceName: "CMYK", value: color!.toCMYK())
 			]
+			var white: CGFloat = 0
+			color!.getWhite(&white, alpha: nil)
+			let tintColor: UIColor = white > 0.65 ? .black : .white
+			backButton.backgroundColor = tintColor
+			_ = colorRows.map { $0.textColor = tintColor }
 		}
 	}
 	private let backButton: UIButton = {
 		let button = UIButton(type: .custom)
 		button.backgroundColor = .white
-		let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .regular)
+		let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)
 		let image = UIImage(systemName: "chevron.down", withConfiguration: config)
 		button.setImage(image, for: .normal)
 		button.layer.cornerRadius = 22.5
 		button.tintColor = .lightGray
 		button.imageEdgeInsets.top = 2.5
+		button.alpha = 0.75
 		NSLayoutConstraint.activate([
 			button.widthAnchor.constraint(equalToConstant: 45),
 			button.heightAnchor.constraint(equalToConstant: 45)
@@ -60,6 +66,8 @@ final class ColorController: UIViewController {
 		dismiss(animated: true, completion: nil)
 	}
 
+	var colorRows = [ColorRowView]()
+
 	fileprivate func setupSubviews() {
 		let stackView = UIStackView()
 		stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -67,6 +75,7 @@ final class ColorController: UIViewController {
 		stackView.axis = .vertical
 		for color in colorData! {
 			let colorRowView = ColorRowView(title: color.spaceName, value: color.value)
+			colorRows.append(colorRowView)
 			stackView.addArrangedSubview(colorRowView)
 		}
 		view.addSubview(stackView)
