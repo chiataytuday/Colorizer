@@ -23,7 +23,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	private var currentPage = 0
 	private var dict = [Int : UIStackView]()
 	private var images: [String] = [
-		"camera.fill", "photo.fill"
+		"camera.fill", "photo.fill", "folder.fill"
 	]
 
 	override func viewDidLoad() {
@@ -65,6 +65,13 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 		libraryController.view.frame.origin.x = view.frame.width
 		libraryController.view.tag = 1
 		addPage(libraryController)
+		appendButton()
+
+		let historyController = HistoryController()
+		cameraController.updateColors = historyController.reloadCollectionView
+		historyController.view.frame.origin.x = view.frame.width * 2
+		historyController.view.tag = 2
+		addPage(historyController)
 		appendButton()
 	}
 
@@ -117,6 +124,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 	fileprivate func appendButton() {
 		let index = pages.count - 1
 		let pageButton = BarButton(images[index])
+		pageButton.isAnimatable = true
 		pageButton.set(size: 22, weight: .medium)
 		pageButton.tag = index
 		pageButton.addTarget(self, action: #selector(animateScroll(sender:)), for: .touchDown)

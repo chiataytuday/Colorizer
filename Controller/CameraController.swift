@@ -20,6 +20,7 @@ enum State {
 
 final class CameraController: UIViewController {
 	var delegate: ScrollViewDelegate?
+	var updateColors: (() -> ())?
 	
 	private let dot: UIImageView = {
 		let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
@@ -204,6 +205,8 @@ final class CameraController: UIViewController {
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		guard presentedViewController == nil else { return }
 		let pickedColor = previewLayer.pickColor(at: view.center)
+		ColorManager.shared.colors.insert(pickedColor!, at: 0)
+		updateColors?()
 		UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
 		colorInfoView.set(color: pickedColor!)
 		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
