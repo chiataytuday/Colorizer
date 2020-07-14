@@ -12,6 +12,7 @@ final class ColorController: UIViewController {
 	private var colorData: [Color]?
 	private let backButton: UIButton = {
 		let button = UIButton(type: .custom)
+		button.adjustsImageWhenHighlighted = false
 		let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)
 		button.setPreferredSymbolConfiguration(config, forImageIn: .normal)
 		let image = UIImage(systemName: "chevron.down")
@@ -20,7 +21,6 @@ final class ColorController: UIViewController {
 		button.tintColor = .lightGray
 		button.layer.cornerRadius = 22.5
 		button.imageEdgeInsets.top = 2.5
-		button.alpha = 0.75
 		NSLayoutConstraint.activate([
 			button.widthAnchor.constraint(equalToConstant: 45),
 			button.heightAnchor.constraint(equalToConstant: 45)
@@ -60,7 +60,7 @@ final class ColorController: UIViewController {
 		color.getWhite(&white, alpha: nil)
 		let readableColor: UIColor
 		if white > 0.65 {
-			readableColor = UIColor.black.withAlphaComponent(0.5)
+			readableColor = UIColor.black.withAlphaComponent(0.4)
 		} else {
 			readableColor = UIColor.white.withAlphaComponent(0.8)
 		}

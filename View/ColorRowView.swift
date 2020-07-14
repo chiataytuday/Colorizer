@@ -12,13 +12,11 @@ final class ColorRowView: UIView {
 	private var titleLabel: UILabel = {
 		let label = UILabel()
 		label.font = UIFont.roundedFont(ofSize: 20, weight: .semibold)
-		label.alpha = 0.75
 		return label
 	}()
 	private var valueLabel: UILabel = {
 		let label = UILabel()
 		label.font = UIFont.monospacedFont(ofSize: 18, weight: .regular)
-		label.alpha = 0.75
 		return label
 	}()
 	var textColor: UIColor = .white {

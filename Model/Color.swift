@@ -8,12 +8,7 @@
 
 import Foundation
 
-final class Color {
+struct Color {
 	let spaceName: String
 	let value: String
-
-	init(spaceName: String, value: String) {
-		self.spaceName = spaceName
-		self.value = value
-	}
 }
