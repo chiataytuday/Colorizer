@@ -204,7 +204,10 @@ final class CameraController: UIViewController {
 
 	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		guard presentedViewController == nil else { return }
-		let pickedColor = previewLayer.pickColor(at: view.center)
+		// Не использовать view.center, x бывает отрицательным
+		let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
+
+		let pickedColor = previewLayer.pickColor(at: center)
 		ColorManager.shared.colors.insert(pickedColor!, at: 0)
 		updateColors?()
 		UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")

@@ -14,7 +14,7 @@ class HistoryController: UIViewController {
 		let layout = UICollectionViewFlowLayout()
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 		collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
-		collectionView.backgroundColor = .systemRed
+		collectionView.backgroundColor = UIColor(white: 0.95, alpha: 1)
 		return collectionView
 	}()
 
