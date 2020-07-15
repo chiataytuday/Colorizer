@@ -38,7 +38,6 @@ final class CameraController: UIViewController {
 		return imageView
 	}()
 	private var colorInfoView = ColorInfoView()
-//	private let buttonsView = ButtonsView()
 	private var torchState: State = .disabled
 
 	private lazy var captureSession: AVCaptureSession = {

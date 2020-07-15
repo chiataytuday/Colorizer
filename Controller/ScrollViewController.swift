@@ -28,6 +28,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		view.clipsToBounds = true
 		setupPages()
 		setupBottom()
 		setupButtons()
@@ -164,7 +165,7 @@ class ScrollViewController: UIViewController, ScrollViewDelegate {
 		pages[sender.tag].frame.origin.x = newOffset
 		scrollView.bringSubviewToFront(pages[sender.tag])
 
-		UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
+		UIView.animate(withDuration: 0.45, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
 			self.scrollView.contentOffset.x = newOffset
 		})
 		currentPage = sender.tag

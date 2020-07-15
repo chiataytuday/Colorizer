@@ -56,16 +56,8 @@ final class ColorController: UIViewController {
 	}
 
 	private func defineReadableColor(on color: UIColor) {
-		var white: CGFloat = 0
-		color.getWhite(&white, alpha: nil)
-		let readableColor: UIColor
-		if white > 0.65 {
-			readableColor = UIColor.black.withAlphaComponent(0.4)
-		} else {
-			readableColor = UIColor.white.withAlphaComponent(0.8)
-		}
-		backButton.backgroundColor = readableColor
-		rowViews.forEach { $0.textColor = readableColor }
+		backButton.backgroundColor = color.readable
+		rowViews.forEach { $0.textColor = color.readable }
 	}
 
 	private func setupStackView() {
@@ -100,10 +92,24 @@ final class ColorController: UIViewController {
 
 extension ColorController: UIViewControllerTransitioningDelegate {
 	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		return AnimationController(duration: 0.5, type: .present, direction: .vertical)
+		return AnimationController(duration: 0.45, type: .present, direction: .vertical)
 	}
 
 	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		return AnimationController(duration: 0.5, type: .dismiss, direction: .vertical)
+		return AnimationController(duration: 0.45, type: .dismiss, direction: .vertical)
+	}
+}
+
+extension UIColor {
+	var readable: UIColor {
+		var white: CGFloat = 0
+		getWhite(&white, alpha: nil)
+		let readableColor: UIColor
+		if white > 0.65 {
+			readableColor = UIColor.black.withAlphaComponent(0.4)
+		} else {
+			readableColor = UIColor.white.withAlphaComponent(0.8)
+		}
+		return readableColor
 	}
 }

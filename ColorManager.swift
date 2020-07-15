@@ -13,7 +13,7 @@ class ColorManager {
 	var colors: [UIColor]
 
 	private init() {
-		colors = []
+		colors = [.systemRed, .systemGreen, .systemBlue, .systemPink, .systemTeal, .systemIndigo, .systemOrange, .systemYellow]
 	}
 }
 
