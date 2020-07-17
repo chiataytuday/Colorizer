@@ -9,8 +9,8 @@
 import UIKit
 
 final class ColorInfoView: UIButton {
-	var delegate: (() -> ())?
-	private let filledCircle: UIView = {
+  var delegate: (() -> Void)?
+	private let circleView: UIView = {
 		let view = UIView()
 		view.layer.cornerRadius = 10
 		view.backgroundColor = .black
@@ -35,23 +35,20 @@ final class ColorInfoView: UIButton {
 		return label
 	}()
 	var color: UIColor? {
-		return filledCircle.backgroundColor
+		return circleView.backgroundColor
 	}
 
 	init() {
 		super.init(frame: .zero)
 		backgroundColor = .white
 		layer.cornerRadius = 35
-		setupStackViews()
+		setupStackView()
+
 		addTarget(self, action: #selector(openColorController), for: .touchUpInside)
 	}
 
-	@objc private func openColorController() {
-		delegate?()
-	}
-
-	private func setupStackViews() {
-		let hexStackView = UIStackView(arrangedSubviews: [filledCircle, hexLabel])
+	private func setupStackView() {
+		let hexStackView = UIStackView(arrangedSubviews: [circleView, hexLabel])
 		hexStackView.spacing = 10
 
 		let stackView = UIStackView(arrangedSubviews: [hexStackView, rgbLabel])
@@ -67,9 +64,13 @@ final class ColorInfoView: UIButton {
 		])
 	}
 
+  @objc private func openColorController() {
+    delegate?()
+  }
+
 	func set(color: UIColor) {
 		rgbLabel.text = color.rgb
-		filledCircle.backgroundColor = color
+		circleView.backgroundColor = color
 		hexLabel.text = color.hex
 	}
 
@@ -78,28 +79,19 @@ final class ColorInfoView: UIButton {
 	}
 }
 
+// MARK: - UIFont
 extension UIFont {
 	static func monospacedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
-		if let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.monospaced) {
-			return UIFont(descriptor: descriptor, size: size)
-		} else {
-			return UIFont.systemFont(ofSize: size)
-		}
+    guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.monospaced) else {
+      return .systemFont(ofSize: size, weight: weight)
+    }
+    return UIFont(descriptor: descriptor, size: size)
 	}
 
 	static func roundedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
-		if let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.rounded) {
-			return UIFont(descriptor: descriptor, size: size)
-		} else {
-			return UIFont.systemFont(ofSize: size)
-		}
-	}
-
-	static func monospacedRoundedRont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
-		if let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.monospaced)?.withDesign(.rounded) {
-			return UIFont(descriptor: descriptor, size: size)
-		} else {
-			return UIFont.systemFont(ofSize: size)
-		}
+		guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.rounded) else {
+      return .systemFont(ofSize: size, weight: weight)
+    }
+    return UIFont(descriptor: descriptor, size: size)
 	}
 }

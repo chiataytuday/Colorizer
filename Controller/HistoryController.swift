@@ -9,7 +9,6 @@
 import UIKit
 
 class HistoryController: UIViewController {
-
 	private let collectionView: UICollectionView = {
 		let layout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
@@ -29,7 +28,7 @@ class HistoryController: UIViewController {
 		collectionView.reloadData()
 	}
 
-	fileprivate func setupCollectionView() {
+	private func setupCollectionView() {
 		collectionView.delegate = self
 		collectionView.dataSource = self
 		view.addSubview(collectionView)
@@ -43,7 +42,28 @@ class HistoryController: UIViewController {
 	}
 }
 
-extension HistoryController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: - UICollectionViewDelegate
+extension HistoryController: UICollectionViewDelegate {
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		let color = ColorManager.shared.colors[indexPath.item]
+		let colorController = ColorController()
+		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
+		colorController.set(color: color)
+		colorController.modalPresentationStyle = .fullScreen
+		present(colorController, animated: true)
+	}
+
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+		return 8
+	}
+
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+		return 8
+	}
+}
+
+// MARK: - UICollectionViewDataSource
+extension HistoryController: UICollectionViewDataSource {
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		return ColorManager.shared.colors.count
 	}
@@ -54,26 +74,12 @@ extension HistoryController: UICollectionViewDelegate, UICollectionViewDataSourc
 		cell.configure(with: color)
 		return cell
 	}
+}
 
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		let color = ColorManager.shared.colors[indexPath.item]
-		let colorController = ColorController()
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
-		colorController.set(color: color)
-		colorController.modalPresentationStyle = .fullScreen
-		present(colorController, animated: true)
-	}
-
+// MARK: - UICollectionViewDelegateFlowLayout
+extension HistoryController: UICollectionViewDelegateFlowLayout {
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		let size = (collectionView.frame.width - 38)/2
 		return CGSize(width: size, height: 60)
-	}
-
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-		8
-	}
-
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-		8
 	}
 }

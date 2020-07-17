@@ -57,7 +57,9 @@ final class ColorController: UIViewController {
 
 	private func defineReadableColor(on color: UIColor) {
 		backButton.backgroundColor = color.readable
-		rowViews.forEach { $0.textColor = color.readable }
+    for i in 0..<rowViews.count {
+      rowViews[i].set(color: color.readable)
+    }
 	}
 
 	private func setupStackView() {
