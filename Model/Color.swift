@@ -9,6 +9,6 @@
 import Foundation
 
 struct Color {
-	let spaceName: String
-	let value: String
+  let spaceName: String
+  let value: String
 }

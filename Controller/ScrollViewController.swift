@@ -14,11 +14,11 @@ enum ScrollDirection {
 }
 
 final class ScrollViewController: UIViewController {
-	private lazy var scrollView: UIScrollView = {
-		let scrollView = UIScrollView(frame: view.frame)
-		scrollView.isScrollEnabled = false
-		return scrollView
-	}()
+  private lazy var scrollView: UIScrollView = {
+    let scrollView = UIScrollView(frame: view.frame)
+    scrollView.isScrollEnabled = false
+    return scrollView
+  }()
   private let buttonsStackView = UIStackView()
   private let controllers = [
     CameraController(),
@@ -30,27 +30,27 @@ final class ScrollViewController: UIViewController {
     "photo.fill",
     "folder.fill"
   ]
-	private var currentPage = 0
+  private var currentPage = 0
   private let bottomView = UIView()
-
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		view.clipsToBounds = true
-		setupPages()
-		setupBottom()
-		setupButtons()
-	}
-
-	private func setupPages() {
-		view.addSubview(scrollView)
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.clipsToBounds = true
+    setupPages()
+    setupBottom()
+    setupButtons()
+  }
+  
+  private func setupPages() {
+    view.addSubview(scrollView)
     for i in 0..<controllers.count {
       controllers[i].view.frame.origin.x = view.frame.width * CGFloat(i)
       controllers[i].view.tag = i
-
+      
       scrollView.addSubview(controllers[i].view)
       addChild(controllers[i])
       controllers[i].didMove(toParent: self)
-
+      
       let button = BarButton(icons[i])
       button.set(size: 22, weight: .medium)
       button.tag = i
@@ -58,8 +58,8 @@ final class ScrollViewController: UIViewController {
       buttonsStackView.addArrangedSubview(button)
     }
     scrollView.contentSize.width = scrollView.frame.width * CGFloat(controllers.count)
-	}
-
+  }
+  
   private func setupBottom() {
     bottomView.backgroundColor = .white
     bottomView.layer.cornerRadius = 25
@@ -71,7 +71,7 @@ final class ScrollViewController: UIViewController {
       bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 15),
       bottomView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
     ])
-
+    
     let backView = UIView()
     backView.backgroundColor = .white
     backView.translatesAutoresizingMaskIntoConstraints = false
@@ -84,18 +84,18 @@ final class ScrollViewController: UIViewController {
     ])
     view.bringSubviewToFront(bottomView)
   }
-
-	private func setupButtons() {
-		buttonsStackView.spacing = 2
-		buttonsStackView.arrangedSubviews.first?.tintColor = .darkGray
-		bottomView.addSubview(buttonsStackView)
-		buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			buttonsStackView.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -20),
-			buttonsStackView.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor)
-		])
-	}
-
+  
+  private func setupButtons() {
+    buttonsStackView.spacing = 2
+    buttonsStackView.arrangedSubviews.first?.tintColor = .darkGray
+    bottomView.addSubview(buttonsStackView)
+    buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      buttonsStackView.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -20),
+      buttonsStackView.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor)
+    ])
+  }
+  
   @objc private func handleTap(on sender: UIButton) {
     guard sender.tag != currentPage else {
       return
@@ -106,12 +106,12 @@ final class ScrollViewController: UIViewController {
     let offset = scrollView.contentOffset.x + (direction == .right ? view.frame.width : -view.frame.width)
     controllers[sender.tag].view.frame.origin.x = offset
     scrollView.bringSubviewToFront(controllers[sender.tag].view)
-
+    
     scrollView.contentOffset.x = offset
     currentPage = sender.tag
   }
-
-	override var prefersStatusBarHidden: Bool {
-		true
-	}
+  
+  override var prefersStatusBarHidden: Bool {
+    true
+  }
 }

@@ -9,33 +9,33 @@
 import UIKit
 
 final class ColorRowView: UIView {
-	private var titleLabel: UILabel = {
-		let label = UILabel()
-		label.font = UIFont.roundedFont(ofSize: 20, weight: .semibold)
-		return label
-	}()
-	private var valueLabel: UILabel = {
-		let label = UILabel()
-		label.font = UIFont.monospacedFont(ofSize: 18, weight: .regular)
-		return label
-	}()
-
-	init(title: String, value: String) {
-		super.init(frame: .zero)
-		layer.cornerRadius = 15
-		titleLabel.text = title
-		valueLabel.text = value
-		titleLabel.sizeToFit()
-		valueLabel.sizeToFit()
+  private var titleLabel: UILabel = {
+    let label = UILabel()
+    label.font = UIFont.roundedFont(ofSize: 20, weight: .semibold)
+    return label
+  }()
+  private var valueLabel: UILabel = {
+    let label = UILabel()
+    label.font = UIFont.monospacedFont(ofSize: 18, weight: .regular)
+    return label
+  }()
+  
+  init(title: String, value: String) {
+    super.init(frame: .zero)
+    layer.cornerRadius = 15
+    titleLabel.text = title
+    valueLabel.text = value
+    titleLabel.sizeToFit()
+    valueLabel.sizeToFit()
     
     setupStackView()
-	}
-
+  }
+  
   func set(color: UIColor) {
     titleLabel.textColor = color
     valueLabel.textColor = color
   }
-
+  
   private func setupStackView() {
     let stackView = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
     stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -49,22 +49,22 @@ final class ColorRowView: UIView {
       stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
     ])
   }
-
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+  
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard let title = titleLabel.text, let value = valueLabel.text else {
       return
     }
     let stringToCopy = "\(title)(\(value.split(separator: " ").joined(separator: ", ")))"
     UIPasteboard.general.string = stringToCopy
     UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-
+    
     backgroundColor = titleLabel.textColor.withAlphaComponent(0.1)
     UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
       self.backgroundColor = .clear
     })
-	}
-
-	required init?(coder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 }
