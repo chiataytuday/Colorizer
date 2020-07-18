@@ -62,7 +62,7 @@ final class ScrollViewController: UIViewController {
   
   private func setupBottom() {
     bottomView.backgroundColor = .white
-    bottomView.layer.cornerRadius = 25
+    bottomView.layer.cornerRadius = 30
     bottomView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(bottomView)
     NSLayoutConstraint.activate([
@@ -101,7 +101,7 @@ final class ScrollViewController: UIViewController {
     guard sender.tag != currentPage else {
       return
     }
-    UIViewPropertyAnimator(duration: 0.12, curve: .easeOut) {
+    UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
       self.buttonsStackView.arrangedSubviews[self.currentPage].tintColor = .softGray
       self.buttonsStackView.arrangedSubviews[sender.tag].tintColor = .black
     }.startAnimation()

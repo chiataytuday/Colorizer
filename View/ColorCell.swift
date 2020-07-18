@@ -15,26 +15,39 @@ class ColorCell: UICollectionViewCell {
     label.text = "#000000"
     return label
   }()
+  private let rgbLabel: UILabel = {
+    let label = UILabel()
+    label.font = UIFont.monospacedFont(ofSize: 15, weight: .medium)
+    label.text = "255 0 41"
+    label.alpha = 0.65
+    return label
+  }()
 
   override init(frame: CGRect) {
     super.init(frame: frame)
     layer.cornerRadius = 30
-    setupLabel()
+    setupStackView()
   }
 
-  private func setupLabel() {
-    addSubview(hexLabel)
-    hexLabel.translatesAutoresizingMaskIntoConstraints = false
+  private func setupStackView() {
+    let stackView = UIStackView(arrangedSubviews: [hexLabel, rgbLabel])
+    stackView.axis = .vertical
+    stackView.alignment = .center
+    stackView.spacing = 2
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    addSubview(stackView)
     NSLayoutConstraint.activate([
-      hexLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-      hexLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+      stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+      stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
     ])
   }
 
   func configure(with color: UIColor) {
     backgroundColor = color
     hexLabel.textColor = color.readable
+    rgbLabel.textColor = color.readable
     hexLabel.text = color.hex
+    rgbLabel.text = color.rgb
   }
 
   required init?(coder: NSCoder) {

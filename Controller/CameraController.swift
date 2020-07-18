@@ -204,7 +204,7 @@ final class CameraController: UIViewController {
     let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
 
     let pickedColor = previewLayer.pickColor(at: center)
-    ColorManager.shared.colors.insert(pickedColor!, at: 0)
+//    ColorManager.shared.colors.insert(pickedColor!, at: 0)
     updateColors?()
     UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
     colorInfoView.set(color: pickedColor!)
