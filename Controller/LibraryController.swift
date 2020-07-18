@@ -231,29 +231,6 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
     colorPickerView.shapeLayer.fillColor = color!.cgColor
     moved(to: color!)
   }
-  //  var image: UIImage? {
-  //    get {
-  //      return photoImageView.image
-  //    }
-  //    set(newImage) {
-  //      photoImageView.image = newImage
-  //      photoImageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
-  //      scrollView.isUserInteractionEnabled = true
-  //      colorPickerView.isHidden = false
-  //      colorInfoView.isHidden = false
-  //      tipStackView.isHidden = true
-  //      openButton.isHidden = false
-  //
-  //      let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
-  //      print(colorPickerView.center)
-  //      colorPickerView.center = center
-  //      print(colorPickerView.center)
-  //      let color = photoImageView.layer.pickColor(at: center)
-  //      print(color)
-  //      colorPickerView.shapeLayer.fillColor = color!.cgColor
-  //      moved(to: color!)
-  //    }
-  //  }
 }
 
 extension LibraryController: ColorPickerDelegate {
@@ -285,9 +262,9 @@ extension LibraryController: UIViewControllerTransitioningDelegate {
 
 //MARK: - ColorInfoDelegate
 extension LibraryController: ColorInfoDelegate {
-  func presentColorController(with color: UIColor) {
+  func presentColorController() {
     let colorController = ColorController()
-    colorController.set(color: color)
+    colorController.set(color: colorInfoView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }

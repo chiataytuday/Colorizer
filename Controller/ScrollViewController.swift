@@ -21,13 +21,13 @@ final class ScrollViewController: UIViewController {
   }()
   private let buttonsStackView = UIStackView()
   private let controllers = [
-    CameraController(),
     LibraryController(),
+    CameraController(),
     HistoryController()
   ]
   private let icons = [
-    "viewfinder",
     "map",
+    "viewfinder",
     "circle.grid.2x2"
   ]
   private var currentPage = 0

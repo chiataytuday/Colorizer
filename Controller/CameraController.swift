@@ -383,9 +383,9 @@ extension CameraController: UIViewControllerTransitioningDelegate {
 }
 
 extension CameraController: ColorInfoDelegate {
-  func presentColorController(with color: UIColor) {
+  func presentColorController() {
     let colorController = ColorController()
-    colorController.set(color: color)
+    colorController.set(color: colorInfoView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }

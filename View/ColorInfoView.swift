@@ -9,7 +9,7 @@
 import UIKit
 
 @objc protocol ColorInfoDelegate {
-  func presentColorController(with color: UIColor)
+  func presentColorController()
 }
 
 final class ColorInfoView: UIButton {
@@ -48,7 +48,7 @@ final class ColorInfoView: UIButton {
     layer.cornerRadius = 35
     setupStackView()
 
-    addTarget(delegate, action: #selector(delegate?.presentColorController(with:)), for: .touchUpInside)
+    addTarget(delegate, action: #selector(delegate?.presentColorController), for: .touchUpInside)
   }
 
   private func setupStackView() {
