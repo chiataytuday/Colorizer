@@ -18,32 +18,18 @@ final class BarButton: UIButton {
   }
 
   private func setupAppearance() {
-    tintColor = .lightGray
+    tintColor = .softGray
     adjustsImageWhenHighlighted = false
     translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       widthAnchor.constraint(equalToConstant: 45),
       heightAnchor.constraint(equalToConstant: 45)
     ])
-    addTarget(self, action: #selector(magnify), for: .touchDown)
-    addTarget(self, action: #selector(reset), for: [.touchUpInside, .touchUpOutside])
   }
 
   func set(size: CGFloat, weight: UIImage.SymbolWeight) {
     let config = UIImage.SymbolConfiguration(pointSize: size, weight: weight)
     setPreferredSymbolConfiguration(config, forImageIn: .normal)
-  }
-
-  @objc private func magnify() {
-    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.45, initialSpringVelocity: 0.5, options: .allowUserInteraction, animations: {
-      self.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
-    })
-  }
-
-  @objc private func reset() {
-    UIView.animate(withDuration: 0.55, delay: 0, usingSpringWithDamping: 0.45, initialSpringVelocity: 0.5, options: .allowUserInteraction, animations: {
-      self.transform = .identity
-    })
   }
 
   required init?(coder: NSCoder) {
