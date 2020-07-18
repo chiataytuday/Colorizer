@@ -20,23 +20,21 @@ final class LibraryController: UIViewController {
     return imageView
   }()
   private let imagePicker = UIImagePickerController()
-  var image: UIImage? {
-    get {
-      return photoImageView.image
-    }
-    set(newImage) {
-      photoImageView.image = newImage
-      photoImageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
-      scrollView.isUserInteractionEnabled = true
-      colorPickerView.isHidden = false
-      colorInfoView.isHidden = false
-      tipStackView.isHidden = true
-
-      let color = photoImageView.layer.pickColor(at: view.center)
-      colorPickerView.shapeLayer.fillColor = color!.cgColor
-      moved(to: color!)
-    }
-  }
+  private let openButton: UIButton = {
+    let button = UIButton()
+    button.backgroundColor = .white
+    button.adjustsImageWhenHighlighted = false
+    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 22, weight: .regular), forImageIn: .normal)
+    button.tintColor = .softGray
+    button.setImage(UIImage(systemName: "plus"), for: .normal)
+    NSLayoutConstraint.activate([
+      button.widthAnchor.constraint(equalToConstant: 55),
+      button.heightAnchor.constraint(equalToConstant: 55)
+    ])
+    button.layer.cornerRadius = 27.5
+    button.isHidden = true
+    return button
+  }()
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -51,11 +49,13 @@ final class LibraryController: UIViewController {
   }
 
   private func setupBarButtons() {
-    let photoButton = BarButton("plus")
-    photoButton.set(size: 23, weight: .medium)
-    photoButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
-    #warning("Переместить присвоение делегата в init()")
-    // ... = LibraryController(self)
+    openButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
+    view.addSubview(openButton)
+    openButton.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      openButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22.5),
+      openButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -75)
+    ])
   }
 
   @objc private func openImagePicker() {
@@ -210,9 +210,50 @@ extension LibraryController: UIScrollViewDelegate {
 
 extension LibraryController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    setImage(info[.originalImage] as? UIImage)
     dismiss(animated: true)
-    image = info[.originalImage] as? UIImage
   }
+
+  func setImage(_ image: UIImage?) {
+    photoImageView.image = image
+    photoImageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+    scrollView.isUserInteractionEnabled = true
+
+    colorPickerView.isHidden = false
+    colorInfoView.isHidden = false
+    tipStackView.isHidden = true
+    openButton.isHidden = false
+
+    let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
+    colorPickerView.center = center
+    colorPickerView.shapeLayer.fillColor = UIColor.clear.cgColor
+    let color = photoImageView.layer.pickColor(at: center)
+    colorPickerView.shapeLayer.fillColor = color!.cgColor
+    moved(to: color!)
+  }
+  //  var image: UIImage? {
+  //    get {
+  //      return photoImageView.image
+  //    }
+  //    set(newImage) {
+  //      photoImageView.image = newImage
+  //      photoImageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+  //      scrollView.isUserInteractionEnabled = true
+  //      colorPickerView.isHidden = false
+  //      colorInfoView.isHidden = false
+  //      tipStackView.isHidden = true
+  //      openButton.isHidden = false
+  //
+  //      let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
+  //      print(colorPickerView.center)
+  //      colorPickerView.center = center
+  //      print(colorPickerView.center)
+  //      let color = photoImageView.layer.pickColor(at: center)
+  //      print(color)
+  //      colorPickerView.shapeLayer.fillColor = color!.cgColor
+  //      moved(to: color!)
+  //    }
+  //  }
 }
 
 extension LibraryController: ColorPickerDelegate {

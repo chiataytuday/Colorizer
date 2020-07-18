@@ -12,7 +12,7 @@ class SectionHeaderView: UICollectionReusableView {
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.text = "Today"
-    label.font = UIFont.roundedFont(ofSize: 35, weight: .semibold)
+    label.font = UIFont.roundedFont(ofSize: 26, weight: .semibold)
     label.textColor = .black
     return label
   }()
