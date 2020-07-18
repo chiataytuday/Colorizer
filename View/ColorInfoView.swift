@@ -48,7 +48,21 @@ final class ColorInfoView: UIButton {
     layer.cornerRadius = 35
     setupStackView()
 
+    addTarget(self, action: #selector(touchDown), for: .touchDown)
     addTarget(delegate, action: #selector(delegate?.presentColorController), for: .touchUpInside)
+    addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchUpOutside])
+  }
+
+  @objc private func touchDown() {
+    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+      self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+    })
+  }
+
+  @objc private func touchUp() {
+    UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+      self.transform = .identity
+    })
   }
 
   private func setupStackView() {

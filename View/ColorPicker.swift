@@ -107,12 +107,12 @@ extension ColorPicker {
   }
   
   private func turnToCircle() {
-    UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .allowUserInteraction, animations: {
+    UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 1, options: .allowUserInteraction, animations: {
       self.transform = CGAffineTransform(scaleX: self.defaultScale, y: self.defaultScale)
     })
     shapeLayer.strokeColor = UIColor.white.cgColor
     shapeLayer.fillColor = color.cgColor
-    shapeLayer.lineWidth = 1.25
+    shapeLayer.lineWidth = 1.3
     shapeLayer.shadowOpacity = 0.25
   }
   
@@ -126,7 +126,7 @@ extension ColorPicker {
     CATransaction.commit()
     
     let scale = defaultScale * 2.25
-    UIView.animate(withDuration: 0.45, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
+    UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
       self.transform = CGAffineTransform(scaleX: scale, y: scale)
     })
   }

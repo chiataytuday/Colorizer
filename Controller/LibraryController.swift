@@ -28,7 +28,7 @@ final class LibraryController: UIViewController {
     button.tintColor = .softGray
     button.setImage(UIImage(systemName: "plus"), for: .normal)
     NSLayoutConstraint.activate([
-      button.widthAnchor.constraint(equalToConstant: 55),
+      button.widthAnchor.constraint(equalToConstant: 56),
       button.heightAnchor.constraint(equalToConstant: 55)
     ])
     button.layer.cornerRadius = 27.5
@@ -49,12 +49,14 @@ final class LibraryController: UIViewController {
   }
 
   private func setupBarButtons() {
+    openButton.addTarget(self, action: #selector(openTouchDown(sender:)), for: .touchDown)
     openButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
+    openButton.addTarget(self, action: #selector(openTouchUp(sender:)), for: [.touchUpInside, .touchUpOutside])
     view.addSubview(openButton)
     openButton.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       openButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22.5),
-      openButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -75)
+      openButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -77.5)
     ])
   }
 
@@ -106,7 +108,7 @@ final class LibraryController: UIViewController {
       scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
       scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-      scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+      scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     ])
 
     scrollView.addSubview(photoImageView)
@@ -267,5 +269,20 @@ extension LibraryController: ColorInfoDelegate {
     colorController.set(color: colorInfoView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
+  }
+}
+
+//MARK: - For rounded button
+extension LibraryController {
+  @objc private func openTouchDown(sender: UIButton) {
+    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+      sender.transform = CGAffineTransform(scaleX: 0.925, y: 0.925)
+    })
+  }
+
+  @objc private func openTouchUp(sender: UIButton) {
+    UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+      sender.transform = .identity
+    })
   }
 }

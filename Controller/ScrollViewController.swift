@@ -23,12 +23,12 @@ final class ScrollViewController: UIViewController {
   private let controllers = [
     LibraryController(),
     CameraController(),
-    HistoryController()
+//    HistoryController()
   ]
   private let icons = [
     "map",
     "viewfinder",
-    "circle.grid.2x2"
+//    "circle.grid.2x2"
   ]
   private var currentPage = 0
   private let bottomView = UIView()
