@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HistoryController: UIViewController {
+final class HistoryController: UIViewController {
 	private let collectionView: UICollectionView = {
 		let layout = UICollectionViewFlowLayout()
 		layout.sectionInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)

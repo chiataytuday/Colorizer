@@ -9,8 +9,6 @@
 import UIKit
 
 final class LibraryController: UIViewController {
-	var delegate: ScrollViewDelegate?
-
 	private var tipStackView: UIStackView!
 	private let scrollView = UIScrollView()
 	private var colorPickerView: ColorPicker!
@@ -58,15 +56,6 @@ final class LibraryController: UIViewController {
 		photoButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
 		#warning("Переместить присвоение делегата в init()")
 		// ... = LibraryController(self)
-		delegate?.setPageButtons([photoButton], with: 1)
-	}
-
-	@objc private func openColorController() {
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
-		let colorController = ColorController()
-		colorController.set(color: colorInfoView.color!)
-		colorController.modalPresentationStyle = .fullScreen
-		present(colorController, animated: true)
 	}
 
 	@objc private func openImagePicker() {
@@ -140,8 +129,8 @@ final class LibraryController: UIViewController {
 		colorPickerView.center = view.center
 
 		colorInfoView = ColorInfoView()
+    colorInfoView.delegate = self
 		colorInfoView.isHidden = true
-		colorInfoView.delegate = openColorController
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([
@@ -251,4 +240,14 @@ extension LibraryController: UIViewControllerTransitioningDelegate {
 	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return AnimationController(duration: 0.4, type: .dismiss, direction: .horizontal)
 	}
+}
+
+//MARK: - ColorInfoDelegate
+extension LibraryController: ColorInfoDelegate {
+  func presentColorController(with color: UIColor) {
+    let colorController = ColorController()
+    colorController.set(color: color)
+    colorController.modalPresentationStyle = .fullScreen
+    present(colorController, animated: true)
+  }
 }

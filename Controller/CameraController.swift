@@ -19,7 +19,6 @@ enum State {
 }
 
 final class CameraController: UIViewController {
-	var delegate: ScrollViewDelegate?
 	var updateColors: (() -> ())?
 	
 	private let dot: UIImageView = {
@@ -126,7 +125,7 @@ final class CameraController: UIViewController {
 
 	private func setupSubviews() {
 		colorInfoView = ColorInfoView()
-		colorInfoView.delegate = openColorController
+		colorInfoView.delegate = self
 		colorInfoView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(colorInfoView)
 		NSLayoutConstraint.activate([
@@ -153,8 +152,6 @@ final class CameraController: UIViewController {
 		let zoomButton = BarButton("arrow.down.right.and.arrow.up.left")
 		zoomButton.set(size: 22, weight: .medium)
 		zoomButton.addTarget(self, action: #selector(zoomInOut(sender:)), for: .touchDown)
-
-		delegate?.setPageButtons([torchButton, zoomButton], with: 0)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -383,4 +380,13 @@ extension CameraController: UIViewControllerTransitioningDelegate {
 	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return AnimationController(duration: 0.4, type: .dismiss, direction: .horizontal)
 	}
+}
+
+extension CameraController: ColorInfoDelegate {
+  func presentColorController(with color: UIColor) {
+    let colorController = ColorController()
+    colorController.set(color: color)
+    colorController.modalPresentationStyle = .fullScreen
+    present(colorController, animated: true)
+  }
 }

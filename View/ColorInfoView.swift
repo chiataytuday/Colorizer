@@ -8,8 +8,12 @@
 
 import UIKit
 
+@objc protocol ColorInfoDelegate {
+  func presentColorController(with color: UIColor)
+}
+
 final class ColorInfoView: UIButton {
-  var delegate: (() -> Void)?
+  var delegate: ColorInfoDelegate?
 	private let circleView: UIView = {
 		let view = UIView()
 		view.layer.cornerRadius = 10
@@ -44,7 +48,7 @@ final class ColorInfoView: UIButton {
 		layer.cornerRadius = 35
 		setupStackView()
 
-		addTarget(self, action: #selector(openColorController), for: .touchUpInside)
+    addTarget(delegate, action: #selector(delegate?.presentColorController(with:)), for: .touchUpInside)
 	}
 
 	private func setupStackView() {
@@ -63,10 +67,6 @@ final class ColorInfoView: UIButton {
 			stackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 2)
 		])
 	}
-
-  @objc private func openColorController() {
-    delegate?()
-  }
 
 	func set(color: UIColor) {
 		rgbLabel.text = color.rgb

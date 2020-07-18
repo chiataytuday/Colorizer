@@ -32,15 +32,38 @@ final class ColorController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		transitioningDelegate = self
-
-		view.addSubview(backButton)
-		backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
-		backButton.translatesAutoresizingMaskIntoConstraints = false
-		NSLayoutConstraint.activate([
-			backButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-			backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
-		])
+    setupBackButton()
 	}
+
+  private func setupBackButton() {
+    view.addSubview(backButton)
+    backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
+    backButton.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      backButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+      backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
+    ])
+  }
+
+  private func setupStackView() {
+    let stackView = UIStackView()
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.alignment = .leading
+    stackView.axis = .vertical
+
+    guard let data = colorData else { return }
+    for color in data {
+      let rowView = ColorRowView(title: color.spaceName, value: color.value)
+      stackView.addArrangedSubview(rowView)
+      rowViews.append(rowView)
+    }
+
+    view.addSubview(stackView)
+    NSLayoutConstraint.activate([
+      stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 17.5),
+      stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22.5)
+    ])
+  }
 
 	func set(color: UIColor) {
 		view.backgroundColor = color
@@ -52,38 +75,14 @@ final class ColorController: UIViewController {
 			Color(spaceName: "CMYK", value: color.cmyk)
 		]
 		setupStackView()
-		defineReadableColor(on: color)
-	}
 
-	private func defineReadableColor(on color: UIColor) {
-		backButton.backgroundColor = color.readable
-    for i in 0..<rowViews.count {
-      rowViews[i].set(color: color.readable)
+    backButton.backgroundColor = color.readable
+    for rowView in rowViews {
+      rowView.set(color: color.readable)
     }
 	}
 
-	private func setupStackView() {
-		let stackView = UIStackView()
-		stackView.translatesAutoresizingMaskIntoConstraints = false
-		stackView.alignment = .leading
-		stackView.axis = .vertical
-
-		guard let data = colorData else { return }
-		for color in data {
-			let rowView = ColorRowView(title: color.spaceName, value: color.value)
-			stackView.addArrangedSubview(rowView)
-			rowViews.append(rowView)
-		}
-		
-		view.addSubview(stackView)
-		NSLayoutConstraint.activate([
-			stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 17.5),
-			stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22.5)
-		])
-	}
-
 	@objc private func backToCamera() {
-		UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
 		dismiss(animated: true, completion: nil)
 	}
 
@@ -102,6 +101,7 @@ extension ColorController: UIViewControllerTransitioningDelegate {
 	}
 }
 
+//MARK: - UIColor
 extension UIColor {
 	var readable: UIColor {
 		var white: CGFloat = 0

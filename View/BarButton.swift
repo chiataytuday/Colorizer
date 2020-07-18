@@ -9,7 +9,6 @@
 import UIKit
 
 final class BarButton: UIButton {
-	var isAnimatable = false
 
 	init(_ imageName: String) {
 		super.init(frame: .zero)
@@ -36,18 +35,12 @@ final class BarButton: UIButton {
 	}
 
 	@objc private func magnify() {
-		guard isAnimatable else {
-      return
-    }
 		UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.45, initialSpringVelocity: 0.5, options: .allowUserInteraction, animations: {
 			self.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
 		})
 	}
 
 	@objc private func reset() {
-		guard isAnimatable else {
-      return
-    }
 		UIView.animate(withDuration: 0.55, delay: 0, usingSpringWithDamping: 0.45, initialSpringVelocity: 0.5, options: .allowUserInteraction, animations: {
 			self.transform = .identity
 		})
