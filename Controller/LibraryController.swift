@@ -219,6 +219,10 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
   func setImage(_ image: UIImage?) {
     photoImageView.image = image
     photoImageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+    photoImageView.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
+    UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
+      self.photoImageView.transform = .identity
+    })
     scrollView.isUserInteractionEnabled = true
 
     colorPickerView.isHidden = false
