@@ -106,7 +106,7 @@ extension ColorPicker {
   }
   
   private func turnToCircle() {
-    UIView.animate(withDuration: 0.315, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.5, options: [.allowUserInteraction], animations: {
+    UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: [.curveLinear, .allowUserInteraction], animations: {
       self.transform = CGAffineTransform(scaleX: self.defaultScale, y: self.defaultScale)
     })
     CATransaction.begin()
