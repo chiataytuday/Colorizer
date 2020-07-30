@@ -11,20 +11,10 @@ import UIKit
 final class ColorController: UIViewController {
   private var colorData: [Color]?
   private let backButton: UIButton = {
-    let button = UIButton(type: .custom)
-    button.adjustsImageWhenHighlighted = false
-    let config = UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)
-    button.setPreferredSymbolConfiguration(config, forImageIn: .normal)
-    let image = UIImage(systemName: "chevron.down")
-    button.setImage(image, for: .normal)
-    button.backgroundColor = .white
-    button.tintColor = .lightGray
-    button.layer.cornerRadius = 22.5
-    button.imageEdgeInsets.top = 2.5
-    NSLayoutConstraint.activate([
-      button.widthAnchor.constraint(equalToConstant: 45),
-      button.heightAnchor.constraint(equalToConstant: 45)
-    ])
+    let button = RoundButton(size: CGSize(width: 47, height: 46))
+    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 19, weight: .medium), forImageIn: .normal)
+    button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+    button.imageEdgeInsets.top =  2.5
     return button
   }()
   private var rowViews = [ColorRowView]()

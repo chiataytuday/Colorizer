@@ -20,18 +20,11 @@ final class LibraryController: UIViewController {
     return imageView
   }()
   private let imagePicker = UIImagePickerController()
-  private let openButton: UIButton = {
-    let button = UIButton()
-    button.backgroundColor = .white
-    button.adjustsImageWhenHighlighted = false
+  private let pickButton: UIButton = {
+    let button = RoundButton(size: CGSize(width: 56, height: 55))
     button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 22, weight: .regular), forImageIn: .normal)
-    button.tintColor = .softGray
     button.setImage(UIImage(systemName: "plus"), for: .normal)
-    NSLayoutConstraint.activate([
-      button.widthAnchor.constraint(equalToConstant: 56),
-      button.heightAnchor.constraint(equalToConstant: 55)
-    ])
-    button.layer.cornerRadius = 27.5
+    button.tintColor = .softGray
     button.isHidden = true
     return button
   }()
@@ -49,14 +42,12 @@ final class LibraryController: UIViewController {
   }
 
   private func setupBarButtons() {
-    openButton.addTarget(self, action: #selector(openTouchDown(sender:)), for: .touchDown)
-    openButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
-    openButton.addTarget(self, action: #selector(openTouchUp(sender:)), for: [.touchUpInside, .touchUpOutside])
-    view.addSubview(openButton)
-    openButton.translatesAutoresizingMaskIntoConstraints = false
+    pickButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
+    pickButton.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(pickButton)
     NSLayoutConstraint.activate([
-      openButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22.5),
-      openButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -77.5)
+      pickButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22.5),
+      pickButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -77.5)
     ])
   }
 
@@ -101,7 +92,7 @@ final class LibraryController: UIViewController {
     scrollView.isUserInteractionEnabled = false
     scrollView.contentInsetAdjustmentBehavior = .never
     scrollView.delaysContentTouches = false
-    scrollView.maximumZoomScale = 4
+    scrollView.maximumZoomScale = 8
     view.addSubview(scrollView)
     scrollView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -213,7 +204,15 @@ extension LibraryController: UIScrollViewDelegate {
 extension LibraryController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     setImage(info[.originalImage] as? UIImage)
+    setZoomedImage()
     dismiss(animated: true)
+  }
+
+  func setZoomedImage() {
+//    let cgImage = photoImageView.image?.cgImage
+//    let rect = CGRect(origin: colorPickerView.center, size: CGSize(width: 100, height: 100))
+//    let croppedImage = cgImage?.cropping(to: rect)
+//    zoomedImageView.image = UIImage(cgImage: croppedImage!)
   }
 
   func setImage(_ image: UIImage?) {
@@ -228,7 +227,7 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
     colorPickerView.isHidden = false
     colorInfoView.isHidden = false
     tipStackView.isHidden = true
-    openButton.isHidden = false
+    pickButton.isHidden = false
 
     let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
     colorPickerView.center = center
@@ -253,6 +252,7 @@ extension LibraryController: ColorPickerDelegate {
   func moved(to color: UIColor) {
     colorInfoView.set(color: color)
     colorPickerView.color = color
+    setZoomedImage()
   }
 }
 
@@ -273,20 +273,5 @@ extension LibraryController: ColorInfoDelegate {
     colorController.set(color: colorInfoView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
-  }
-}
-
-//MARK: - For rounded button
-extension LibraryController {
-  @objc private func openTouchDown(sender: UIButton) {
-    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
-      sender.transform = CGAffineTransform(scaleX: 0.925, y: 0.925)
-    })
-  }
-
-  @objc private func openTouchUp(sender: UIButton) {
-    UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
-      sender.transform = .identity
-    })
   }
 }

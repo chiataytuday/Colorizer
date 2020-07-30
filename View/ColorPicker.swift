@@ -90,7 +90,6 @@ extension ColorPicker {
   private func locationChanged(with translation: CGPoint = .zero) {
     center = CGPoint(x: location.x + translation.x,
                      y: location.y + translation.y)
-    print(center)
     guard let imageView = superview as? UIImageView else {
       return
     }
