@@ -25,8 +25,8 @@ class ColorCell: UICollectionViewCell {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-    layer.cornerRadius = 30
-    setupStackView()
+//    layer.cornerRadius = 30
+//    setupStackView()
   }
 
   private func setupStackView() {

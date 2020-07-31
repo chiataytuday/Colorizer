@@ -11,13 +11,13 @@ import UIKit
 class APIManager {
   static let shared = APIManager()
 
-  func getTestDays() -> [Day] {
-    let testDays = [
-      Day(date: Date(), colors: [.systemRed, .systemGreen, .systemBlue, .systemPink, .systemTeal, .systemOrange, .systemYellow]),
-      Day(date: Date.random(in: 20), colors: [.systemGray4, .systemIndigo, .systemPurple]),
-      Day(date: Date.random(in: 10), colors: [.secondarySystemFill])
+  func fetchColors() -> [UIColor] {
+    let colors: [UIColor] = [
+      .systemRed, .systemGreen, .systemBlue, .systemPink,
+      .systemTeal, .systemOrange, .systemYellow, .systemGray4,
+      .systemIndigo, .systemPurple, .secondarySystemFill
     ]
-    return testDays
+    return colors
   }
 }
 
