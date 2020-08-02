@@ -9,45 +9,31 @@
 import UIKit
 
 class ColorCell: UICollectionViewCell {
-  private let hexLabel: UILabel = {
-    let label = UILabel()
-    label.font = UIFont.monospacedFont(ofSize: 21, weight: .medium)
-    label.text = "#000000"
-    return label
-  }()
-  private let rgbLabel: UILabel = {
-    let label = UILabel()
-    label.font = UIFont.monospacedFont(ofSize: 15, weight: .medium)
-    label.text = "255 0 41"
-    label.alpha = 0.65
-    return label
-  }()
+  var delegate: ColorCellDelegate?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-//    layer.cornerRadius = 30
-//    setupStackView()
   }
 
-  private func setupStackView() {
-    let stackView = UIStackView(arrangedSubviews: [hexLabel, rgbLabel])
-    stackView.axis = .vertical
-    stackView.alignment = .center
-    stackView.spacing = 2
-    stackView.translatesAutoresizingMaskIntoConstraints = false
-    addSubview(stackView)
-    NSLayoutConstraint.activate([
-      stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-      stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
-    ])
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: [.allowUserInteraction, .curveEaseOut], animations: {
+      self.transform = CGAffineTransform(scaleX: 0.925, y: 0.925)
+    })
+  }
+
+  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    delegate?.presentColorController(with: backgroundColor!)
+    UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.allowUserInteraction, .curveLinear], animations: {
+      self.transform = .identity
+    })
+  }
+
+  override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+    touchesEnded(touches, with: event)
   }
 
   func configure(with color: UIColor) {
     backgroundColor = color
-    hexLabel.textColor = color.readable
-    rgbLabel.textColor = color.readable
-    hexLabel.text = color.hex
-    rgbLabel.text = color.rgb
   }
 
   required init?(coder: NSCoder) {

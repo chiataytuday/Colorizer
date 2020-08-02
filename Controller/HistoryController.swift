@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol ColorCellDelegate {
+  func presentColorController(with color: UIColor)
+}
+
 final class HistoryController: UIViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
@@ -17,6 +21,7 @@ final class HistoryController: UIViewController {
     collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
     collectionView.register(ColorCell.self, forCellWithReuseIdentifier: "Cell")
     collectionView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+    collectionView.delaysContentTouches = false
     collectionView.alwaysBounceVertical = true
     return collectionView
   }()
@@ -73,6 +78,7 @@ extension HistoryController: UICollectionViewDataSource {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ColorCell
     let color = colors[indexPath.item]
     cell.configure(with: color)
+    cell.delegate = self
     return cell
   }
 }
@@ -82,5 +88,14 @@ extension HistoryController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     let size = (collectionView.frame.width - 4)/5
     return CGSize(width: size, height: size)
+  }
+}
+
+extension HistoryController: ColorCellDelegate {
+  func presentColorController(with color: UIColor) {
+    let colorController = ColorController()
+    colorController.set(color: color)
+    colorController.modalPresentationStyle = .fullScreen
+    present(colorController, animated: true)
   }
 }

@@ -13,9 +13,10 @@ class APIManager {
 
   func fetchColors() -> [UIColor] {
     let colors: [UIColor] = [
-      .systemRed, .systemGreen, .systemBlue, .systemPink,
-      .systemTeal, .systemOrange, .systemYellow, .systemGray4,
-      .systemIndigo, .systemPurple, .secondarySystemFill
+      .systemRed, .systemBlue, .systemFill, .systemGray,
+      .systemPink, .systemTeal, .systemGray2, .systemGray3,
+      .systemGray4, .systemGray5, .systemGray6, .systemGreen,
+      .systemIndigo, .systemOrange, .systemPurple, .systemYellow
     ]
     return colors
   }
