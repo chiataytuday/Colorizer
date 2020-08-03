@@ -14,20 +14,17 @@ final class ColorController: UIViewController {
   private var colorData: [Color]?
   private let backButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 47, height: 46))
-    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 18, weight: .regular), forImageIn: .normal)
-    button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-    button.imageEdgeInsets.top =  2.5
+    button.backgroundColor = .clear
+    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .light), forImageIn: .normal)
+    button.setImage(UIImage(systemName: "arrow.down"), for: .normal)
     return button
   }()
   private let saveButton: UIButton = {
-    let button = RoundButton(size: CGSize(width: 185, height: 46))
-    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 18, weight: .regular), forImageIn: .normal)
-    button.setImage(UIImage(systemName: "plus"), for: .normal)
-    button.setTitle("Add to archive", for: .normal)
-    button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .regular)
-  button.imageEdgeInsets.top = 1
-    button.imageEdgeInsets.left = -8
-    button.titleEdgeInsets.left = 8
+    let button = RoundButton(size: CGSize(width: 47, height: 46))
+    button.backgroundColor = .clear
+    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .light), forImageIn: .normal)
+    button.setImage(UIImage(systemName: "suit.heart"), for: .normal)
+    button.tag = 0
     return button
   }()
   private var rowViews = [ColorRowView]()
@@ -55,12 +52,27 @@ final class ColorController: UIViewController {
       saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
     ])
   }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    stackView.transform = CGAffineTransform(translationX: 0, y: -500)
+    saveButton.transform = CGAffineTransform(translationX: 0, y: -500)
+    backButton.transform = CGAffineTransform(translationX: 0, y: -500)
+    UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [.curveEaseOut, .allowUserInteraction], animations: {
+      self.stackView.transform = .identity
+      self.saveButton.transform = .identity
+      self.backButton.transform = .identity
+    })
+  }
+
+  var stackView: UIStackView!
   
   private func setupStackView() {
-    let stackView = UIStackView()
+    stackView = UIStackView()
     stackView.translatesAutoresizingMaskIntoConstraints = false
     stackView.alignment = .leading
     stackView.axis = .vertical
+    stackView.spacing = 4
     
     guard let data = colorData else { return }
     for color in data {
@@ -71,79 +83,28 @@ final class ColorController: UIViewController {
     
     view.addSubview(stackView)
     NSLayoutConstraint.activate([
-      stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 17.5),
-      stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22.5)
+      stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     ])
   }
   
   func set(color: UIColor) {
     view.backgroundColor = color
-    backButton.tintColor = color
+    backButton.tintColor = color.readable
     colorData = [
       Color(spaceName: "HEX", value: color.hex),
       Color(spaceName: "RGB", value: color.rgb),
       Color(spaceName: "HSB", value: color.hsb),
       Color(spaceName: "CMYK", value: color.cmyk)
     ]
-    
-    backButton.backgroundColor = color.readable
+    setupStackView()
+
     for rowView in rowViews {
       rowView.set(color: color.readable)
     }
 
-    saveButton.tintColor = color
-    saveButton.backgroundColor = color.readable
+    saveButton.tintColor = color.readable
     saveButton.setTitleColor(color, for: .normal)
-
-    setupInfoButtons(colorData!)
-  }
-
-  func setupInfoButtons(_ data: [Color]) {
-    let stackView = UIStackView()
-    stackView.distribution = .fillEqually
-    stackView.alignment = .center
-    stackView.spacing = 8
-
-    for i in 0..<data.count {
-      let button = UIButton(type: .custom)
-      button.layer.cornerRadius = 17.5
-      button.setTitle(data[i].spaceName, for: .normal)
-      button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-      button.setTitleColor(saveButton.backgroundColor, for: .normal)
-      button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-      stackView.addArrangedSubview(button)
-    }
-    stackView.arrangedSubviews.first?.backgroundColor = saveButton.backgroundColor?.withAlphaComponent(0.6)
-    (stackView.arrangedSubviews.first as? UIButton)?.setTitleColor(saveButton.tintColor, for: .normal)
-
-    view.addSubview(stackView)
-    stackView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      stackView.bottomAnchor.constraint(equalTo: saveButton.topAnchor, constant: -80),
-      stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
-      stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30)
-    ])
-
-
-    let copyButton = UIButton(type: .custom)
-    copyButton.setTitle("255 60 23", for: .normal)
-    let copyImage = UIImage(systemName: "doc.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18, weight: .regular))
-    copyButton.setImage(copyImage?.withHorizontallyFlippedOrientation(), for: .normal)
-    copyButton.titleLabel?.font = UIFont.monospacedFont(ofSize: 22, weight: .light)
-    copyButton.imageEdgeInsets.left = -14
-    copyButton.titleEdgeInsets.left = 14
-    copyButton.layer.cornerRadius = 25
-    copyButton.backgroundColor = saveButton.backgroundColor?.withAlphaComponent(0.6)
-    copyButton.setTitleColor(saveButton.tintColor, for: .normal)
-    copyButton.tintColor = saveButton.tintColor
-    view.addSubview(copyButton)
-    copyButton.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      copyButton.heightAnchor.constraint(equalToConstant: 50),
-      copyButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
-      copyButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-      copyButton.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -10)
-    ])
   }
   
   @objc private func backToCamera() {
@@ -151,7 +112,13 @@ final class ColorController: UIViewController {
   }
 
   @objc private func addToLibrary() {
-    APIManager.shared.addColor(saveButton.tintColor)
+    guard saveButton.tag != 1 else {
+      return
+    }
+    APIManager.shared.addColor(view.backgroundColor!)
+    saveButton.tag = 1
+    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.3)
+    saveButton.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
     updateColorsArchive?()
   }
   
