@@ -9,6 +9,8 @@
 import UIKit
 
 final class LibraryController: UIViewController {
+  var updateColorsArchive: (() -> Void)?
+
   private var tipStackView: UIStackView!
   private let scrollView = UIScrollView()
   private var colorPickerView: ColorPicker!
@@ -22,8 +24,8 @@ final class LibraryController: UIViewController {
   private let imagePicker = UIImagePickerController()
   private let pickButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 56, height: 55))
-    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 22, weight: .regular), forImageIn: .normal)
-    button.setImage(UIImage(systemName: "plus"), for: .normal)
+    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .regular), forImageIn: .normal)
+    button.setImage(UIImage(systemName: "photo"), for: .normal)
     button.tintColor = .softGray
     button.isHidden = true
     return button
@@ -270,6 +272,7 @@ extension LibraryController: UIViewControllerTransitioningDelegate {
 extension LibraryController: ColorInfoDelegate {
   func presentColorController() {
     let colorController = ColorController()
+    colorController.updateColorsArchive = updateColorsArchive
     colorController.set(color: colorInfoView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)

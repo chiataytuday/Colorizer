@@ -21,12 +21,11 @@ final class HistoryController: UIViewController {
     collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
     collectionView.register(ColorCell.self, forCellWithReuseIdentifier: "Cell")
     collectionView.backgroundColor = UIColor(white: 0.95, alpha: 1)
-    collectionView.delaysContentTouches = false
     collectionView.alwaysBounceVertical = true
     return collectionView
   }()
 
-  private let colors = APIManager.shared.fetchColors()
+  private var colors = APIManager.shared.fetchColors()
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -35,6 +34,7 @@ final class HistoryController: UIViewController {
   }
 
   func reloadCollectionView() {
+    colors = APIManager.shared.fetchColors()
     collectionView.reloadData()
   }
 
@@ -60,6 +60,13 @@ extension HistoryController: UICollectionViewDelegate {
 
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
     return 1
+  }
+
+  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    let colorController = ColorController()
+    colorController.set(color: colors[indexPath.item])
+    colorController.modalPresentationStyle = .fullScreen
+    present(colorController, animated: true)
   }
 
   func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {

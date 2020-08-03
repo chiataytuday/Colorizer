@@ -11,13 +11,16 @@ import UIKit
 class APIManager {
   static let shared = APIManager()
 
+  private var colors: [UIColor] = [
+    .systemGreen, .systemPurple, .systemIndigo, .systemBlue,
+    .systemTeal, .systemPink, .systemRed, .systemOrange, .systemYellow
+  ]
+
+  func addColor(_ color: UIColor) {
+    colors.insert(color, at: 0)
+  }
+
   func fetchColors() -> [UIColor] {
-    let colors: [UIColor] = [
-      .systemRed, .systemBlue, .systemFill, .systemGray,
-      .systemPink, .systemTeal, .systemGray2, .systemGray3,
-      .systemGray4, .systemGray5, .systemGray6, .systemGreen,
-      .systemIndigo, .systemOrange, .systemPurple, .systemYellow
-    ]
     return colors
   }
 }

@@ -20,25 +20,32 @@ final class ScrollViewController: UIViewController {
     return scrollView
   }()
   private let buttonsStackView = UIStackView()
-  private let controllers = [
-    LibraryController(),
-//    CameraController(),
-    HistoryController()
-  ]
-  private let icons = [
-    "person.crop.square",
-//    "viewfinder",
-    "archivebox"
-  ]
+  private var controllers: [UIViewController] = []
+  private var icons: [String] = []
   private var currentPage = 0
   private let bottomView = UIView()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     view.clipsToBounds = true
+    setupControllers()
     setupPages()
     setupBottom()
     setupButtons()
+  }
+
+  private func setupControllers() {
+    let libraryController = LibraryController()
+    let libraryIcon = "person.crop.square"
+    controllers.append(libraryController)
+    icons.append(libraryIcon)
+
+    let historyController = HistoryController()
+    let historyIcon = "archivebox"
+    controllers.append(historyController)
+    icons.append(historyIcon)
+
+    libraryController.updateColorsArchive = historyController.reloadCollectionView
   }
   
   private func setupPages() {
