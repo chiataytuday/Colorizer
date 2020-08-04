@@ -53,18 +53,6 @@ final class ColorInfoView: UIButton {
     addTarget(self, action: #selector(touchUp), for: [.touchUpInside, .touchUpOutside])
   }
 
-  @objc private func touchDown() {
-    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
-      self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-    })
-  }
-
-  @objc private func touchUp() {
-    UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
-      self.transform = .identity
-    })
-  }
-
   private func setupStackView() {
     let hexStackView = UIStackView(arrangedSubviews: [circleView, hexLabel])
     hexStackView.spacing = 10
@@ -80,6 +68,18 @@ final class ColorInfoView: UIButton {
       stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
       stackView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 2)
     ])
+  }
+
+  @objc private func touchDown() {
+    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+      self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+    })
+  }
+
+  @objc private func touchUp() {
+    UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+      self.transform = .identity
+    })
   }
 
   func set(color: UIColor) {

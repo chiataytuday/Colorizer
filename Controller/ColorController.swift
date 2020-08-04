@@ -41,7 +41,7 @@ final class ColorController: UIViewController {
     backButton.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       backButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-      backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
+      backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
     ])
 
     view.addSubview(saveButton)
@@ -149,5 +149,50 @@ extension UIColor {
       readableColor = UIColor.white.withAlphaComponent(0.8)
     }
     return readableColor
+  }
+  var hex: String {
+    guard let components = cgColor.components, components.count >= 3 else {
+      return "#FFFFFF"
+    }
+    let r = Float(components[0])
+    let g = Float(components[1])
+    let b = Float(components[2])
+    return String(format: "#%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
+  }
+  var rgb: String {
+    let values: (r: CGFloat, g: CGFloat, b: CGFloat) = (
+      (cgColor.components![0] * 255).rounded(),
+      (cgColor.components![1] * 255).rounded(),
+      (cgColor.components![2] * 255).rounded()
+    )
+    return "\(Int(values.r)) \(Int(values.g)) \(Int(values.b))"
+  }
+  var hsb: String {
+    var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+    getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+    #warning("Why hue value is incorrect?")
+    let rounded: (h: CGFloat, s: CGFloat, b: CGFloat) = (
+      (h*100).rounded(), (s*100).rounded(), (b*100).rounded()
+    )
+    return "\(Int(rounded.h)) \(Int(rounded.s)) \(Int(rounded.b))"
+  }
+  var cmyk: String {
+    let r = cgColor.components![0]
+    let g = cgColor.components![1]
+    let b = cgColor.components![2]
+    guard r != 0 && g != 0 && b != 0 else {
+      return "0 0 0 100"
+    }
+
+    var c = 1 - r, m = 1 - g, y = 1 - b
+    let minCMY = min(c, m, y)
+    c = (c - minCMY) / (1 - minCMY)
+    m = (m - minCMY) / (1 - minCMY)
+    y = (y - minCMY) / (1 - minCMY)
+
+    let rounded: (c: CGFloat, m: CGFloat, y: CGFloat, k: CGFloat) = (
+      (c*100).rounded(), (m*100).rounded(), (y*100).rounded(), (minCMY*100).rounded()
+    )
+    return "\(Int(rounded.c)) \(Int(rounded.m)) \(Int(rounded.y)) \(Int(rounded.k))"
   }
 }

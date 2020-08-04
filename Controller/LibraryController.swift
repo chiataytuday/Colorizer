@@ -206,6 +206,7 @@ extension LibraryController: UIScrollViewDelegate {
 extension LibraryController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     setImage(info[.originalImage] as? UIImage)
+    calculateZoomScale()
     setZoomedImage()
     dismiss(animated: true)
   }
@@ -215,6 +216,14 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
 //    let rect = CGRect(origin: colorPickerView.center, size: CGSize(width: 100, height: 100))
 //    let croppedImage = cgImage?.cropping(to: rect)
 //    zoomedImageView.image = UIImage(cgImage: croppedImage!)
+  }
+
+  func calculateZoomScale() {
+    let imageSize = photoImageView.image!.size
+    let ratioH = imageSize.height/(view.frame.height/4)
+    let ratioW = imageSize.width/(view.frame.width/4)
+    let ratio = max(ratioH, ratioW)
+    scrollView.maximumZoomScale = max(ratio, 4)
   }
 
   func setImage(_ image: UIImage?) {
@@ -276,5 +285,23 @@ extension LibraryController: ColorInfoDelegate {
     colorController.set(color: colorInfoView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
+  }
+}
+
+extension CALayer {
+  public func pickColor(at position: CGPoint) -> UIColor? {
+    var pixel = [UInt8](repeatElement(0, count: 4))
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
+    guard let context = CGContext(data: &pixel, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4, space: colorSpace, bitmapInfo: bitmapInfo) else {
+      return nil
+    }
+    context.translateBy(x: -position.x, y: -position.y)
+    render(in: context)
+
+    return UIColor(red: CGFloat(pixel[0]) / 255.0,
+                   green: CGFloat(pixel[1]) / 255.0,
+                   blue: CGFloat(pixel[2]) / 255.0,
+                   alpha: CGFloat(pixel[3]) / 255.0)
   }
 }

@@ -9,7 +9,6 @@
 import UIKit
 
 final class BarButton: UIButton {
-  
   init(_ imageName: String) {
     super.init(frame: .zero)
     let image = UIImage(systemName: imageName)

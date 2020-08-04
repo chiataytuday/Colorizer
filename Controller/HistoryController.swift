@@ -19,7 +19,7 @@ final class HistoryController: UIViewController {
     layout.headerReferenceSize.height = 70
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
-    collectionView.register(ColorCell.self, forCellWithReuseIdentifier: "Cell")
+    collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
     collectionView.backgroundColor = UIColor(white: 0.95, alpha: 1)
     collectionView.alwaysBounceVertical = true
     return collectionView
@@ -82,10 +82,9 @@ extension HistoryController: UICollectionViewDataSource {
   }
 
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ColorCell
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
     let color = colors[indexPath.item]
-    cell.configure(with: color)
-    cell.delegate = self
+    cell.backgroundColor = color
     return cell
   }
 }

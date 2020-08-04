@@ -9,7 +9,7 @@
 import UIKit
 
 class SectionHeaderView: UICollectionReusableView {
-  private let imageView: UIImageView = {
+  private let boxImageView: UIImageView = {
     let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .semibold)
     let image = UIImage(systemName: "archivebox", withConfiguration: config)
     let imageView = UIImageView(image: image)
@@ -33,7 +33,10 @@ class SectionHeaderView: UICollectionReusableView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
+    setupStackView()
+  }
 
+  private func setupStackView() {
     subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
     addSubview(subtitleLabel)
     NSLayoutConstraint.activate([
@@ -41,13 +44,13 @@ class SectionHeaderView: UICollectionReusableView {
       subtitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.5)
     ])
 
-    let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel])
+    let stackView = UIStackView(arrangedSubviews: [boxImageView, titleLabel])
     stackView.alignment = .center
     stackView.distribution = .equalCentering
-    stackView.spacing = 8
     stackView.axis = .horizontal
-    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.spacing = 8
     addSubview(stackView)
+    stackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 17.5),
       stackView.bottomAnchor.constraint(equalTo: subtitleLabel.topAnchor, constant: -2)
@@ -56,10 +59,5 @@ class SectionHeaderView: UICollectionReusableView {
 
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
-  }
-
-  func configure(with text: String) {
-    titleLabel.text = text
-    titleLabel.sizeToFit()
   }
 }

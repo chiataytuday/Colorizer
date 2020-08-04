@@ -31,11 +31,6 @@ final class ColorRowView: UIView {
     setupStackView()
   }
   
-  func set(color: UIColor) {
-    titleLabel.textColor = color
-    valueLabel.textColor = color
-  }
-  
   private func setupStackView() {
     let stackView = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
     stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -48,6 +43,11 @@ final class ColorRowView: UIView {
       stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12.5),
       stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
     ])
+  }
+
+  func set(color: UIColor) {
+    titleLabel.textColor = color
+    valueLabel.textColor = color
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
