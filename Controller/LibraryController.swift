@@ -10,7 +10,6 @@ import UIKit
 
 final class LibraryController: UIViewController {
   var updateColorsArchive: (() -> Void)?
-
   private var tipStackView: UIStackView!
   private let scrollView = UIScrollView()
   private var colorPickerView: ColorPicker!
@@ -65,7 +64,7 @@ final class LibraryController: UIViewController {
     openImagePicker()
   }
 
-  fileprivate func setupTipViews() {
+  private func setupTipViews() {
     let plusImageView: UIImageView = {
       let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
       let image = UIImage(systemName: "plus", withConfiguration: config)
@@ -93,7 +92,7 @@ final class LibraryController: UIViewController {
     ])
   }
 
-  fileprivate func setupSubviews() {
+  private func setupSubviews() {
     scrollView.delegate = self
     scrollView.isUserInteractionEnabled = false
     scrollView.contentInsetAdjustmentBehavior = .never
@@ -141,7 +140,7 @@ final class LibraryController: UIViewController {
     ])
   }
 
-  fileprivate func setupDoubleTapRecognizer() {
+  private func setupDoubleTapRecognizer() {
     doubleTapGesture.addTarget(self, action: #selector(handleDoubleTap(recognizer:)))
     doubleTapGesture.numberOfTapsRequired = 2
     doubleTapGesture.delaysTouchesBegan = false
@@ -149,7 +148,7 @@ final class LibraryController: UIViewController {
     scrollView.addGestureRecognizer(doubleTapGesture)
   }
 
-  fileprivate func setupImagePicker() {
+  private func setupImagePicker() {
     imagePicker.delegate = self
     imagePicker.sourceType = .photoLibrary
     imagePicker.allowsEditing = false
@@ -300,7 +299,7 @@ extension LibraryController: ColorInfoDelegate {
 }
 
 extension CALayer {
-  public func pickColor(at position: CGPoint) -> UIColor? {
+  func pickColor(at position: CGPoint) -> UIColor? {
     var pixel = [UInt8](repeatElement(0, count: 4))
     let colorSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue

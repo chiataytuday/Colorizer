@@ -37,10 +37,10 @@ final class ColorController: UIViewController {
 
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    stackView.transform = CGAffineTransform(translationX: 0, y: -500)
-    saveButton.transform = CGAffineTransform(translationX: 0, y: -500)
-    backButton.transform = CGAffineTransform(translationX: 0, y: -500)
-    UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [.curveEaseOut, .allowUserInteraction], animations: {
+    stackView.transform = CGAffineTransform(translationX: 0, y: -400)
+    saveButton.transform = CGAffineTransform(translationX: 0, y: -400)
+    backButton.transform = CGAffineTransform(translationX: 0, y: -400)
+    UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [.curveEaseOut, .allowUserInteraction], animations: {
       self.stackView.transform = .identity
       self.saveButton.transform = .identity
       self.backButton.transform = .identity

@@ -24,7 +24,6 @@ final class HistoryController: UIViewController {
     collectionView.alwaysBounceVertical = true
     return collectionView
   }()
-
   private var colors = APIManager.shared.fetchColors()
 
   override func viewDidLoad() {
