@@ -18,7 +18,6 @@ final class LibraryController: UIViewController {
   private let doubleTapGesture = UITapGestureRecognizer()
   private var photoImageView: UIImageView = {
     let imageView = UIImageView()
-    imageView.backgroundColor = .red
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
@@ -242,8 +241,11 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
     UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
       self.photoImageView.transform = .identity
     })
+    scrollView.contentInset = .zero
     scrollView.isUserInteractionEnabled = true
-
+    scrollView.zoomScale = 1
+    
+    colorPickerView.transform = .identity
     colorPickerView.isHidden = false
     colorInfoView.isHidden = false
     tipStackView.isHidden = true

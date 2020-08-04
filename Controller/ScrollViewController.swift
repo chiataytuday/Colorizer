@@ -30,7 +30,7 @@ final class ScrollViewController: UIViewController {
     view.clipsToBounds = true
     setupControllers()
     setupPages()
-//    setupBottom()
+    setupBottom()
     setupButtons()
   }
 
