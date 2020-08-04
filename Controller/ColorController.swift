@@ -107,10 +107,13 @@ final class ColorController: UIViewController {
     }
   }
   
-  @objc private func backToCamera() {
-    dismiss(animated: true, completion: nil)
+  override var prefersStatusBarHidden: Bool {
+    true
   }
+}
 
+//MARK: - Target actions
+extension ColorController {
   @objc private func saveButtonTapped(sender: UIButton) {
     switch sender.tag {
       case 0:
@@ -127,12 +130,13 @@ final class ColorController: UIViewController {
     UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.4)
     updateColorsArchive?()
   }
-  
-  override var prefersStatusBarHidden: Bool {
-    true
+
+  @objc private func backToCamera() {
+    dismiss(animated: true, completion: nil)
   }
 }
 
+//MARK: - UIViewControllerTransitioningDelegate
 extension ColorController: UIViewControllerTransitioningDelegate {
   func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
     return AnimationController(duration: 0.45, type: .present, direction: .vertical)
