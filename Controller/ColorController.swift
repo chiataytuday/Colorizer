@@ -10,15 +10,7 @@ import UIKit
 
 final class ColorController: UIViewController {
   var updateColorsArchive: (() -> Void)?
-
   private var colorData: [Color]?
-  private let backButton: UIButton = {
-    let button = RoundButton(size: CGSize(width: 47, height: 46))
-    button.backgroundColor = .clear
-    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .light), forImageIn: .normal)
-    button.setImage(UIImage(systemName: "arrow.down"), for: .normal)
-    return button
-  }()
   private let saveButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 47, height: 46))
     button.backgroundColor = .clear
@@ -27,30 +19,20 @@ final class ColorController: UIViewController {
     button.tag = 0
     return button
   }()
+  private let backButton: UIButton = {
+    let button = RoundButton(size: CGSize(width: 47, height: 46))
+    button.backgroundColor = .clear
+    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .light), forImageIn: .normal)
+    button.setImage(UIImage(systemName: "arrow.down"), for: .normal)
+    return button
+  }()
   private var rowViews = [ColorRowView]()
+  private var stackView = UIStackView()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     transitioningDelegate = self
-    setupBackButton()
-  }
-  
-  private func setupBackButton() {
-    view.addSubview(backButton)
-    backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
-    backButton.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      backButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-      backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
-    ])
-
-    view.addSubview(saveButton)
-    saveButton.addTarget(self, action: #selector(addToLibrary), for: .touchUpInside)
-    saveButton.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      saveButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-      saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
-    ])
+    setupBottomButtons()
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -65,11 +47,26 @@ final class ColorController: UIViewController {
     })
   }
 
-  var stackView: UIStackView!
+  private func setupBottomButtons() {
+    view.addSubview(backButton)
+    backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
+    backButton.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      backButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+      backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
+    ])
+
+    view.addSubview(saveButton)
+    saveButton.addTarget(self, action: #selector(saveButtonTapped(sender:)), for: .touchUpInside)
+    saveButton.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      saveButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+      saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
+    ])
+  }
   
   private func setupStackView() {
     stackView = UIStackView()
-    stackView.translatesAutoresizingMaskIntoConstraints = false
     stackView.alignment = .leading
     stackView.axis = .vertical
     stackView.spacing = 4
@@ -82,15 +79,22 @@ final class ColorController: UIViewController {
     }
     
     view.addSubview(stackView)
+    stackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     ])
   }
-  
-  func set(color: UIColor) {
+
+  func configure(with color: UIColor) {
     view.backgroundColor = color
     backButton.tintColor = color.readable
+    saveButton.tintColor = color.readable
+    if APIManager.shared.contains(color: color) {
+      saveButton.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
+      saveButton.tag = 1
+    }
+
     colorData = [
       Color(spaceName: "HEX", value: color.hex),
       Color(spaceName: "RGB", value: color.rgb),
@@ -98,27 +102,29 @@ final class ColorController: UIViewController {
       Color(spaceName: "CMYK", value: color.cmyk)
     ]
     setupStackView()
-
-    for rowView in rowViews {
-      rowView.set(color: color.readable)
+    for row in rowViews {
+      row.set(color: color.readable)
     }
-
-    saveButton.tintColor = color.readable
-    saveButton.setTitleColor(color, for: .normal)
   }
   
   @objc private func backToCamera() {
     dismiss(animated: true, completion: nil)
   }
 
-  @objc private func addToLibrary() {
-    guard saveButton.tag != 1 else {
-      return
+  @objc private func saveButtonTapped(sender: UIButton) {
+    switch sender.tag {
+      case 0:
+        APIManager.shared.add(color: view.backgroundColor!)
+        sender.tag = 1
+        sender.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
+      case 1:
+        APIManager.shared.remove(color: view.backgroundColor!)
+        sender.tag = 0
+        sender.setImage(UIImage(systemName: "suit.heart"), for: .normal)
+      default:
+        break
     }
-    APIManager.shared.addColor(view.backgroundColor!)
-    saveButton.tag = 1
-    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.3)
-    saveButton.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
+    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.4)
     updateColorsArchive?()
   }
   

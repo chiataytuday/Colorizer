@@ -25,13 +25,13 @@ class RoundButton: UIButton {
   }
 
   @objc private func touchDown(sender: UIButton) {
-    UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+    UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: [.allowUserInteraction, .curveEaseOut], animations: {
       sender.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
     })
   }
 
   @objc private func touchUp(sender: UIButton) {
-    UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
+    UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 0, options: [.allowUserInteraction, .curveEaseOut], animations: {
       sender.transform = .identity
     })
   }

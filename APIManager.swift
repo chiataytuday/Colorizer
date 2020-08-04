@@ -10,17 +10,34 @@ import UIKit
 
 class APIManager {
   static let shared = APIManager()
-  var colors: [UIColor] = [
+  private let defaults = UserDefaults.standard
+  private var colors: [UIColor] = [
     .systemGreen, .systemPurple, .systemIndigo, .systemBlue,
     .systemTeal, .systemPink, .systemRed, .systemOrange, .systemYellow
   ]
 
-  func addColor(_ color: UIColor) {
+  func add(color: UIColor) {
     if colors.count == 100 {
       colors.removeLast()
     }
     colors.insert(color, at: 0)
-    UserDefaults.standard.setColors(colors: colors, forKey: "colors")
+    defaults.setColors(colors: colors, forKey: "colors")
+  }
+
+  func remove(color: UIColor) {
+    guard colors.contains(color) else { return }
+    if let index = colors.firstIndex(of: color) {
+      colors.remove(at: index)
+    }
+    defaults.setColors(colors: colors, forKey: "colors")
+  }
+
+  func set(colors: [UIColor]) {
+    self.colors = colors
+  }
+
+  func contains(color: UIColor) -> Bool {
+    colors.contains(color)
   }
 
   func fetchColors() -> [UIColor] {

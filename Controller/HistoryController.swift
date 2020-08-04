@@ -64,7 +64,9 @@ extension HistoryController: UICollectionViewDelegate {
 
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     let colorController = ColorController()
-    colorController.set(color: colors[indexPath.item])
+    let color = colors[indexPath.item]
+    colorController.configure(with: color)
+    colorController.updateColorsArchive = reloadCollectionView
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }
@@ -100,7 +102,7 @@ extension HistoryController: UICollectionViewDelegateFlowLayout {
 extension HistoryController: ColorCellDelegate {
   func presentColorController(with color: UIColor) {
     let colorController = ColorController()
-    colorController.set(color: color)
+    colorController.configure(with: color)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }

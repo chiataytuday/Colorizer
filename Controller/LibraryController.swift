@@ -36,7 +36,7 @@ final class LibraryController: UIViewController {
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
     transitioningDelegate = self
     if let colors = UserDefaults.standard.getColors(key: "colors") {
-      APIManager.shared.colors = colors
+      APIManager.shared.set(colors: colors)
       updateColorsArchive?()
     }
 
@@ -286,7 +286,7 @@ extension LibraryController: ColorInfoDelegate {
   func presentColorController() {
     let colorController = ColorController()
     colorController.updateColorsArchive = updateColorsArchive
-    colorController.set(color: colorInfoView.color!)
+    colorController.configure(with: colorInfoView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }
