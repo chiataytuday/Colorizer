@@ -15,7 +15,7 @@ protocol ColorCellDelegate {
 final class HistoryController: UIViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
-    layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 25, right: 0)
+    layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 56, right: 0)
     layout.headerReferenceSize.height = 70
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
@@ -44,7 +44,7 @@ final class HistoryController: UIViewController {
     view.addSubview(collectionView)
     collectionView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+      collectionView.topAnchor.constraint(equalTo: view.topAnchor),
       collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)

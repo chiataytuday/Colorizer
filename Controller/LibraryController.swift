@@ -35,6 +35,10 @@ final class LibraryController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
     transitioningDelegate = self
+    if let colors = UserDefaults.standard.getColors(key: "colors") {
+      APIManager.shared.colors = colors
+      updateColorsArchive?()
+    }
 
     setupTipViews()
     setupSubviews()
