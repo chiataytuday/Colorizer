@@ -18,6 +18,7 @@ final class LibraryController: UIViewController {
   private let doubleTapGesture = UITapGestureRecognizer()
   private var photoImageView: UIImageView = {
     let imageView = UIImageView()
+    imageView.backgroundColor = .red
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
@@ -111,14 +112,6 @@ final class LibraryController: UIViewController {
     scrollView.addSubview(photoImageView)
     photoImageView.clipsToBounds = true
     photoImageView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      photoImageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-      photoImageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-      photoImageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-      photoImageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-      photoImageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-      photoImageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
-    ])
 
     colorPickerView = ColorPicker(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
     colorPickerView.delegate = self
@@ -137,6 +130,15 @@ final class LibraryController: UIViewController {
       colorInfoView.heightAnchor.constraint(equalToConstant: 70),
       colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15)
+    ])
+
+    NSLayoutConstraint.activate([
+      photoImageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+      photoImageView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 150),
+      photoImageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+      photoImageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -150),
+      photoImageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+      photoImageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, constant: -300)
     ])
   }
 
@@ -193,17 +195,28 @@ extension LibraryController: UIScrollViewDelegate {
       scrollView.contentInset = .zero
       return
     }
+
     guard let image = photoImageView.image else { return }
     let wRatio = photoImageView.frame.width / image.size.width
     let hRatio = photoImageView.frame.height / image.size.height
     let ratio = min(wRatio, hRatio)
+    let newSize = CGSize(width: image.size.width * ratio, height: image.size.height * ratio)
 
-    let newSize = CGSize(width: image.size.width * ratio,
-                         height: image.size.height * ratio)
-    let left = 0.5 * (newSize.width * scale > photoImageView.frame.width ? (newSize.width - photoImageView.frame.width) : (scrollView.frame.width - scrollView.contentSize.width))
-    let top = 0.5 * (newSize.height * scale > photoImageView.frame.height ? (newSize.height - photoImageView.frame.height) : (scrollView.frame.height - scrollView.contentSize.height))
+    var hInset: CGFloat = 0
+    if newSize.width * scale > photoImageView.frame.width {
+      hInset = (newSize.width - photoImageView.frame.width)/2 + 20
+    } else {
+      hInset = (scrollView.frame.width - scrollView.contentSize.width)/2
+    }
 
-    scrollView.contentInset = UIEdgeInsets(top: top, left: left, bottom: top, right: left)
+    var vInset: CGFloat = 0
+    if newSize.height * scale > photoImageView.frame.height {
+      vInset = (newSize.height - photoImageView.frame.height)/2
+    } else {
+      vInset = (scrollView.frame.height - scrollView.contentSize.height)/2
+    }
+
+    scrollView.contentInset = UIEdgeInsets(top: vInset, left: hInset, bottom: vInset + 300, right: hInset)
   }
 }
 
@@ -211,15 +224,7 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     setImage(info[.originalImage] as? UIImage)
     calculateZoomScale()
-    setZoomedImage()
     dismiss(animated: true)
-  }
-
-  func setZoomedImage() {
-//    let cgImage = photoImageView.image?.cgImage
-//    let rect = CGRect(origin: colorPickerView.center, size: CGSize(width: 100, height: 100))
-//    let croppedImage = cgImage?.cropping(to: rect)
-//    zoomedImageView.image = UIImage(cgImage: croppedImage!)
   }
 
   func calculateZoomScale() {
@@ -244,7 +249,8 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
     tipStackView.isHidden = true
     pickButton.isHidden = false
 
-    let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
+    let center = CGPoint(x: photoImageView.frame.width/2,
+                         y: photoImageView.frame.height/2)
     colorPickerView.center = center
     colorPickerView.shapeLayer.fillColor = UIColor.clear.cgColor
     let color = photoImageView.layer.pickColor(at: center)
@@ -267,7 +273,6 @@ extension LibraryController: ColorPickerDelegate {
   func moved(to color: UIColor) {
     colorInfoView.set(color: color)
     colorPickerView.color = color
-    setZoomedImage()
   }
 }
 
