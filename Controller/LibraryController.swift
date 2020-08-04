@@ -167,12 +167,12 @@ final class LibraryController: UIViewController {
 
   private func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
     var zoomRect: CGRect = .zero
-    zoomRect.size.height = photoImageView.frame.size.height / scale
+    zoomRect.size.height = (photoImageView.frame.size.height + 300) / scale
     zoomRect.size.width  = photoImageView.frame.size.width  / scale
 
     let newCenter = scrollView.convert(center, from: photoImageView)
     zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
-    zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
+    zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0) - 300
     return zoomRect
   }
 
@@ -244,7 +244,7 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
     scrollView.contentInset = .zero
     scrollView.isUserInteractionEnabled = true
     scrollView.zoomScale = 1
-    
+
     colorPickerView.transform = .identity
     colorPickerView.isHidden = false
     colorInfoView.isHidden = false
