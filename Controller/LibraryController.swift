@@ -9,6 +9,11 @@
 import UIKit
 
 final class LibraryController: UIViewController {
+  var bottomBarConstraint: NSLayoutAnchor<NSLayoutYAxisAnchor>? {
+    didSet {
+      setupBarButtons()
+    }
+  }
   var updateColorsArchive: (() -> Void)?
   private var tipStackView: UIStackView!
   private let scrollView = UIScrollView()
@@ -39,11 +44,21 @@ final class LibraryController: UIViewController {
       updateColorsArchive?()
     }
 
+    calculateImageInsets()
     setupTipViews()
     setupSubviews()
     setupDoubleTapRecognizer()
     setupImagePicker()
-    setupBarButtons()
+  }
+
+  var imageInsets: (top: CGFloat, bottom: CGFloat, height: CGFloat)!
+
+  private func calculateImageInsets() {
+    if Device.shared.hasNotch {
+      imageInsets = (150, -150, -300)
+    } else {
+      imageInsets = (110, -160, -270)
+    }
   }
 
   private func setupBarButtons() {
@@ -52,7 +67,7 @@ final class LibraryController: UIViewController {
     view.addSubview(pickButton)
     NSLayoutConstraint.activate([
       pickButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22.5),
-      pickButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -77.5)
+      pickButton.bottomAnchor.constraint(equalTo: bottomBarConstraint!, constant: -20)
     ])
   }
 
@@ -123,20 +138,21 @@ final class LibraryController: UIViewController {
     colorInfoView.isHidden = true
     colorInfoView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(colorInfoView)
+    let topMargin: CGFloat = Device.shared.hasNotch ? 15 : 20
     NSLayoutConstraint.activate([
       colorInfoView.widthAnchor.constraint(equalToConstant: 172),
       colorInfoView.heightAnchor.constraint(equalToConstant: 70),
       colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15)
+      colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
     ])
 
     NSLayoutConstraint.activate([
       photoImageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-      photoImageView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 150),
+      photoImageView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageInsets.top),
       photoImageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-      photoImageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -150),
+      photoImageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: imageInsets.bottom),
       photoImageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-      photoImageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, constant: -300)
+      photoImageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, constant: imageInsets.height)
     ])
   }
 
@@ -150,6 +166,9 @@ final class LibraryController: UIViewController {
 
   private func setupImagePicker() {
     imagePicker.delegate = self
+    if !Device.shared.hasNotch {
+      imagePicker.modalPresentationStyle = .fullScreen
+    }
     imagePicker.sourceType = .photoLibrary
     imagePicker.allowsEditing = false
   }
@@ -166,12 +185,12 @@ final class LibraryController: UIViewController {
 
   private func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
     var zoomRect: CGRect = .zero
-    zoomRect.size.height = (photoImageView.frame.size.height + 300) / scale
+    zoomRect.size.height = (photoImageView.frame.size.height - imageInsets.height) / scale
     zoomRect.size.width  = photoImageView.frame.size.width  / scale
 
     let newCenter = scrollView.convert(center, from: photoImageView)
     zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
-    zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0) - 300
+    zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0) + imageInsets.height
     return zoomRect
   }
 
@@ -214,7 +233,7 @@ extension LibraryController: UIScrollViewDelegate {
       vInset = (scrollView.frame.height - scrollView.contentSize.height)/2
     }
 
-    scrollView.contentInset = UIEdgeInsets(top: vInset, left: hInset, bottom: vInset + 300, right: hInset)
+    scrollView.contentInset = UIEdgeInsets(top: vInset, left: hInset, bottom: vInset - imageInsets.height, right: hInset)
   }
 }
 
