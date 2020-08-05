@@ -70,14 +70,16 @@ final class ScrollViewController: UIViewController {
   private func setupBottom() {
     bottomView.backgroundColor = .white
     bottomView.layer.cornerRadius = 30
-    bottomView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(bottomView)
+    bottomView.translatesAutoresizingMaskIntoConstraints = false
+    let bottomMargin: CGFloat = Device.shared.hasNotch ? 10 : 0
     NSLayoutConstraint.activate([
       bottomView.widthAnchor.constraint(equalTo: view.widthAnchor),
       bottomView.heightAnchor.constraint(equalToConstant: 65),
-      bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 10),
+      bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: bottomMargin),
       bottomView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
     ])
+    (controllers.first as? LibraryController)?.bottomBarConstraint = bottomView.topAnchor
     
     let backView = UIView()
     backView.backgroundColor = .white
