@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SectionHeaderView: UICollectionReusableView {
+final class SectionHeaderView: UICollectionReusableView {
   private let boxImageView: UIImageView = {
     let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .semibold)
     let image = UIImage(systemName: "archivebox", withConfiguration: config)
