@@ -32,7 +32,26 @@ final class ColorController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     transitioningDelegate = self
-    setupBottomButtons()
+    setupButtons()
+  }
+
+  private func setupButtons() {
+    view.addSubview(backButton)
+    backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
+    backButton.translatesAutoresizingMaskIntoConstraints = false
+    let bottomMargin: CGFloat = Device.shared.hasNotch ? -10 : -30
+    NSLayoutConstraint.activate([
+      backButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+      backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: bottomMargin)
+    ])
+
+    view.addSubview(saveButton)
+    saveButton.addTarget(self, action: #selector(saveButtonTapped(sender:)), for: .touchUpInside)
+    saveButton.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      saveButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+      saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
+    ])
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -45,24 +64,6 @@ final class ColorController: UIViewController {
       self.saveButton.transform = .identity
       self.backButton.transform = .identity
     })
-  }
-
-  private func setupBottomButtons() {
-    view.addSubview(backButton)
-    backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
-    backButton.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      backButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-      backButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10)
-    ])
-
-    view.addSubview(saveButton)
-    saveButton.addTarget(self, action: #selector(saveButtonTapped(sender:)), for: .touchUpInside)
-    saveButton.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      saveButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-      saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30)
-    ])
   }
   
   private func setupStackView() {
