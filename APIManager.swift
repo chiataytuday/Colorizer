@@ -12,8 +12,15 @@ class APIManager {
   static let shared = APIManager()
   private let defaults = UserDefaults.standard
   private var colors: [UIColor] = [
-    .systemGreen, .systemPurple, .systemIndigo, .systemBlue,
-    .systemTeal, .systemPink, .systemRed, .systemOrange, .systemYellow
+    UIColor.rgb(48, 209, 88),
+    UIColor.rgb(191, 90, 242),
+    UIColor.rgb(94, 92, 230),
+    UIColor.rgb(10, 132, 255),
+    UIColor.rgb(100, 210, 255),
+    UIColor.rgb(255, 55, 95),
+    UIColor.rgb(255, 69, 58),
+    UIColor.rgb(255, 159, 10),
+    UIColor.rgb(255, 214, 10)
   ]
 
   func add(color: UIColor) {
@@ -61,5 +68,11 @@ extension UserDefaults {
     }
     set(colorData, forKey: key)
     synchronize()
+  }
+}
+
+extension UIColor {
+  static func rgb(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat) -> UIColor {
+    return UIColor(red: r/255, green: g/255, blue: b/255, alpha: 1)
   }
 }
