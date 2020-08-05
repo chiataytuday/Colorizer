@@ -33,26 +33,25 @@ final class SectionHeaderView: UICollectionReusableView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-    setupStackView()
+    setupSubviews()
   }
 
-  private func setupStackView() {
-    subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+  private func setupSubviews() {
     addSubview(subtitleLabel)
+    subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       subtitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-      subtitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.5)
+      subtitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 22.5)
     ])
 
     let stackView = UIStackView(arrangedSubviews: [boxImageView, titleLabel])
     stackView.alignment = .center
-    stackView.distribution = .equalCentering
     stackView.axis = .horizontal
     stackView.spacing = 8
     addSubview(stackView)
     stackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 17.5),
+      stackView.leadingAnchor.constraint(equalTo: subtitleLabel.leadingAnchor, constant: -2.5),
       stackView.bottomAnchor.constraint(equalTo: subtitleLabel.topAnchor, constant: -2)
     ])
   }

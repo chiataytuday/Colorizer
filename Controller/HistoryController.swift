@@ -16,7 +16,7 @@ final class HistoryController: UIViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
     layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 100, right: 0)
-    layout.headerReferenceSize.height = 70
+    layout.headerReferenceSize.height = 72
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
     collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
