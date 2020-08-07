@@ -40,11 +40,17 @@ final class ScrollViewController: UIViewController {
     controllers.append(libraryController)
     icons.append(libraryIcon)
 
+    let cameraController = CameraController()
+    let cameraIcon = "viewfinder"
+    controllers.append(cameraController)
+    icons.append(cameraIcon)
+
     let historyController = HistoryController()
     let historyIcon = "archivebox"
     controllers.append(historyController)
     icons.append(historyIcon)
 
+    cameraController.updateColorsArchive = historyController.reloadCollectionView
     libraryController.updateColorsArchive = historyController.reloadCollectionView
   }
   
@@ -79,7 +85,7 @@ final class ScrollViewController: UIViewController {
       bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: bottomMargin),
       bottomView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
     ])
-    (controllers.first as? LibraryController)?.bottomBarConstraint = bottomView.topAnchor
+    (controllers[0] as? LibraryController)?.bottomBarConstraint = bottomView.topAnchor
     
     let backView = UIView()
     backView.backgroundColor = .white
