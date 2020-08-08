@@ -134,6 +134,7 @@ final class CameraController: UIViewController {
 
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard presentedViewController == nil else { return }
+    guard let _ = previewLayer.connection else { return }
 
     /* Don't use view.center, because x is negative sometimes */
     let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
