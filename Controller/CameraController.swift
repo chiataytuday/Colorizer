@@ -116,11 +116,12 @@ final class CameraController: UIViewController {
     colorInfoView.delegate = self
     colorInfoView.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(colorInfoView)
+    let topMargin: CGFloat = Device.shared.hasNotch ? 15 : 20
     NSLayoutConstraint.activate([
       colorInfoView.widthAnchor.constraint(equalToConstant: 172),
       colorInfoView.heightAnchor.constraint(equalToConstant: 70),
       colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15)
+      colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
     ])
     if let color = UserDefaults.standard.colorForKey("lastColor") {
       colorInfoView.set(color: color)
