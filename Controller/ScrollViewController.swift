@@ -77,6 +77,14 @@ final class ScrollViewController: UIViewController {
     }
     scrollView.contentSize.width = scrollView.frame.width * CGFloat(controllers.count)
   }
+
+  override func viewWillAppear(_ animated: Bool) {
+    /* Pages change their order for some reason, so
+     we reset current page's offset here */
+
+    let offset = controllers[currentPage].view.frame.origin.x
+    scrollView.contentOffset.x = offset
+  }
   
   private func setupBottom() {
     bottomView.backgroundColor = .white
