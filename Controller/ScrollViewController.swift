@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol ScrollableViewDelegate {
+@objc protocol ScrollableViewDelegate {
   func scrollableViewWillAppear()
   func scrollableViewWillDisappear()
 }
@@ -129,6 +129,7 @@ final class ScrollViewController: UIViewController {
     guard sender.tag != currentPage else {
       return
     }
+    (controllers[sender.tag] as? CameraController)?.isCurrent = true
     (controllers[currentPage] as? ScrollableViewDelegate)?.scrollableViewWillDisappear()
     (controllers[sender.tag] as? ScrollableViewDelegate)?.scrollableViewWillAppear()
 

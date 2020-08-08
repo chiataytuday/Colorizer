@@ -54,8 +54,10 @@ final class CameraController: UIViewController {
     captureSession.startRunning()
     setupSubviews()
 
-//    NotificationCenter.default.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
-//    NotificationCenter.default.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+    previewLayer.connection?.isEnabled = false
+
+    NotificationCenter.default.addObserver(self, selector: #selector(scrollableViewWillDisappear), name: UIApplication.willResignActiveNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(scrollableViewWillAppear), name: UIApplication.didBecomeActiveNotification, object: nil)
   }
 
   private func setupCaptureSession() {
@@ -130,53 +132,10 @@ final class CameraController: UIViewController {
     viewfinder.center = view.center
   }
 
-//  override func viewWillAppear(_ animated: Bool) {
-//    restartCaptureSession()
-//  }
-
-//  override func viewWillDisappear(_ animated: Bool) {
-//    stopCaptureSession()
-//  }
-
-//  fileprivate func stopCaptureSession() {
-//    DispatchQueue.main.async {
-//      self.previewLayer.connection?.isEnabled = false
-//      guard self.torchState == .enabled else { return }
-//      do {
-//        try self.captureDevice?.lockForConfiguration()
-//        defer { self.captureDevice?.unlockForConfiguration() }
-//        self.captureDevice?.torchMode = .off
-//      } catch {
-//        print(error.localizedDescription)
-//      }
-//    }
-//  }
-
-//  fileprivate func restartCaptureSession() {
-//    DispatchQueue.main.async {
-//      self.previewLayer.connection?.isEnabled = true
-//      guard self.torchState == .enabled else { return }
-//      do {
-//        try self.captureDevice?.lockForConfiguration()
-//        defer { self.captureDevice?.unlockForConfiguration() }
-//        self.captureDevice?.torchMode = .on
-//      } catch {
-//        print(error.localizedDescription)
-//      }
-//    }
-//  }
-
-//  @objc private func willResignActive() {
-//    stopCaptureSession()
-//  }
-//
-//  @objc private func didBecomeActive() {
-//    restartCaptureSession()
-//  }
-
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard presentedViewController == nil else { return }
-    // Не использовать view.center, x бывает отрицательным
+
+    /* Don't use view.center, because x is negative sometimes */
     let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
 
     let pickedColor = previewLayer.pickColor(at: center)
@@ -188,15 +147,29 @@ final class CameraController: UIViewController {
   override var prefersStatusBarHidden: Bool {
     true
   }
+
+  var isCurrent = false
 }
 
 extension CameraController: ScrollableViewDelegate {
-  func scrollableViewWillAppear() {
+  @objc func scrollableViewWillAppear() {
+    guard isCurrent else { return }
     previewLayer.connection?.isEnabled = true
   }
 
-  func scrollableViewWillDisappear() {
+  @objc func scrollableViewWillDisappear() {
+    guard isCurrent else { return }
     previewLayer.connection?.isEnabled = false
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    scrollableViewWillAppear()
+  }
+
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    scrollableViewWillDisappear()
   }
 }
 
