@@ -190,6 +190,16 @@ final class CameraController: UIViewController {
   }
 }
 
+extension CameraController: ScrollableViewDelegate {
+  func scrollableViewWillAppear() {
+    previewLayer.connection?.isEnabled = true
+  }
+
+  func scrollableViewWillDisappear() {
+    previewLayer.connection?.isEnabled = false
+  }
+}
+
 extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
   func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
     connection.videoOrientation = .portrait

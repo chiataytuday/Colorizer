@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol ScrollableViewDelegate {
+  func scrollableViewWillAppear()
+  func scrollableViewWillDisappear()
+}
+
 enum ScrollDirection {
   case right
   case left
@@ -116,6 +121,9 @@ final class ScrollViewController: UIViewController {
     guard sender.tag != currentPage else {
       return
     }
+    (controllers[currentPage] as? ScrollableViewDelegate)?.scrollableViewWillDisappear()
+    (controllers[sender.tag] as? ScrollableViewDelegate)?.scrollableViewWillAppear()
+
     UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
       self.buttonsStackView.arrangedSubviews[self.currentPage].tintColor = .softGray
       self.buttonsStackView.arrangedSubviews[sender.tag].tintColor = .black
