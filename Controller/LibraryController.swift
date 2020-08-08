@@ -111,6 +111,8 @@ final class LibraryController: UIViewController {
     scrollView.delegate = self
     scrollView.isUserInteractionEnabled = false
     scrollView.contentInsetAdjustmentBehavior = .never
+    scrollView.showsVerticalScrollIndicator = false
+    scrollView.showsHorizontalScrollIndicator = false
     scrollView.delaysContentTouches = false
     scrollView.maximumZoomScale = 8
     view.addSubview(scrollView)
