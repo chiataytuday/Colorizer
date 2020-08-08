@@ -254,8 +254,28 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
     scrollView.maximumZoomScale = max(ratio, 4)
   }
 
+  func resizedImage(_ image: UIImage, to scale: CGFloat) -> UIImage {
+    let height = image.size.height * scale
+    let width = image.size.width * scale
+    UIGraphicsBeginImageContext(CGSize(width: width, height: height))
+    image.draw(in: CGRect(x: 0, y: 0, width: width, height: height))
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return newImage!
+  }
+
+  func appropriateScale(for image: UIImage) -> CGFloat {
+    let maxSideLength: CGFloat = 2100
+    let largestSide = max(image.size.width, image.size.height)
+    let scale = maxSideLength / largestSide
+    return min(1, scale)
+  }
+
   func setImage(_ image: UIImage?) {
-    photoImageView.image = image
+    let scale = appropriateScale(for: image!)
+    let compressedImage = resizedImage(image!, to: scale)
+
+    photoImageView.image = compressedImage
     photoImageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
     photoImageView.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
     UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
