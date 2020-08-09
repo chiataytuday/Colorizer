@@ -26,7 +26,7 @@ final class ColorInfoView: UIButton {
   private let hexLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.monospacedFont(ofSize: 19, weight: .light)
-    label.text = "#FFFFFF"
+    label.text = "#000000"
     label.textColor = .lightGray
     return label
   }()

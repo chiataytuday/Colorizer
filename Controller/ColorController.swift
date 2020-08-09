@@ -181,9 +181,8 @@ extension UIColor {
   var hsb: String {
     var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
     getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-    #warning("TO-DO: Fix wrong hue value")
     let rounded: (h: CGFloat, s: CGFloat, b: CGFloat) = (
-      (h*100).rounded(), (s*100).rounded(), (b*100).rounded()
+      (h*360).rounded(), (s*100).rounded(), (b*100).rounded()
     )
     return "\(Int(rounded.h)) \(Int(rounded.s)) \(Int(rounded.b))"
   }
