@@ -25,7 +25,7 @@ final class ArchiveHeaderView: UICollectionReusableView {
   }()
   private let subtitleLabel: UILabel = {
     let label = UILabel()
-    label.text = "Last 100 colors are stored here"
+    label.text = "Up to 100 colors can be stored here"
     label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
     label.textColor = .lightGray
     return label

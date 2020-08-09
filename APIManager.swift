@@ -15,17 +15,7 @@ import UIKit
 class APIManager {
   static let shared = APIManager()
   private let defaults = UserDefaults.standard
-  private var colors: [UIColor] = [
-    UIColor.rgb(48, 209, 88),
-    UIColor.rgb(191, 90, 242),
-    UIColor.rgb(94, 92, 230),
-    UIColor.rgb(10, 132, 255),
-    UIColor.rgb(100, 210, 255),
-    UIColor.rgb(255, 55, 95),
-    UIColor.rgb(255, 69, 58),
-    UIColor.rgb(255, 159, 10),
-    UIColor.rgb(255, 214, 10)
-  ]
+  private var colors: [UIColor] = []
 
   func add(color: UIColor) {
     if colors.count == 100 {

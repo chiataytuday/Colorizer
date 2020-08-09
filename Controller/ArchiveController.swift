@@ -18,7 +18,6 @@ final class ArchiveController: UIViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
     layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 100, right: 0)
-    layout.headerReferenceSize.height = 72
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     collectionView.register(ArchiveHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
     collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
@@ -26,12 +25,26 @@ final class ArchiveController: UIViewController {
     collectionView.alwaysBounceVertical = true
     return collectionView
   }()
+  private var tipStackView: UIStackView = {
+    let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+    let image = UIImage(systemName: "bin.xmark", withConfiguration: config)
+    let imageView = UIImageView(image: image)
+    imageView.tintColor = .lightGray
+
+    let label = UILabel()
+    label.text = "Archive is empty"
+    label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+    label.textColor = .lightGray
+
+    return UIStackView(arrangedSubviews: [imageView, label])
+  }()
   private var colors = APIManager.shared.fetchColors()
 
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
     setupCollectionView()
+    setupTipStackView()
   }
 
   private func setupCollectionView() {
@@ -47,8 +60,21 @@ final class ArchiveController: UIViewController {
     ])
   }
 
+  private func setupTipStackView() {
+    tipStackView.axis = .vertical
+    tipStackView.alignment = .center
+    tipStackView.spacing = 8
+    view.addSubview(tipStackView)
+    tipStackView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      tipStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      tipStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+    ])
+  }
+
   func synchronize() {
     colors = APIManager.shared.fetchColors()
+    tipStackView.isHidden = colors.count > 0
     collectionView.reloadData()
   }
 }
@@ -101,6 +127,11 @@ extension ArchiveController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     let size = (collectionView.frame.width - 4)/5
     return CGSize(width: size, height: size)
+  }
+
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    let height = colors.count > 0 ? 72 : 0
+    return CGSize(width: 0, height: height)
   }
 }
 
