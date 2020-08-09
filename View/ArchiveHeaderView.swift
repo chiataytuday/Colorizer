@@ -8,10 +8,6 @@
 
 import UIKit
 
-/**
- 
- */
-
 final class ArchiveHeaderView: UICollectionReusableView {
   private let iconImageView: UIImageView = {
     let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .semibold)

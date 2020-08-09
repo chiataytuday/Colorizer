@@ -8,10 +8,6 @@
 
 import UIKit
 
-/**
- 
- */
-
 final class AnimationController: NSObject {
   enum AnimationType {
     case present

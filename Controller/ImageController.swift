@@ -8,29 +8,16 @@
 
 import UIKit
 
-/**
- 
- */
-
-#warning("TO-DO: Refactor")
 final class ImageController: UIViewController {
-  var bottomBarConstraint: NSLayoutAnchor<NSLayoutYAxisAnchor>? {
-    didSet {
-      setupBarButtons()
-    }
-  }
-  var updateColorsArchive: (() -> Void)?
-  private var tipStackView: UIStackView!
   private let scrollView = UIScrollView()
-  private var colorPickerView: ColorPicker!
-  private var colorInfoView = ColorInfoView()
+  private let imagePicker = UIImagePickerController()
   private let doubleTapGesture = UITapGestureRecognizer()
+  private var colorInfoView = ColorInfoView()
   private var photoImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
-  private let imagePicker = UIImagePickerController()
   private let pickButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 56, height: 55))
     button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .regular), forImageIn: .normal)
@@ -39,6 +26,14 @@ final class ImageController: UIViewController {
     button.isHidden = true
     return button
   }()
+  var bottomBarConstraint: NSLayoutAnchor<NSLayoutYAxisAnchor>? {
+    didSet {
+      setupBarButtons()
+    }
+  }
+  private var colorPickerView: ColorPicker!
+  private var tipStackView: UIStackView!
+  var updateColorsArchive: (() -> Void)?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -205,6 +200,7 @@ final class ImageController: UIViewController {
   }
 }
 
+// MARK: - UIScrollViewDelegate
 extension ImageController: UIScrollViewDelegate {
   func viewForZooming(in scrollView: UIScrollView) -> UIView? {
     return photoImageView
@@ -243,6 +239,7 @@ extension ImageController: UIScrollViewDelegate {
   }
 }
 
+//MARK: - UINavigationControllerDelegate, UIImagePickerControllerDelegate
 extension ImageController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     setImage(info[.originalImage] as? UIImage)
@@ -305,6 +302,7 @@ extension ImageController: UINavigationControllerDelegate, UIImagePickerControll
   }
 }
 
+//MARK: - ColorPickerDelegate
 extension ImageController: ColorPickerDelegate {
   func endedMovement() {
     doubleTapGesture.isEnabled = true

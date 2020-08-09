@@ -12,13 +12,7 @@ import UIKit
   func presentColorController()
 }
 
-/**
-
- */
-
-#warning("TO-DO: Refactor")
 final class ColorInfoView: UIButton {
-  var delegate: ColorInfoDelegate?
   private let circleView: UIView = {
     let view = UIView()
     view.layer.cornerRadius = 10
@@ -31,21 +25,22 @@ final class ColorInfoView: UIButton {
   }()
   private let hexLabel: UILabel = {
     let label = UILabel()
+    label.font = UIFont.monospacedFont(ofSize: 19, weight: .light)
     label.text = "#FFFFFF"
     label.textColor = .lightGray
-    label.font = UIFont.monospacedFont(ofSize: 19, weight: .light)
     return label
   }()
   private let rgbLabel: UILabel = {
     let label = UILabel()
+    label.font = UIFont.monospacedFont(ofSize: 14, weight: .regular)
     label.text = "0 0 0"
     label.textColor = .lightGray
-    label.font = UIFont.monospacedFont(ofSize: 14, weight: .regular)
     return label
   }()
   var color: UIColor? {
     return circleView.backgroundColor
   }
+  var delegate: ColorInfoDelegate?
 
   init() {
     super.init(frame: .zero)

@@ -14,22 +14,17 @@ protocol ColorPickerDelegate {
   func endedMovement()
 }
 
-/**
- 
- */
-
-#warning("TO-DO: Refactor")
 final class ColorPicker: UIView {
-  var delegate: ColorPickerDelegate?
-  var color: UIColor = .white
   let shapeLayer = CAShapeLayer()
-  private lazy var location: CGPoint = {
-    return center
-  }()
+  var color: UIColor = .white
   private var defaultScale: CGFloat {
     let scrollView = superview?.superview as! UIScrollView
     return 1/scrollView.zoomScale
   }
+  private lazy var location: CGPoint = {
+    return center
+  }()
+  var delegate: ColorPickerDelegate?
   
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -76,6 +71,7 @@ final class ColorPicker: UIView {
   }
 }
 
+// MARK: - Gesture actions
 extension ColorPicker {
   @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
     switch recognizer.state {

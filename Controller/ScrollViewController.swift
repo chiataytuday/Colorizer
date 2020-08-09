@@ -18,10 +18,6 @@ enum ScrollDirection {
   case left
 }
 
-/**
- 
- */
-
 final class ScrollViewController: UIViewController {
   private lazy var scrollView: UIScrollView = {
     let scrollView = UIScrollView(frame: view.frame)

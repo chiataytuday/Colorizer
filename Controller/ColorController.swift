@@ -8,14 +8,7 @@
 
 import UIKit
 
-/**
- 
- */
-
-#warning("TO-DO: Refactor")
 final class ColorController: UIViewController {
-  var updateColorsArchive: (() -> Void)?
-  private var colorData: [Color]?
   private let saveButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 47, height: 46))
     button.backgroundColor = .clear
@@ -31,8 +24,10 @@ final class ColorController: UIViewController {
     button.setImage(UIImage(systemName: "arrow.down"), for: .normal)
     return button
   }()
-  private var rowViews = [CopyableDataView]()
   private var stackView = UIStackView()
+  private var rowViews = [CopyableDataView]()
+  var updateColorsArchive: (() -> Void)?
+  private var colorData: [Color]?
 
   #warning("TO-DO: Get rid of unused variables in class header")
   
