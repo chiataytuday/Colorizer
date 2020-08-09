@@ -28,8 +28,6 @@ final class ColorController: UIViewController {
   private var rowViews = [CopyableDataView]()
   var updateColorsArchive: (() -> Void)?
   private var colorData: [Color]?
-
-  #warning("TO-DO: Get rid of unused variables in class header")
   
   override func viewDidLoad() {
     super.viewDidLoad()

@@ -63,8 +63,6 @@ extension ArchiveController: UICollectionViewDelegate {
     let color = colors[indexPath.item]
     let colorController = ColorController()
     colorController.configure(with: color)
-    #warning("TO-DO: Color controller delegate")
-//    colorController.delegate = self
     colorController.updateColorsArchive = synchronize
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)

@@ -26,7 +26,6 @@ final class CopyableDataView: UIView {
   
   init(title: String, value: String) {
     super.init(frame: .zero)
-    layer.cornerRadius = 15
     colorSpaceLabel.text = title
     colorSpaceLabel.sizeToFit()
     valueLabel.text = value
@@ -42,8 +41,8 @@ final class CopyableDataView: UIView {
     addSubview(stackView)
     NSLayoutConstraint.activate([
       heightAnchor.constraint(equalTo: stackView.heightAnchor, constant: 15),
-      widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: 25),
-      stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12.5),
+      widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: 26),
+      stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 13),
       stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
     ])
   }
@@ -62,7 +61,7 @@ final class CopyableDataView: UIView {
     UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
 
     #warning("TO-DO: Change copy animation")
-    backgroundColor = colorSpaceLabel.textColor.withAlphaComponent(0.1)
+    backgroundColor = colorSpaceLabel.textColor.withAlphaComponent(0.15)
     UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
       self.backgroundColor = .clear
     })
