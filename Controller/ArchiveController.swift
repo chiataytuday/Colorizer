@@ -1,5 +1,5 @@
 //
-//  HistoryController.swift
+//  ArchiveController.swift
 //  Tint
 //
 //  Created by debavlad on 14.07.2020.
@@ -8,17 +8,19 @@
 
 import UIKit
 
-protocol ColorCellDelegate {
-  func presentColorController(with color: UIColor)
-}
+/**
+ This class is responsible for colors archive.
+ It's content is synchonized via APIManager, where
+ all the colors are stored.
+ */
 
-final class HistoryController: UIViewController {
+final class ArchiveController: UIViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
     layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 100, right: 0)
     layout.headerReferenceSize.height = 72
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-    collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
+    collectionView.register(ArchiveHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
     collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
     collectionView.backgroundColor = UIColor(white: 0.95, alpha: 1)
     collectionView.alwaysBounceVertical = true
@@ -30,11 +32,6 @@ final class HistoryController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
     setupCollectionView()
-  }
-
-  func reloadCollectionView() {
-    colors = APIManager.shared.fetchColors()
-    collectionView.reloadData()
   }
 
   private func setupCollectionView() {
@@ -49,23 +46,26 @@ final class HistoryController: UIViewController {
       collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     ])
   }
+
+  func synchronize() {
+    colors = APIManager.shared.fetchColors()
+    collectionView.reloadData()
+  }
+}
+
+protocol ColorCellDelegate {
+  func presentColorController(with color: UIColor)
 }
 
 // MARK: - UICollectionViewDelegate
-extension HistoryController: UICollectionViewDelegate {
-  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-    return 1
-  }
-
-  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-    return 1
-  }
-
+extension ArchiveController: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    let colorController = ColorController()
     let color = colors[indexPath.item]
+    let colorController = ColorController()
     colorController.configure(with: color)
-    colorController.updateColorsArchive = reloadCollectionView
+    #warning("TO-DO: Color controller delegate")
+//    colorController.delegate = self
+    colorController.updateColorsArchive = synchronize
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }
@@ -74,10 +74,18 @@ extension HistoryController: UICollectionViewDelegate {
     let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HeaderView", for: indexPath)
     return header
   }
+
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    return 1
+  }
+
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    return 1
+  }
 }
 
 // MARK: - UICollectionViewDataSource
-extension HistoryController: UICollectionViewDataSource {
+extension ArchiveController: UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     return colors.count
   }
@@ -91,14 +99,14 @@ extension HistoryController: UICollectionViewDataSource {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension HistoryController: UICollectionViewDelegateFlowLayout {
+extension ArchiveController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     let size = (collectionView.frame.width - 4)/5
     return CGSize(width: size, height: size)
   }
 }
 
-extension HistoryController: ColorCellDelegate {
+extension ArchiveController: ColorCellDelegate {
   func presentColorController(with color: UIColor) {
     let colorController = ColorController()
     colorController.configure(with: color)

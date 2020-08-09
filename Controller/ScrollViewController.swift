@@ -18,6 +18,10 @@ enum ScrollDirection {
   case left
 }
 
+/**
+ 
+ */
+
 final class ScrollViewController: UIViewController {
   private lazy var scrollView: UIScrollView = {
     let scrollView = UIScrollView(frame: view.frame)
@@ -40,7 +44,7 @@ final class ScrollViewController: UIViewController {
   }
 
   private func setupControllers() {
-    let libraryController = LibraryController()
+    let libraryController = ImageController()
     let libraryIcon = "person.crop.square"
     controllers.append(libraryController)
     icons.append(libraryIcon)
@@ -50,13 +54,13 @@ final class ScrollViewController: UIViewController {
     controllers.append(cameraController)
     icons.append(cameraIcon)
 
-    let historyController = HistoryController()
+    let historyController = ArchiveController()
     let historyIcon = "archivebox"
     controllers.append(historyController)
     icons.append(historyIcon)
 
-    cameraController.updateColorsArchive = historyController.reloadCollectionView
-    libraryController.updateColorsArchive = historyController.reloadCollectionView
+    cameraController.updateColorsArchive = historyController.synchronize
+    libraryController.updateColorsArchive = historyController.synchronize
   }
   
   private func setupPages() {
@@ -98,7 +102,7 @@ final class ScrollViewController: UIViewController {
       bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: bottomMargin),
       bottomView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
     ])
-    (controllers[0] as? LibraryController)?.bottomBarConstraint = bottomView.topAnchor
+    (controllers[0] as? ImageController)?.bottomBarConstraint = bottomView.topAnchor
     
     let backView = UIView()
     backView.backgroundColor = .white

@@ -12,6 +12,11 @@ import UIKit
   func presentColorController()
 }
 
+/**
+
+ */
+
+#warning("TO-DO: Refactor")
 final class ColorInfoView: UIButton {
   var delegate: ColorInfoDelegate?
   private let circleView: UIView = {
@@ -83,9 +88,9 @@ final class ColorInfoView: UIButton {
   }
 
   func set(color: UIColor) {
-    rgbLabel.text = color.rgb
     circleView.backgroundColor = color
     hexLabel.text = color.hex
+    rgbLabel.text = color.rgb
   }
 
   required init?(coder: NSCoder) {
@@ -97,13 +102,6 @@ final class ColorInfoView: UIButton {
 extension UIFont {
   static func monospacedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
     guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.monospaced) else {
-      return .systemFont(ofSize: size, weight: weight)
-    }
-    return UIFont(descriptor: descriptor, size: size)
-  }
-
-  static func roundedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
-    guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.rounded) else {
       return .systemFont(ofSize: size, weight: weight)
     }
     return UIFont(descriptor: descriptor, size: size)

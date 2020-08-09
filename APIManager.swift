@@ -8,6 +8,10 @@
 
 import UIKit
 
+/**
+ 
+ */
+
 class APIManager {
   static let shared = APIManager()
   private let defaults = UserDefaults.standard

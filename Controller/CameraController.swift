@@ -9,52 +9,33 @@
 import UIKit
 import AVFoundation
 
+/**
+ This class is responsible for camera color picker,
+ it can be used to sip colors from the real world.
+ Color is being fetched from view's center via CALayer
+ */
+
 final class CameraController: UIViewController {
-  var updateColorsArchive: (() -> Void)?
-
-  private let dot: UIImageView = {
-    let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
-    let image = UIImage(systemName: "circle.fill", withConfiguration: config)
-    let imageView = UIImageView(image: image)
-    imageView.tintColor = .white
-    return imageView
-  }()
-  private let viewfinder: UIImageView = {
-    let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
-    let image = UIImage(systemName: "viewfinder", withConfiguration: config)
-    let imageView = UIImageView(image: image)
-    imageView.tintColor = .white
-    imageView.alpha = 0.25
-    return imageView
-  }()
-  private var colorInfoView = ColorInfoView()
-
   private lazy var captureSession: AVCaptureSession = {
     let session = AVCaptureSession()
     session.sessionPreset = .inputPriority
     return session
   }()
   private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
-    let layer = AVCaptureVideoPreviewLayer(session: self.captureSession)
+    let layer = AVCaptureVideoPreviewLayer(session: captureSession)
     layer.videoGravity = .resizeAspectFill
-    layer.frame = self.view.bounds
+    layer.frame = view.bounds
     return layer
   }()
-  private let queue = DispatchQueue(label: "com.camera.video.queue", attributes: .concurrent)
+  private var colorInfoView = ColorInfoView()
   private var captureDevice: AVCaptureDevice?
-  var previewView: UIView?
+  var updateColorsArchive: (() -> Void)?
 
   override func viewDidLoad() {
     super.viewDidLoad()
     setupCaptureSession()
     configureDeviceFormat()
-    transitioningDelegate = self
-
-    view.layer.addSublayer(previewLayer)
-    captureSession.startRunning()
     setupSubviews()
-
-    previewLayer.connection?.isEnabled = false
 
     NotificationCenter.default.addObserver(self, selector: #selector(scrollableViewWillDisappear), name: UIApplication.willResignActiveNotification, object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(scrollableViewWillAppear), name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -103,15 +84,11 @@ final class CameraController: UIViewController {
     }
   }
 
-  @objc private func openColorController() {
-    let colorController = ColorController()
-    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
-    colorController.configure(with: colorInfoView.color!)
-    colorController.modalPresentationStyle = .fullScreen
-    present(colorController, animated: true)
-  }
-
   private func setupSubviews() {
+    previewLayer.connection?.isEnabled = false
+    view.layer.addSublayer(previewLayer)
+    captureSession.startRunning()
+
     colorInfoView = ColorInfoView()
     colorInfoView.delegate = self
     colorInfoView.translatesAutoresizingMaskIntoConstraints = false
@@ -127,8 +104,24 @@ final class CameraController: UIViewController {
       colorInfoView.set(color: color)
     }
 
+    let dot: UIImageView = {
+      let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
+      let image = UIImage(systemName: "circle.fill", withConfiguration: config)
+      let imageView = UIImageView(image: image)
+      imageView.tintColor = .white
+      return imageView
+    }()
     view.addSubview(dot)
     dot.center = view.center
+
+    let viewfinder: UIImageView = {
+      let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
+      let image = UIImage(systemName: "viewfinder", withConfiguration: config)
+      let imageView = UIImageView(image: image)
+      imageView.tintColor = .white
+      imageView.alpha = 0.25
+      return imageView
+    }()
     view.addSubview(viewfinder)
     viewfinder.center = view.center
   }
@@ -222,16 +215,6 @@ extension UserDefaults {
       print(error.localizedDescription)
     }
     return colorToReturn
-  }
-}
-
-extension CameraController: UIViewControllerTransitioningDelegate {
-  func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.4, type: .present, direction: .horizontal)
-  }
-
-  func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.4, type: .dismiss, direction: .horizontal)
   }
 }
 

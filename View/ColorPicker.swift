@@ -14,6 +14,11 @@ protocol ColorPickerDelegate {
   func endedMovement()
 }
 
+/**
+ 
+ */
+
+#warning("TO-DO: Refactor")
 final class ColorPicker: UIView {
   var delegate: ColorPickerDelegate?
   var color: UIColor = .white

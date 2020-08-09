@@ -1,5 +1,5 @@
 //
-//  SectionHeaderView.swift
+//  ArchiveHeaderView.swift
 //  Tint
 //
 //  Created by debavlad on 18.07.2020.
@@ -7,6 +7,10 @@
 //
 
 import UIKit
+
+/**
+ 
+ */
 
 final class ArchiveHeaderView: UICollectionReusableView {
   private let iconImageView: UIImageView = {

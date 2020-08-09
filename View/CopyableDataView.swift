@@ -1,5 +1,5 @@
 //
-//  ColorRowView.swift
+//  CopyableDataView.swift
 //  Tint
 //
 //  Created by debavlad on 05.07.2020.
@@ -8,8 +8,12 @@
 
 import UIKit
 
-final class ColorRowView: UIView {
-  private var titleLabel: UILabel = {
+/**
+ 
+ */
+
+final class CopyableDataView: UIView {
+  private var colorSpaceLabel: UILabel = {
     let label = UILabel()
     label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
     return label
@@ -23,16 +27,15 @@ final class ColorRowView: UIView {
   init(title: String, value: String) {
     super.init(frame: .zero)
     layer.cornerRadius = 15
-    titleLabel.text = title
+    colorSpaceLabel.text = title
+    colorSpaceLabel.sizeToFit()
     valueLabel.text = value
-    titleLabel.sizeToFit()
     valueLabel.sizeToFit()
-    
     setupStackView()
   }
   
   private func setupStackView() {
-    let stackView = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
+    let stackView = UIStackView(arrangedSubviews: [colorSpaceLabel, valueLabel])
     stackView.translatesAutoresizingMaskIntoConstraints = false
     stackView.isUserInteractionEnabled = false
     stackView.axis = .vertical
@@ -46,19 +49,20 @@ final class ColorRowView: UIView {
   }
 
   func set(color: UIColor) {
-    titleLabel.textColor = color
+    colorSpaceLabel.textColor = color
     valueLabel.textColor = color
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    guard let title = titleLabel.text, let value = valueLabel.text else {
+    guard let title = colorSpaceLabel.text, let value = valueLabel.text else {
       return
     }
     let stringToCopy = "\(title)(\(value.split(separator: " ").joined(separator: ", ")))"
     UIPasteboard.general.string = stringToCopy
     UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-    
-    backgroundColor = titleLabel.textColor.withAlphaComponent(0.1)
+
+    #warning("TO-DO: Change copy animation")
+    backgroundColor = colorSpaceLabel.textColor.withAlphaComponent(0.1)
     UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
       self.backgroundColor = .clear
     })

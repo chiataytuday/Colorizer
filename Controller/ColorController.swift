@@ -8,6 +8,11 @@
 
 import UIKit
 
+/**
+ 
+ */
+
+#warning("TO-DO: Refactor")
 final class ColorController: UIViewController {
   var updateColorsArchive: (() -> Void)?
   private var colorData: [Color]?
@@ -26,8 +31,10 @@ final class ColorController: UIViewController {
     button.setImage(UIImage(systemName: "arrow.down"), for: .normal)
     return button
   }()
-  private var rowViews = [ColorRowView]()
+  private var rowViews = [CopyableDataView]()
   private var stackView = UIStackView()
+
+  #warning("TO-DO: Get rid of unused variables in class header")
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -74,7 +81,7 @@ final class ColorController: UIViewController {
     
     guard let data = colorData else { return }
     for color in data {
-      let rowView = ColorRowView(title: color.spaceName, value: color.value)
+      let rowView = CopyableDataView(title: color.spaceName, value: color.value)
       stackView.addArrangedSubview(rowView)
       rowViews.append(rowView)
     }
@@ -140,11 +147,11 @@ extension ColorController {
 //MARK: - UIViewControllerTransitioningDelegate
 extension ColorController: UIViewControllerTransitioningDelegate {
   func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.5, type: .present, direction: .vertical)
+    return AnimationController(duration: 0.5, type: .present)
   }
   
   func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.5, type: .dismiss, direction: .vertical)
+    return AnimationController(duration: 0.5, type: .dismiss)
   }
 }
 
@@ -181,7 +188,7 @@ extension UIColor {
   var hsb: String {
     var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
     getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-    #warning("Why hue value is incorrect?")
+    #warning("TO-DO: Fix wrong hue value")
     let rounded: (h: CGFloat, s: CGFloat, b: CGFloat) = (
       (h*100).rounded(), (s*100).rounded(), (b*100).rounded()
     )

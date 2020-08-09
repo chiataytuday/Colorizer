@@ -1,5 +1,5 @@
 //
-//  LibraryController.swift
+//  ImageController.swift
 //  Tint
 //
 //  Created by debavlad on 01.07.2020.
@@ -8,7 +8,12 @@
 
 import UIKit
 
-final class LibraryController: UIViewController {
+/**
+ 
+ */
+
+#warning("TO-DO: Refactor")
+final class ImageController: UIViewController {
   var bottomBarConstraint: NSLayoutAnchor<NSLayoutYAxisAnchor>? {
     didSet {
       setupBarButtons()
@@ -38,7 +43,6 @@ final class LibraryController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
-    transitioningDelegate = self
     if let colors = UserDefaults.standard.getColors(key: "colors") {
       APIManager.shared.set(colors: colors)
       updateColorsArchive?()
@@ -201,7 +205,7 @@ final class LibraryController: UIViewController {
   }
 }
 
-extension LibraryController: UIScrollViewDelegate {
+extension ImageController: UIScrollViewDelegate {
   func viewForZooming(in scrollView: UIScrollView) -> UIView? {
     return photoImageView
   }
@@ -239,7 +243,7 @@ extension LibraryController: UIScrollViewDelegate {
   }
 }
 
-extension LibraryController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+extension ImageController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     setImage(info[.originalImage] as? UIImage)
     calculateZoomScale()
@@ -301,7 +305,7 @@ extension LibraryController: UINavigationControllerDelegate, UIImagePickerContro
   }
 }
 
-extension LibraryController: ColorPickerDelegate {
+extension ImageController: ColorPickerDelegate {
   func endedMovement() {
     doubleTapGesture.isEnabled = true
     scrollView.isScrollEnabled = true
@@ -318,18 +322,8 @@ extension LibraryController: ColorPickerDelegate {
   }
 }
 
-extension LibraryController: UIViewControllerTransitioningDelegate {
-  func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.4, type: .present, direction: .horizontal)
-  }
-
-  func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.4, type: .dismiss, direction: .horizontal)
-  }
-}
-
 //MARK: - ColorInfoDelegate
-extension LibraryController: ColorInfoDelegate {
+extension ImageController: ColorInfoDelegate {
   func presentColorController() {
     let colorController = ColorController()
     colorController.updateColorsArchive = updateColorsArchive
