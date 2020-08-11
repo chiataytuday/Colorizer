@@ -37,7 +37,7 @@ final class ColorController: UIViewController {
 
   private func setupButtons() {
     view.addSubview(backButton)
-    backButton.addTarget(self, action: #selector(backToCamera), for: .touchUpInside)
+    backButton.addTarget(self, action: #selector(backToScroll), for: .touchUpInside)
     backButton.translatesAutoresizingMaskIntoConstraints = false
     let bottomMargin: CGFloat = Device.shared.hasNotch ? -10 : -30
     NSLayoutConstraint.activate([
@@ -46,7 +46,7 @@ final class ColorController: UIViewController {
     ])
 
     view.addSubview(saveButton)
-    saveButton.addTarget(self, action: #selector(saveButtonTapped(sender:)), for: .touchUpInside)
+    saveButton.addTarget(self, action: #selector(likeButtonTapped(sender:)), for: .touchUpInside)
     saveButton.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       saveButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
@@ -114,8 +114,8 @@ final class ColorController: UIViewController {
 }
 
 //MARK: - Target actions
-extension ColorController {
-  @objc private func saveButtonTapped(sender: UIButton) {
+@objc extension ColorController {
+  private func likeButtonTapped(sender: UIButton) {
     switch sender.tag {
       case 0:
         APIManager.shared.add(color: view.backgroundColor!)
@@ -132,8 +132,8 @@ extension ColorController {
     updateColorsArchive?()
   }
 
-  @objc private func backToCamera() {
-    dismiss(animated: true, completion: nil)
+  private func backToScroll() {
+    dismiss(animated: true)
     ReviewManager.requestReviewIfAppropriate()
   }
 }
@@ -154,51 +154,55 @@ extension UIColor {
   var readable: UIColor {
     var white: CGFloat = 0
     getWhite(&white, alpha: nil)
-    let readableColor: UIColor
-    if white > 0.65 {
-      readableColor = UIColor.black.withAlphaComponent(0.4)
-    } else {
-      readableColor = UIColor.white.withAlphaComponent(0.8)
-    }
-    return readableColor
+    let color = white > 0.65 ? UIColor.black.withAlphaComponent(0.4) :
+      UIColor.white.withAlphaComponent(0.8)
+    return color
   }
+
   var hex: String {
-    guard let components = cgColor.components, components.count >= 3 else {
+    guard let components = cgColor.components,
+      components.count >= 3 else {
       return "#000000"
     }
-    let r = Float(components[0])
-    let g = Float(components[1])
-    let b = Float(components[2])
-    return String(format: "#%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
+    let values = components.map {
+      lroundf(Float($0) * 255)
+    }
+    return String(format: "#%02lX%02lX%02lX", values[0], values[1], values[2])
   }
+
   var rgb: String {
     guard let components = cgColor.components, components.count >= 3 else {
       return "0 0 0"
     }
-    let values = components.map { Int(($0 * 255).rounded()) }
+    let values = components.map {
+      Int(($0 * 255).rounded())
+    }
     return "\(values[0]) \(values[1]) \(values[2])"
   }
+
   var hsb: String {
-    var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-    getHue(&h, saturation: &s, brightness: &b, alpha: &a)
-    let rounded: (h: CGFloat, s: CGFloat, b: CGFloat) = (
-      (h*360).rounded(), (s*100).rounded(), (b*100).rounded()
-    )
-    return "\(Int(rounded.h)) \(Int(rounded.s)) \(Int(rounded.b))"
+    var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0
+    getHue(&h, saturation: &s, brightness: &b, alpha: nil)
+    let values = [h * 360, s * 100, b * 100].map {
+      Int($0.rounded())
+    }
+    return "\(values[0]) \(values[1]) \(values[2])"
   }
+
   var cmyk: String {
-    guard let components = cgColor.components, components.count >= 3, components[0] != 0, components[1] != 0, components[2] != 0 else {
+    guard let components = cgColor.components, components.count >= 3,
+      components[0] != 0, components[1] != 0, components[2] != 0 else {
       return "0 0 0 100"
     }
     var c = 1 - components[0], m = 1 - components[1], y = 1 - components[2]
     let minCMY = min(c, m, y)
-    c = (c - minCMY) / (1 - minCMY)
-    m = (m - minCMY) / (1 - minCMY)
-    y = (y - minCMY) / (1 - minCMY)
+    c = (c - minCMY)/(1 - minCMY)
+    m = (m - minCMY)/(1 - minCMY)
+    y = (y - minCMY)/(1 - minCMY)
 
-    let rounded: (c: CGFloat, m: CGFloat, y: CGFloat, k: CGFloat) = (
-      (c*100).rounded(), (m*100).rounded(), (y*100).rounded(), (minCMY*100).rounded()
-    )
-    return "\(Int(rounded.c)) \(Int(rounded.m)) \(Int(rounded.y)) \(Int(rounded.k))"
+    let values = [c, m, y, minCMY].map {
+      Int(($0 * 100).rounded())
+    }
+    return "\(values[0]) \(values[1]) \(values[2]) \(values[3])"
   }
 }
