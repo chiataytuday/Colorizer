@@ -64,8 +64,6 @@ final class ColorController: UIViewController {
       self.saveButton.transform = .identity
       self.backButton.transform = .identity
     })
-    
-    ReviewManager.requestReviewIfAppropriate()
   }
   
   private func setupStackView() {
@@ -136,6 +134,7 @@ extension ColorController {
 
   @objc private func backToCamera() {
     dismiss(animated: true, completion: nil)
+    ReviewManager.requestReviewIfAppropriate()
   }
 }
 
