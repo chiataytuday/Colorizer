@@ -142,11 +142,11 @@ extension ColorController {
 //MARK: - UIViewControllerTransitioningDelegate
 extension ColorController: UIViewControllerTransitioningDelegate {
   func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.5, type: .present)
+    return AnimationController(duration: 0.48, type: .present)
   }
   
   func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.5, type: .dismiss)
+    return AnimationController(duration: 0.48, type: .dismiss)
   }
 }
 
