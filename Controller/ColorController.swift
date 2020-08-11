@@ -165,7 +165,7 @@ extension UIColor {
   }
   var hex: String {
     guard let components = cgColor.components, components.count >= 3 else {
-      return "#FFFFFF"
+      return "#000000"
     }
     let r = Float(components[0])
     let g = Float(components[1])
@@ -173,12 +173,11 @@ extension UIColor {
     return String(format: "#%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
   }
   var rgb: String {
-    let values: (r: CGFloat, g: CGFloat, b: CGFloat) = (
-      (cgColor.components![0] * 255).rounded(),
-      (cgColor.components![1] * 255).rounded(),
-      (cgColor.components![2] * 255).rounded()
-    )
-    return "\(Int(values.r)) \(Int(values.g)) \(Int(values.b))"
+    guard let components = cgColor.components, components.count >= 3 else {
+      return "0 0 0"
+    }
+    let values = components.map { Int(($0 * 255).rounded()) }
+    return "\(values[0]) \(values[1]) \(values[2])"
   }
   var hsb: String {
     var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
@@ -189,14 +188,10 @@ extension UIColor {
     return "\(Int(rounded.h)) \(Int(rounded.s)) \(Int(rounded.b))"
   }
   var cmyk: String {
-    let r = cgColor.components![0]
-    let g = cgColor.components![1]
-    let b = cgColor.components![2]
-    guard r != 0 && g != 0 && b != 0 else {
+    guard let components = cgColor.components, components.count >= 3, components[0] != 0, components[1] != 0, components[2] != 0 else {
       return "0 0 0 100"
     }
-
-    var c = 1 - r, m = 1 - g, y = 1 - b
+    var c = 1 - components[0], m = 1 - components[1], y = 1 - components[2]
     let minCMY = min(c, m, y)
     c = (c - minCMY) / (1 - minCMY)
     m = (m - minCMY) / (1 - minCMY)

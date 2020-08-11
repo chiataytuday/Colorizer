@@ -100,9 +100,9 @@ final class CameraController: UIViewController {
       colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
     ])
-    if let color = UserDefaults.standard.colorForKey("lastColor") {
-      colorInfoView.set(color: color)
-    }
+
+    let color = UserDefaults.standard.colorForKey("lastColor") ?? .black
+    colorInfoView.set(color: color)
 
     let dot: UIImageView = {
       let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
