@@ -18,7 +18,7 @@ final class APIManager {
       colors.removeLast()
     }
     colors.insert(color, at: 0)
-    defaults.setColors(colors: colors, forKey: "colors")
+    defaults.archiveColors(colors, by: "colors")
   }
 
   func remove(color: UIColor) {
@@ -26,7 +26,7 @@ final class APIManager {
     if let index = colors.firstIndex(of: color) {
       colors.remove(at: index)
     }
-    defaults.setColors(colors: colors, forKey: "colors")
+    defaults.archiveColors(colors, by: "colors")
   }
 
   func set(colors: [UIColor]) {
@@ -43,20 +43,22 @@ final class APIManager {
 }
 
 extension UserDefaults {
-   func getColors(key: String) -> [UIColor]? {
-    var colors: [UIColor]?
-    if let colorData = data(forKey: key) {
-     colors = NSKeyedUnarchiver.unarchiveObject(with: colorData) as? [UIColor]
+  func unarchiveColors(by key: String) -> [UIColor]? {
+    guard let data = data(forKey: key) else { return nil }
+    do {
+      guard let colors = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? [UIColor] else {
+        return nil
+      }
+      return colors
     }
-    return colors
-   }
+  }
 
-  func setColors(colors: [UIColor]?, forKey key: String) {
-    var colorData: NSData?
-     if let colors = colors {
-      colorData = NSKeyedArchiver.archivedData(withRootObject: colors) as NSData?
+  func archiveColors(_ colors: [UIColor]?, by key: String) {
+    var data: NSData?
+    if let colors = colors {
+      data = try? NSKeyedArchiver.archivedData(withRootObject: colors, requiringSecureCoding: false) as NSData
     }
-    set(colorData, forKey: key)
+    set(data, forKey: key)
     synchronize()
   }
 }

@@ -38,7 +38,7 @@ final class ImageController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
-    if let colors = UserDefaults.standard.getColors(key: "colors") {
+    if let colors = UserDefaults.standard.unarchiveColors(by: "colors") {
       APIManager.shared.set(colors: colors)
       updateColorsArchive?()
     }
