@@ -130,7 +130,7 @@ extension ColorController {
       default:
         break
     }
-    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.4)
+    UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 0.4)
     updateColorsArchive?()
   }
 
