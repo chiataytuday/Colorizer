@@ -8,11 +8,7 @@
 
 import UIKit
 
-/**
- 
- */
-
-class APIManager {
+final class APIManager {
   static let shared = APIManager()
   private let defaults = UserDefaults.standard
   private var colors: [UIColor] = []

@@ -64,6 +64,8 @@ final class ColorController: UIViewController {
       self.saveButton.transform = .identity
       self.backButton.transform = .identity
     })
+    
+    ReviewManager.requestReviewIfAppropriate()
   }
   
   private func setupStackView() {
