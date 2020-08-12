@@ -11,19 +11,10 @@ import UIKit
 final class BarButton: UIButton {
   init(_ imageName: String) {
     super.init(frame: .zero)
-    let image = UIImage(systemName: imageName)
-    setImage(image, for: .normal)
-    setupAppearance()
-  }
-
-  private func setupAppearance() {
     tintColor = .softGray
     adjustsImageWhenHighlighted = false
-    translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      widthAnchor.constraint(equalToConstant: 45),
-      heightAnchor.constraint(equalToConstant: 45)
-    ])
+    let image = UIImage(systemName: imageName)
+    setImage(image, for: .normal)
   }
 
   func set(size: CGFloat, weight: UIImage.SymbolWeight) {

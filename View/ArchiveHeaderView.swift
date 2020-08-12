@@ -19,7 +19,7 @@ final class ArchiveHeaderView: UICollectionReusableView {
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.text = "Archive"
-    label.font = UIFont.systemFont(ofSize: 30, weight: .medium)
+    label.font = UIFont.roundedFont(ofSize: 30, weight: .medium)
     label.textColor = .black
     return label
   }()
@@ -47,7 +47,7 @@ final class ArchiveHeaderView: UICollectionReusableView {
     let stackView = UIStackView(arrangedSubviews: [iconImageView, titleLabel])
     stackView.alignment = .center
     stackView.axis = .horizontal
-    stackView.spacing = 8
+    stackView.spacing = 7.5
     addSubview(stackView)
     stackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([

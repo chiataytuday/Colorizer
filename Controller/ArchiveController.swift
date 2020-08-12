@@ -15,7 +15,7 @@ protocol ColorCellDelegate {
 final class ArchiveController: UIViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
-    layout.sectionInset = UIEdgeInsets(top: 16, left: 0, bottom: 100, right: 0)
+    layout.sectionInset = UIEdgeInsets(top: 18, left: 0, bottom: 100, right: 0)
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
     collectionView.register(ArchiveHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
     collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
@@ -124,7 +124,7 @@ extension ArchiveController: UICollectionViewDelegateFlowLayout {
   }
 
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-    let height = colors.count > 0 ? 72 : 0
+    let height = colors.count > 0 ? 74 : 0
     return CGSize(width: 0, height: height)
   }
 }

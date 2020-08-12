@@ -11,7 +11,7 @@ import UIKit
 final class CopyableDataView: UIView {
   private var colorSpaceLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+    label.font = UIFont.roundedFont(ofSize: 20, weight: .semibold)
     return label
   }()
   private var valueLabel: UILabel = {

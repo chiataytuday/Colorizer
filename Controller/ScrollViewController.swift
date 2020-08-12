@@ -135,10 +135,10 @@ final class ScrollViewController: UIViewController {
     (controllers[currentPage] as? ScrollableViewDelegate)?.scrollableViewWillDisappear()
     (controllers[sender.tag] as? ScrollableViewDelegate)?.scrollableViewWillAppear()
 
-    UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
+    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
       self.buttonsStackView.arrangedSubviews[self.currentPage].tintColor = .softGray
       self.buttonsStackView.arrangedSubviews[sender.tag].tintColor = .black
-    }.startAnimation()
+    })
 
     let direction: ScrollDirection = sender.tag >= currentPage ? .right : .left
     let offset = scrollView.contentOffset.x + (direction == .right ? view.frame.width : -view.frame.width)

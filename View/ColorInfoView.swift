@@ -101,4 +101,11 @@ extension UIFont {
     }
     return UIFont(descriptor: descriptor, size: size)
   }
+
+  static func roundedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
+    guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.rounded) else {
+      return .systemFont(ofSize: size, weight: weight)
+    }
+    return UIFont(descriptor: descriptor, size: size)
+  }
 }

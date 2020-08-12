@@ -26,7 +26,7 @@ final class RoundButton: UIButton {
 
   @objc private func touchDown(sender: UIButton) {
     UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: [.allowUserInteraction, .curveEaseOut], animations: {
-      sender.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+      sender.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
     })
   }
 
