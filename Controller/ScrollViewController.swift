@@ -98,6 +98,8 @@ final class ScrollViewController: UIViewController {
       bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: bottomMargin),
       bottomView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
     ])
+    
+    #warning("Implement in a separate method")
     (controllers[0] as? ImageController)?.bottomBarConstraint = bottomView.topAnchor
     
     let backView = UIView()

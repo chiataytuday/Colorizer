@@ -8,10 +8,6 @@
 
 import UIKit
 
-/**
- 
- */
-
 final class CopyableDataView: UIView {
   private var colorSpaceLabel: UILabel = {
     let label = UILabel()
@@ -23,12 +19,12 @@ final class CopyableDataView: UIView {
     label.font = UIFont.monospacedFont(ofSize: 20, weight: .regular)
     return label
   }()
-  
-  init(title: String, value: String) {
+
+  init(with color: Color) {
     super.init(frame: .zero)
-    colorSpaceLabel.text = title
+    colorSpaceLabel.text = color.spaceName
     colorSpaceLabel.sizeToFit()
-    valueLabel.text = value
+    valueLabel.text = color.value
     valueLabel.sizeToFit()
     setupStackView()
   }

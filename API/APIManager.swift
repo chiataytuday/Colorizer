@@ -22,7 +22,9 @@ final class APIManager {
   }
 
   func remove(color: UIColor) {
-    guard colors.contains(color) else { return }
+    guard colors.contains(color) else {
+      return
+    }
     if let index = colors.firstIndex(of: color) {
       colors.remove(at: index)
     }

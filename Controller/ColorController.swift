@@ -11,23 +11,21 @@ import UIKit
 final class ColorController: UIViewController {
   private let saveButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 47, height: 46))
-    button.backgroundColor = .clear
     button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .light), forImageIn: .normal)
     button.setImage(UIImage(systemName: "suit.heart"), for: .normal)
+    button.backgroundColor = .clear
     button.tag = 0
     return button
   }()
   private let backButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 47, height: 46))
-    button.backgroundColor = .clear
     button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 25, weight: .light), forImageIn: .normal)
     button.setImage(UIImage(systemName: "arrow.down"), for: .normal)
+    button.backgroundColor = .clear
     return button
   }()
-  private var stackView = UIStackView()
-  private var rowViews = [CopyableDataView]()
+  private let stackView = UIStackView()
   var updateColorsArchive: (() -> Void)?
-  private var colorData: [Color]?
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -65,27 +63,6 @@ final class ColorController: UIViewController {
       self.backButton.transform = .identity
     })
   }
-  
-  private func setupStackView() {
-    stackView = UIStackView()
-    stackView.alignment = .leading
-    stackView.axis = .vertical
-    stackView.spacing = 4
-    
-    guard let data = colorData else { return }
-    for color in data {
-      let rowView = CopyableDataView(title: color.spaceName, value: color.value)
-      stackView.addArrangedSubview(rowView)
-      rowViews.append(rowView)
-    }
-    
-    view.addSubview(stackView)
-    stackView.translatesAutoresizingMaskIntoConstraints = false
-    NSLayoutConstraint.activate([
-      stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-    ])
-  }
 
   func configure(with color: UIColor) {
     view.backgroundColor = color
@@ -95,17 +72,35 @@ final class ColorController: UIViewController {
       saveButton.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
       saveButton.tag = 1
     }
+    setupStackView()
+  }
 
-    colorData = [
+  private func setupStackView() {
+    guard let color = view.backgroundColor else {
+      return
+    }
+    let data = [
       Color(spaceName: "HEX", value: color.hex),
       Color(spaceName: "RGB", value: color.rgb),
       Color(spaceName: "HSB", value: color.hsb),
       Color(spaceName: "CMYK", value: color.cmyk)
     ]
-    setupStackView()
-    for row in rowViews {
-      row.set(color: color.readable)
+
+    stackView.axis = .vertical
+    stackView.alignment = .leading
+    stackView.spacing = 4
+    data.forEach {
+      let dataView = CopyableDataView(with: $0)
+      dataView.set(color: color.readable)
+      stackView.addArrangedSubview(dataView)
     }
+
+    view.addSubview(stackView)
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+    ])
   }
   
   override var prefersStatusBarHidden: Bool {

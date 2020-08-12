@@ -8,11 +8,9 @@
 
 import UIKit
 
-/**
- This class is responsible for colors archive.
- It's content is synchonized via APIManager, where
- all the colors are stored.
- */
+protocol ColorCellDelegate {
+  func presentColorController(with color: UIColor)
+}
 
 final class ArchiveController: UIViewController {
   private let collectionView: UICollectionView = {
@@ -77,10 +75,6 @@ final class ArchiveController: UIViewController {
     tipStackView.isHidden = colors.count > 0
     collectionView.reloadData()
   }
-}
-
-protocol ColorCellDelegate {
-  func presentColorController(with color: UIColor)
 }
 
 // MARK: - UICollectionViewDelegate
