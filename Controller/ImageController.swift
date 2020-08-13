@@ -90,7 +90,7 @@ final class ImageController: UIViewController {
     let tipLabel: UILabel = {
       let label = UILabel()
       label.text = "Tap to open photo"
-      label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+      label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
       label.textColor = .lightGray
       return label
     }()
@@ -98,7 +98,7 @@ final class ImageController: UIViewController {
     tipStackView = UIStackView(arrangedSubviews: [plusImageView, tipLabel])
     tipStackView.translatesAutoresizingMaskIntoConstraints = false
     tipStackView.axis = .vertical
-    tipStackView.spacing = 8
+    tipStackView.spacing = 7.5
     view.addSubview(tipStackView)
     NSLayoutConstraint.activate([
       tipStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),

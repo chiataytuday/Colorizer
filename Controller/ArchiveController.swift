@@ -124,7 +124,7 @@ extension ArchiveController: UICollectionViewDelegateFlowLayout {
   }
 
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-    let height = colors.count > 0 ? 74 : 0
+    let height = colors.count > 0 ? 73.5 : 0
     return CGSize(width: 0, height: height)
   }
 }

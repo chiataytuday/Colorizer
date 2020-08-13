@@ -10,7 +10,7 @@ import UIKit
 
 final class ArchiveHeaderView: UICollectionReusableView {
   private let iconImageView: UIImageView = {
-    let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .semibold)
+    let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
     let image = UIImage(systemName: "archivebox", withConfiguration: config)
     let imageView = UIImageView(image: image)
     imageView.tintColor = .black
@@ -19,14 +19,15 @@ final class ArchiveHeaderView: UICollectionReusableView {
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.text = "Archive"
-    label.font = UIFont.roundedFont(ofSize: 30, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 29, weight: .semibold)
+    label.transform = CGAffineTransform(translationX: 0, y: 0.65)
     label.textColor = .black
     return label
   }()
   private let subtitleLabel: UILabel = {
     let label = UILabel()
-    label.text = "Up to 100 colors can be stored here"
-    label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+    label.text = "Up to 200 colors can be stored here"
+    label.font = UIFont.systemFont(ofSize: 15, weight: .light)
     label.textColor = .lightGray
     return label
   }()

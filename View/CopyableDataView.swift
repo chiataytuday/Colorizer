@@ -16,7 +16,7 @@ final class CopyableDataView: UIView {
   }()
   private var valueLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.monospacedFont(ofSize: 20, weight: .regular)
+    label.font = UIFont.monospacedFont(ofSize: 19, weight: .light)
     return label
   }()
 
