@@ -100,7 +100,7 @@ final class ScrollViewController: UIViewController {
     ])
     
     #warning("Implement in a separate method")
-    (controllers[0] as? ImageController)?.bottomBarConstraint = bottomView.topAnchor
+    (controllers[0] as? ImageController)?.bottomBarAnchor = bottomView.topAnchor
     
     let backView = UIView()
     backView.backgroundColor = .white
@@ -122,6 +122,7 @@ final class ScrollViewController: UIViewController {
     buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       buttonsStackView.widthAnchor.constraint(equalTo: bottomView.widthAnchor, multiplier: 0.8),
+      buttonsStackView.heightAnchor.constraint(equalToConstant: 65),
       buttonsStackView.centerXAnchor.constraint(equalTo: bottomView.centerXAnchor),
       buttonsStackView.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor)
     ])

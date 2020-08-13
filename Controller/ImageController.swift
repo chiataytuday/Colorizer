@@ -26,7 +26,7 @@ final class ImageController: UIViewController {
     button.isHidden = true
     return button
   }()
-  var bottomBarConstraint: NSLayoutAnchor<NSLayoutYAxisAnchor>? {
+  var bottomBarAnchor: NSLayoutAnchor<NSLayoutYAxisAnchor>? {
     didSet {
       setupBarButtons()
     }
@@ -66,7 +66,7 @@ final class ImageController: UIViewController {
     view.addSubview(pickButton)
     NSLayoutConstraint.activate([
       pickButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22.5),
-      pickButton.bottomAnchor.constraint(equalTo: bottomBarConstraint!, constant: -20)
+      pickButton.bottomAnchor.constraint(equalTo: bottomBarAnchor!, constant: -20)
     ])
   }
 
