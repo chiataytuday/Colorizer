@@ -14,7 +14,7 @@ final class APIManager {
   private var colors: [UIColor] = []
 
   func add(color: UIColor) {
-    if colors.count == 100 {
+    if colors.count == 200 {
       colors.removeLast()
     }
     colors.insert(color, at: 0)
