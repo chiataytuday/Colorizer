@@ -48,15 +48,6 @@ final class CopyableDataView: UIView {
     valueLabel.textColor = color
   }
   
-  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    guard let title = colorSpaceLabel.text, let value = valueLabel.text else {
-      return
-    }
-    let stringToCopy = "\(title)(\(value.split(separator: " ").joined(separator: ", ")))"
-    UIPasteboard.general.string = stringToCopy
-    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-  }
-  
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
