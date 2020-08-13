@@ -16,7 +16,7 @@ final class CopyableDataView: UIView {
   }()
   private var valueLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.monospacedFont(ofSize: 19, weight: .light)
+    label.font = UIFont.monospacedFont(ofSize: 18, weight: .light)
     return label
   }()
 
@@ -55,12 +55,6 @@ final class CopyableDataView: UIView {
     let stringToCopy = "\(title)(\(value.split(separator: " ").joined(separator: ", ")))"
     UIPasteboard.general.string = stringToCopy
     UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-
-    #warning("TO-DO: Change copy animation")
-    backgroundColor = colorSpaceLabel.textColor.withAlphaComponent(0.15)
-    UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
-      self.backgroundColor = .clear
-    })
   }
   
   required init?(coder: NSCoder) {

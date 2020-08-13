@@ -88,7 +88,7 @@ final class ColorController: UIViewController {
 
     stackView.axis = .vertical
     stackView.alignment = .leading
-    stackView.spacing = 4
+    stackView.spacing = 6
     data.forEach {
       let dataView = CopyableDataView(with: $0)
       dataView.set(color: color.readable)
