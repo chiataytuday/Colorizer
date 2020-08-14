@@ -24,14 +24,14 @@ final class ArchiveController: UIViewController {
     return collectionView
   }()
   private var tipStackView: UIStackView = {
-    let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+    let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .light)
     let image = UIImage(systemName: "bin.xmark", withConfiguration: config)
     let imageView = UIImageView(image: image)
     imageView.tintColor = .lightGray
 
     let label = UILabel()
     label.text = "Archive is empty"
-    label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
+    label.font = UIFont.systemFont(ofSize: 17, weight: .light)
     label.textColor = .lightGray
 
     return UIStackView(arrangedSubviews: [imageView, label])
@@ -61,7 +61,7 @@ final class ArchiveController: UIViewController {
   private func setupTipStackView() {
     tipStackView.axis = .vertical
     tipStackView.alignment = .center
-    tipStackView.spacing = 8
+    tipStackView.spacing = 7.5
     view.addSubview(tipStackView)
     tipStackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
