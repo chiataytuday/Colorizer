@@ -37,8 +37,8 @@ final class CameraController: UIViewController {
     configureDeviceFormat()
     setupSubviews()
 
-    NotificationCenter.default.addObserver(self, selector: #selector(scrollableViewWillDisappear), name: UIApplication.willResignActiveNotification, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(scrollableViewWillAppear), name: UIApplication.didBecomeActiveNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(viewWillDisappear(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(viewWillAppear(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
   }
 
   private func setupCaptureSession() {
@@ -155,6 +155,7 @@ extension CameraController: ScrollableViewDelegate {
   @objc func scrollableViewWillDisappear() {
     guard isCurrent else { return }
     previewLayer.connection?.isEnabled = false
+    isCurrent = false
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -164,7 +165,7 @@ extension CameraController: ScrollableViewDelegate {
 
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
-    scrollableViewWillDisappear()
+    previewLayer.connection?.isEnabled = false
   }
 }
 
