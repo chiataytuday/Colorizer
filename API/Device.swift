@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import AVFoundation
 
 final class Device {
   static let shared = Device()
-  var hasNotch: Bool
 
-  private init() {
-    hasNotch = false
+  var cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+  var hasNotch = false
+
+  func refreshCameraStatus() {
+    cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
   }
 }

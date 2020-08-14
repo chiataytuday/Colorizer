@@ -20,7 +20,7 @@ final class ImageController: UIViewController {
   }()
   private let pickButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 56, height: 55))
-    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .regular), forImageIn: .normal)
+    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .light), forImageIn: .normal)
     button.setImage(UIImage(systemName: "photo"), for: .normal)
     button.tintColor = .softGray
     button.isHidden = true
@@ -80,7 +80,7 @@ final class ImageController: UIViewController {
 
   private func setupTipViews() {
     let plusImageView: UIImageView = {
-      let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
+      let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .light)
       let image = UIImage(systemName: "plus", withConfiguration: config)
       let imageView = UIImageView(image: image)
       imageView.contentMode = .center
@@ -89,8 +89,8 @@ final class ImageController: UIViewController {
     }()
     let tipLabel: UILabel = {
       let label = UILabel()
-      label.text = "Tap to open photo"
-      label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+      label.text = "Tap to select photo"
+      label.font = UIFont.systemFont(ofSize: 17, weight: .light)
       label.textColor = .lightGray
       return label
     }()

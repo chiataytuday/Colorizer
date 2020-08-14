@@ -105,7 +105,7 @@ final class CameraController: UIViewController {
     colorInfoView.set(color: color)
 
     let dot: UIImageView = {
-      let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .bold)
+      let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .regular)
       let image = UIImage(systemName: "circle.fill", withConfiguration: config)
       let imageView = UIImageView(image: image)
       imageView.tintColor = .white
@@ -115,7 +115,7 @@ final class CameraController: UIViewController {
     dot.center = view.center
 
     let viewfinder: UIImageView = {
-      let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .medium)
+      let config = UIImage.SymbolConfiguration(pointSize: 38, weight: .regular)
       let image = UIImage(systemName: "viewfinder", withConfiguration: config)
       let imageView = UIImageView(image: image)
       imageView.tintColor = .white

@@ -16,7 +16,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     if let windowScene = scene as? UIWindowScene {
       let window = UIWindow(windowScene: windowScene)
       Device.shared.hasNotch = window.safeAreaInsets.bottom > 0
-      window.rootViewController = ScrollViewController()
+      switch Device.shared.cameraStatus {
+        case .authorized, .denied, .restricted:
+          let scrollViewController = ScrollViewController()
+          window.rootViewController = scrollViewController
+        case .notDetermined:
+          let greetingController = GreetingController()
+          window.rootViewController = greetingController
+        @unknown default:
+          break
+      }
       self.window = window
       window.makeKeyAndVisible()
     }

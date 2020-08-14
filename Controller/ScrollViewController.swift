@@ -33,6 +33,7 @@ final class ScrollViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.clipsToBounds = true
+    transitioningDelegate = self
     setupControllers()
     setupPages()
     setupBottom()
@@ -40,23 +41,20 @@ final class ScrollViewController: UIViewController {
   }
 
   private func setupControllers() {
-    let libraryController = ImageController()
-    let libraryIcon = "person.crop.square"
-    controllers.append(libraryController)
-    icons.append(libraryIcon)
-
-    let cameraController = CameraController()
-    let cameraIcon = "viewfinder"
-    controllers.append(cameraController)
-    icons.append(cameraIcon)
-
     let historyController = ArchiveController()
-    let historyIcon = "archivebox"
-    controllers.append(historyController)
-    icons.append(historyIcon)
 
-    cameraController.updateColorsArchive = historyController.synchronize
+    let libraryController = ImageController()
     libraryController.updateColorsArchive = historyController.synchronize
+
+    controllers.append(contentsOf: [libraryController, historyController])
+    icons.append(contentsOf: ["person.crop.square", "archivebox"])
+
+    if Device.shared.cameraStatus == .authorized {
+      let cameraController = CameraController()
+      cameraController.updateColorsArchive = historyController.synchronize
+      controllers.insert(cameraController, at: 1)
+      icons.insert("viewfinder", at: 1)
+    }
   }
   
   private func setupPages() {
@@ -70,7 +68,7 @@ final class ScrollViewController: UIViewController {
       controllers[i].didMove(toParent: self)
       
       let button = BarButton(icons[i])
-      button.set(size: 25, weight: .regular)
+      button.set(size: 24, weight: .light)
       button.tag = i
       button.addTarget(self, action: #selector(handleTap(on:)), for: .touchDown)
       buttonsStackView.addArrangedSubview(button)
@@ -154,6 +152,17 @@ final class ScrollViewController: UIViewController {
   
   override var prefersStatusBarHidden: Bool {
     true
+  }
+}
+
+//MARK: - UIViewControllerTransitioningDelegate
+extension ScrollViewController: UIViewControllerTransitioningDelegate {
+  func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    return AnimationController(duration: 0.65, type: .present)
+  }
+
+  func ScrollViewController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    return AnimationController(duration: 0.65, type: .dismiss)
   }
 }
 
