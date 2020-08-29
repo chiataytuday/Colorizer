@@ -8,10 +8,6 @@
 
 import UIKit
 
-protocol ColorCellDelegate {
-  func presentColorController(with color: UIColor)
-}
-
 final class ArchiveController: UIViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
@@ -23,26 +19,14 @@ final class ArchiveController: UIViewController {
     collectionView.alwaysBounceVertical = true
     return collectionView
   }()
-  private let tipStackView: UIStackView = {
-    let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .light)
-    let image = UIImage(systemName: "bin.xmark", withConfiguration: config)
-    let imageView = UIImageView(image: image)
-    imageView.tintColor = .lightGray
-
-    let label = UILabel()
-    label.text = "Archive is empty"
-    label.font = UIFont.systemFont(ofSize: 16.5, weight: .regular)
-    label.textColor = .lightGray
-
-    return UIStackView(arrangedSubviews: [imageView, label])
-  }()
   private var colors = APIManager.shared.fetchColors()
+  private var tipStackView: UIStackView!
 
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
     setupCollectionView()
-    setupTipStackView()
+    layoutTipViews()
 
     if let colors = UserDefaults.standard.unarchiveColors(by: "colors") {
       APIManager.shared.set(colors: colors)
@@ -63,7 +47,16 @@ final class ArchiveController: UIViewController {
     ])
   }
 
-  private func setupTipStackView() {
+  private func layoutTipViews() {
+    let tipImageView = UIImageView(image: UIImage(systemName: "bin.xmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .light)))
+    tipImageView.tintColor = .lightGray
+
+    let tipLabel = UILabel()
+    tipLabel.text = "Archive is empty"
+    tipLabel.font = .systemFont(ofSize: 16.5, weight: .regular)
+    tipLabel.textColor = .lightGray
+
+    tipStackView = UIStackView(arrangedSubviews: [tipImageView, tipLabel])
     tipStackView.axis = .vertical
     tipStackView.alignment = .center
     tipStackView.spacing = 7.5
@@ -118,8 +111,7 @@ extension ArchiveController: UICollectionViewDataSource {
 
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
-    let color = colors[indexPath.item]
-    cell.backgroundColor = color
+    cell.backgroundColor = colors[indexPath.item]
     return cell
   }
 }
@@ -134,15 +126,5 @@ extension ArchiveController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
     let height = colors.count > 0 ? 73.5 : 0
     return CGSize(width: 0, height: height)
-  }
-}
-
-// MARK: - ColorCellDelegate
-extension ArchiveController: ColorCellDelegate {
-  func presentColorController(with color: UIColor) {
-    let colorController = ColorController()
-    colorController.configure(with: color)
-    colorController.modalPresentationStyle = .fullScreen
-    present(colorController, animated: true)
   }
 }

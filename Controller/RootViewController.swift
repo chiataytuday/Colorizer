@@ -8,6 +8,7 @@
 
 import UIKit
 
+// Move these to Page class?
 @objc protocol ScrollableViewDelegate {
   func scrollableViewWillAppear()
   func scrollableViewWillDisappear()
@@ -149,12 +150,11 @@ final class RootViewController: UIViewController {
 
 //MARK: - UIViewControllerTransitioningDelegate
 extension RootViewController: UIViewControllerTransitioningDelegate {
-  func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+  func animationController(
+    forPresented presented: UIViewController,
+    presenting: UIViewController,
+    source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
     return AnimationController(duration: 0.65, type: .present)
-  }
-
-  func ScrollViewController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-    return AnimationController(duration: 0.65, type: .dismiss)
   }
 }
 
