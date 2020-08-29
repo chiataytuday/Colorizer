@@ -43,6 +43,11 @@ final class ArchiveController: UIViewController {
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
     setupCollectionView()
     setupTipStackView()
+
+    if let colors = UserDefaults.standard.unarchiveColors(by: "colors") {
+      APIManager.shared.set(colors: colors)
+      updateColorsArchive()
+    }
   }
 
   private func setupCollectionView() {

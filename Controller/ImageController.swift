@@ -11,26 +11,13 @@ import UIKit
 final class ImageController: UIViewController {
   private let scrollView = UIScrollView()
   private let imagePicker = UIImagePickerController()
-  private let doubleTapGesture = UITapGestureRecognizer()
-  private var colorTrackerView = ColorTrackerView()
-  private var photoImageView: UIImageView = {
+  private var imageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
     return imageView
   }()
-  private let pickButton: UIButton = {
-    let button = RoundButton(size: CGSize(width: 56, height: 55))
-    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .light), forImageIn: .normal)
-    button.setImage(UIImage(systemName: "photo"), for: .normal)
-    button.tintColor = .softGray
-    button.isHidden = true
-    return button
-  }()
-  var bottomBarAnchor: NSLayoutAnchor<NSLayoutYAxisAnchor>? {
-    didSet {
-      setupBarButtons()
-    }
-  }
+  private var colorTrackerView = ColorTrackerView()
+  private let doubleTapGesture = UITapGestureRecognizer()
   private var colorPickerView: PipetteView!
   private var tipStackView: UIStackView!
   var delegate: ColorsArchiveUpdating?
@@ -38,75 +25,38 @@ final class ImageController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
-    if let colors = UserDefaults.standard.unarchiveColors(by: "colors") {
-      APIManager.shared.set(colors: colors)
-      delegate?.updateColorsArchive()
-    }
-
-    calculateImageInsets()
-    setupTipViews()
-    setupSubviews()
-    setupDoubleTapRecognizer()
+    
+    layoutTipViews()
+    setupScrollView()
+    setupImageView()
+    setupTools()
+    setupGestures()
     setupImagePicker()
   }
 
-  var imageInsets: (top: CGFloat, bottom: CGFloat, height: CGFloat)!
+  private func layoutTipViews() {
+    let tipImageView = UIImageView(
+      image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .light)))
+    tipImageView.contentMode = .center
+    tipImageView.tintColor = .lightGray
 
-  private func calculateImageInsets() {
-    if Device.shared.hasNotch {
-      imageInsets = (150, -150, -300)
-    } else {
-      imageInsets = (110, -160, -270)
-    }
-  }
+    let tipLabel = UILabel()
+    tipLabel.text = "Tap to select photo"
+    tipLabel.font = .systemFont(ofSize: 16.5, weight: .regular)
+    tipLabel.textColor = .lightGray
 
-  private func setupBarButtons() {
-    pickButton.addTarget(self, action: #selector(openImagePicker), for: .touchUpInside)
-    pickButton.translatesAutoresizingMaskIntoConstraints = false
-    view.addSubview(pickButton)
-    NSLayoutConstraint.activate([
-      pickButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22.5),
-      pickButton.bottomAnchor.constraint(equalTo: bottomBarAnchor!, constant: -20)
-    ])
-  }
-
-  @objc private func openImagePicker() {
-    present(imagePicker, animated: true)
-  }
-
-  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    openImagePicker()
-  }
-
-  private func setupTipViews() {
-    let plusImageView: UIImageView = {
-      let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .light)
-      let image = UIImage(systemName: "plus", withConfiguration: config)
-      let imageView = UIImageView(image: image)
-      imageView.contentMode = .center
-      imageView.tintColor = .lightGray
-      return imageView
-    }()
-    let tipLabel: UILabel = {
-      let label = UILabel()
-      label.text = "Tap to select photo"
-      label.font = UIFont.systemFont(ofSize: 16.5, weight: .regular)
-      label.textColor = .lightGray
-      return label
-    }()
-
-    tipStackView = UIStackView(arrangedSubviews: [plusImageView, tipLabel])
-    tipStackView.translatesAutoresizingMaskIntoConstraints = false
+    tipStackView = UIStackView(arrangedSubviews: [tipImageView, tipLabel])
     tipStackView.axis = .vertical
     tipStackView.spacing = 7.5
     view.addSubview(tipStackView)
+    tipStackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
       tipStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       tipStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     ])
   }
 
-  private func setupSubviews() {
+  private func setupScrollView() {
     scrollView.delegate = self
     scrollView.isUserInteractionEnabled = false
     scrollView.contentInsetAdjustmentBehavior = .never
@@ -122,16 +72,28 @@ final class ImageController: UIViewController {
       scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
     ])
+  }
 
-    scrollView.addSubview(photoImageView)
-    photoImageView.clipsToBounds = true
-    photoImageView.translatesAutoresizingMaskIntoConstraints = false
+  private func setupImageView() {
+    scrollView.addSubview(imageView)
+    imageView.clipsToBounds = true
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    imageView.isUserInteractionEnabled = true
+    NSLayoutConstraint.activate([
+      imageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+      imageView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageInsets.top),
+      imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+      imageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: imageInsets.bottom),
+      imageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+      imageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, constant: imageInsets.height)
+    ])
+  }
 
+  private func setupTools() {
     colorPickerView = PipetteView(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
     colorPickerView.delegate = self
     colorPickerView.isHidden = true
-    photoImageView.addSubview(colorPickerView)
-    photoImageView.isUserInteractionEnabled = true
+    imageView.addSubview(colorPickerView)
     colorPickerView.center = view.center
 
     colorTrackerView.delegate = self
@@ -143,20 +105,13 @@ final class ImageController: UIViewController {
       colorTrackerView.widthAnchor.constraint(equalToConstant: 160),
       colorTrackerView.heightAnchor.constraint(equalToConstant: 70),
       colorTrackerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      colorTrackerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
-    ])
-
-    NSLayoutConstraint.activate([
-      photoImageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-      photoImageView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: imageInsets.top),
-      photoImageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-      photoImageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: imageInsets.bottom),
-      photoImageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-      photoImageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor, constant: imageInsets.height)
+      colorTrackerView.topAnchor.constraint(
+        equalTo: view.safeAreaLayoutGuide.topAnchor,
+        constant: topMargin)
     ])
   }
 
-  private func setupDoubleTapRecognizer() {
+  private func setupGestures() {
     doubleTapGesture.addTarget(self, action: #selector(handleDoubleTap(recognizer:)))
     doubleTapGesture.numberOfTapsRequired = 2
     doubleTapGesture.delaysTouchesBegan = false
@@ -173,25 +128,33 @@ final class ImageController: UIViewController {
     imagePicker.allowsEditing = false
   }
 
+
   @objc private func handleDoubleTap(recognizer: UITapGestureRecognizer) {
     if scrollView.zoomScale == 1 {
       let center = recognizer.location(in: recognizer.view)
-      scrollView.zoom(to: zoomRectForScale(scale: 4, center:
-        center), animated: true)
+      scrollView.zoom(to: rectForScale(4, to: center), animated: true)
     } else {
       scrollView.setZoomScale(1, animated: true)
     }
   }
 
-  private func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
-    var zoomRect: CGRect = .zero
-    zoomRect.size.height = (photoImageView.frame.size.height - imageInsets.height) / scale
-    zoomRect.size.width  = photoImageView.frame.size.width  / scale
+  private func rectForScale(_ scale: CGFloat, to center: CGPoint) -> CGRect {
+    var rect: CGRect = .zero
+    rect.size.height = (imageView.frame.height - imageInsets.height)/scale
+    rect.size.width = imageView.frame.width/scale
 
-    let newCenter = scrollView.convert(center, from: photoImageView)
-    zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
-    zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0) + imageInsets.height
-    return zoomRect
+    let newCenter = scrollView.convert(center, from: imageView)
+    rect.origin.x = newCenter.x - (rect.size.width/2)
+    rect.origin.y = newCenter.y - (rect.size.height/2) + imageInsets.height
+    return rect
+  }
+
+  private let imageInsets: (top: CGFloat, bottom: CGFloat, height: CGFloat) = {
+    return Device.shared.hasNotch ? (150, -150, -300) : (110, -160, -270)
+  }()
+
+  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    present(imagePicker, animated: true)
   }
 
   override var prefersStatusBarHidden: Bool {
@@ -202,7 +165,7 @@ final class ImageController: UIViewController {
 // MARK: - UIScrollViewDelegate
 extension ImageController: UIScrollViewDelegate {
   func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-    return photoImageView
+    return imageView
   }
 
   func scrollViewDidZoom(_ scrollView: UIScrollView) {
@@ -214,22 +177,22 @@ extension ImageController: UIScrollViewDelegate {
       return
     }
 
-    guard let image = photoImageView.image else { return }
-    let wRatio = photoImageView.frame.width / image.size.width
-    let hRatio = photoImageView.frame.height / image.size.height
+    guard let image = imageView.image else { return }
+    let wRatio = imageView.frame.width / image.size.width
+    let hRatio = imageView.frame.height / image.size.height
     let ratio = min(wRatio, hRatio)
     let newSize = CGSize(width: image.size.width * ratio, height: image.size.height * ratio)
 
     var hInset: CGFloat = 0
-    if newSize.width * scale > photoImageView.frame.width {
-      hInset = (newSize.width - photoImageView.frame.width)/2 + 20
+    if newSize.width * scale > imageView.frame.width {
+      hInset = (newSize.width - imageView.frame.width)/2 + 20
     } else {
       hInset = (scrollView.frame.width - scrollView.contentSize.width)/2
     }
 
     var vInset: CGFloat = 0
-    if newSize.height * scale > photoImageView.frame.height {
-      vInset = (newSize.height - photoImageView.frame.height)/2
+    if newSize.height * scale > imageView.frame.height {
+      vInset = (newSize.height - imageView.frame.height)/2
     } else {
       vInset = (scrollView.frame.height - scrollView.contentSize.height)/2
     }
@@ -247,7 +210,7 @@ extension ImageController: UINavigationControllerDelegate, UIImagePickerControll
   }
 
   func calculateZoomScale() {
-    let imageSize = photoImageView.image!.size
+    let imageSize = imageView.image!.size
     let ratioH = imageSize.height/(view.frame.height/4)
     let ratioW = imageSize.width/(view.frame.width/4)
     let ratio = max(ratioH, ratioW)
@@ -275,11 +238,11 @@ extension ImageController: UINavigationControllerDelegate, UIImagePickerControll
     let scale = appropriateScale(for: image!)
     let compressedImage = resizedImage(image!, to: scale)
 
-    photoImageView.image = compressedImage
-    photoImageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
-    photoImageView.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
+    imageView.image = compressedImage
+    imageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+    imageView.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
     UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
-      self.photoImageView.transform = .identity
+      self.imageView.transform = .identity
     })
     scrollView.contentInset = .zero
     scrollView.isUserInteractionEnabled = true
@@ -289,13 +252,13 @@ extension ImageController: UINavigationControllerDelegate, UIImagePickerControll
     colorPickerView.isHidden = false
     colorTrackerView.isHidden = false
     tipStackView.isHidden = true
-    pickButton.isHidden = false
+//    pickButton.isHidden = false
 
-    let center = CGPoint(x: photoImageView.frame.width/2,
-                         y: photoImageView.frame.height/2)
+    let center = CGPoint(x: imageView.frame.width/2,
+                         y: imageView.frame.height/2)
     colorPickerView.center = center
     colorPickerView.shapeLayer.fillColor = UIColor.clear.cgColor
-    let color = photoImageView.layer.pickColor(at: center)
+    let color = imageView.layer.pickColor(at: center)
     colorPickerView.shapeLayer.fillColor = color!.cgColor
     moved(to: color!)
   }

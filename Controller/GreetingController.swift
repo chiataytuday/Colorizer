@@ -70,7 +70,7 @@ final class GreetingController: UIViewController {
       Device.shared.refreshCameraStatus()
 
       DispatchQueue.main.async {
-        let scrollViewController = ScrollViewController()
+        let scrollViewController = RootViewController()
         scrollViewController.modalPresentationStyle = .fullScreen
         self.present(scrollViewController, animated: true)
       }

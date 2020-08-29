@@ -14,6 +14,7 @@ final class Device {
 
   var cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
   var hasNotch = false
+  var barTop: CGFloat = 0
 
   func refreshCameraStatus() {
     cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
