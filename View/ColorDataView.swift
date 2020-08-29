@@ -22,17 +22,21 @@ final class ColorDataView: UIView {
 
   init(with color: Color) {
     super.init(frame: .zero)
+    colorSpaceLabel.textColor = tintColor
     colorSpaceLabel.text = color.spaceName
-//    colorSpaceLabel.sizeToFit()
+    valueLabel.textColor = tintColor
     valueLabel.text = color.value
-//    valueLabel.sizeToFit()
     setupStackView()
+  }
+
+  func set(color: UIColor) {
+    colorSpaceLabel.textColor = color
+    valueLabel.textColor = color
   }
 
   private func setupStackView() {
     let stackView = UIStackView(arrangedSubviews: [colorSpaceLabel, valueLabel])
     stackView.translatesAutoresizingMaskIntoConstraints = false
-//    stackView.isUserInteractionEnabled = false
     stackView.axis = .vertical
     addSubview(stackView)
     NSLayoutConstraint.activate([
@@ -41,11 +45,6 @@ final class ColorDataView: UIView {
       stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12.5),
       stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
     ])
-  }
-
-  func set(color: UIColor) {
-    colorSpaceLabel.textColor = color
-    valueLabel.textColor = color
   }
 
   required init?(coder: NSCoder) {

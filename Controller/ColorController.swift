@@ -37,6 +37,17 @@ final class ColorController: UIViewController {
     setupButtons()
   }
 
+  func configure(with color: UIColor) {
+    view.backgroundColor = color
+    backButton.tintColor = color.readable
+    saveButton.tintColor = color.readable
+    if APIManager.shared.contains(color: color) {
+      saveButton.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
+      saveButton.tag = 1
+    }
+    setupStackView()
+  }
+
   private func setupButtons() {
     view.addSubview(backButton)
     backButton.addTarget(self, action: #selector(backToScroll), for: .touchUpInside)
@@ -56,44 +67,18 @@ final class ColorController: UIViewController {
     ])
   }
 
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    stackView.transform = CGAffineTransform(translationX: 0, y: -400)
-    saveButton.transform = CGAffineTransform(translationX: 0, y: -400)
-    backButton.transform = CGAffineTransform(translationX: 0, y: -400)
-    UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [.curveEaseOut, .allowUserInteraction], animations: {
-      self.stackView.transform = .identity
-      self.saveButton.transform = .identity
-      self.backButton.transform = .identity
-    })
-  }
-
-  func configure(with color: UIColor) {
-    view.backgroundColor = color
-    backButton.tintColor = color.readable
-    saveButton.tintColor = color.readable
-    if APIManager.shared.contains(color: color) {
-      saveButton.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
-      saveButton.tag = 1
-    }
-    setupStackView()
-  }
-
   private func setupStackView() {
-    guard let color = view.backgroundColor else {
-      return
-    }
-    let data = [
-      Color(spaceName: "HEX", value: color.hex),
-      Color(spaceName: "RGB", value: color.rgb),
-      Color(spaceName: "HSB", value: color.hsb),
-      Color(spaceName: "CMYK", value: color.cmyk)
-    ]
-
+    guard let color = view.backgroundColor else { return }
     stackView.axis = .vertical
     stackView.alignment = .leading
     stackView.spacing = 6
-    data.forEach {
+
+    _ = [
+      Color("HEX", color.hex),
+      Color("RGB", color.rgb),
+      Color("HSB", color.hsb),
+      Color("CMYK", color.cmyk)
+    ].map {
       let dataView = ColorDataView(with: $0)
       dataView.set(color: color.readable)
       stackView.addArrangedSubview(dataView)
@@ -105,6 +90,18 @@ final class ColorController: UIViewController {
       stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     ])
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    stackView.transform = CGAffineTransform(translationX: 0, y: -400)
+    saveButton.transform = CGAffineTransform(translationX: 0, y: -400)
+    backButton.transform = CGAffineTransform(translationX: 0, y: -400)
+    UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0.5, options: [.curveEaseOut, .allowUserInteraction], animations: {
+      self.stackView.transform = .identity
+      self.saveButton.transform = .identity
+      self.backButton.transform = .identity
+    })
   }
   
   override var prefersStatusBarHidden: Bool {
