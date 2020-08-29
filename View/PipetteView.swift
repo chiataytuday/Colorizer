@@ -123,13 +123,13 @@ extension PipetteView {
   private func turnToRing() {
     CATransaction.begin()
     CATransaction.setDisableActions(true)
-    shapeLayer.lineWidth = 5
+    shapeLayer.lineWidth = 6
     shapeLayer.strokeColor = color.cgColor
     shapeLayer.fillColor = UIColor.clear.cgColor
     shapeLayer.shadowOpacity = 0.15
     CATransaction.commit()
     
-    let scale = defaultScale * 2.25
+    let scale = defaultScale * 2.3
     UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.5, options: [.curveEaseOut, .allowUserInteraction], animations: {
       self.transform = CGAffineTransform(scaleX: scale, y: scale)
     })

@@ -89,7 +89,7 @@ final class CameraController: UIViewController {
     view.addSubview(colorTrackerView)
     let topMargin: CGFloat = Device.shared.hasNotch ? 15 : 20
     NSLayoutConstraint.activate([
-      colorTrackerView.widthAnchor.constraint(equalToConstant: 172),
+      colorTrackerView.widthAnchor.constraint(equalToConstant: 160),
       colorTrackerView.heightAnchor.constraint(equalToConstant: 70),
       colorTrackerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       colorTrackerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)

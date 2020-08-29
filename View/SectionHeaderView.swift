@@ -10,7 +10,7 @@ import UIKit
 
 final class SectionHeaderView: UICollectionReusableView {
   private let iconImageView: UIImageView = {
-    let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
+    let config = UIImage.SymbolConfiguration(pointSize: 23, weight: .bold)
     let image = UIImage(systemName: "archivebox", withConfiguration: config)
     let imageView = UIImageView(image: image)
     imageView.tintColor = .black
@@ -19,7 +19,7 @@ final class SectionHeaderView: UICollectionReusableView {
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.text = "Archive"
-    label.font = UIFont.systemFont(ofSize: 29, weight: .semibold)
+    label.font = UIFont.systemFont(ofSize: 28, weight: .semibold)
     label.transform = CGAffineTransform(translationX: 0, y: 0.65)
     label.textColor = .black
     return label
