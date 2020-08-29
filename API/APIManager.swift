@@ -44,6 +44,7 @@ final class APIManager {
   }
 }
 
+// MARK: - UserDefaults
 extension UserDefaults {
   func unarchiveColors(by key: String) -> [UIColor]? {
     guard let data = data(forKey: key) else { return nil }
@@ -65,6 +66,7 @@ extension UserDefaults {
   }
 }
 
+// MARK: - UIColor
 extension UIColor {
   static func rgb(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat) -> UIColor {
     return UIColor(red: r/255, green: g/255, blue: b/255, alpha: 1)

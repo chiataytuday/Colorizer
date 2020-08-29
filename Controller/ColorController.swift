@@ -79,7 +79,7 @@ final class ColorController: UIViewController {
       Color("HSB", color.hsb),
       Color("CMYK", color.cmyk)
     ].map {
-      let dataView = ColorDataView(with: $0)
+      let dataView = RowDataView(with: $0)
       dataView.set(color: color.readable)
       stackView.addArrangedSubview(dataView)
     }

@@ -214,7 +214,7 @@ extension UserDefaults {
   }
 }
 
-// MARK: - ColorInfoDelegate
+// MARK: - ColorPresenting
 extension CameraController: ColorPresenting {
   func presentColorController() {
     let colorController = ColorController()

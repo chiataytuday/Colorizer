@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-class GreetingController: UIViewController {
+final class GreetingController: UIViewController {
   private let welcomeLabel: UILabel = {
     let label = UILabel()
     label.text = "Welcome to Tint"

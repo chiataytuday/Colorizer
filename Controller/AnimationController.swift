@@ -23,6 +23,7 @@ final class AnimationController: NSObject {
   }
 }
 
+// MARK: - UIViewControllerAnimatedTransitioning
 extension AnimationController: UIViewControllerAnimatedTransitioning {
   func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
     return TimeInterval(exactly: animationDuration) ?? 0
