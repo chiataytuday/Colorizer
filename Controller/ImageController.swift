@@ -22,6 +22,10 @@ final class ImageController: UIViewController {
   private var tipStackView: UIStackView!
   var delegate: ColorsArchiveUpdating?
 
+  private let imageInsets: (top: CGFloat, bottom: CGFloat, height: CGFloat) = {
+    return Device.shared.hasNotch ? (150, -150, -300) : (110, -160, -270)
+  }()
+
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
@@ -127,8 +131,9 @@ final class ImageController: UIViewController {
     imagePicker.sourceType = .photoLibrary
     imagePicker.allowsEditing = false
   }
+}
 
-
+extension ImageController {
   @objc private func handleDoubleTap(recognizer: UITapGestureRecognizer) {
     if scrollView.zoomScale == 1 {
       let center = recognizer.location(in: recognizer.view)
@@ -148,10 +153,6 @@ final class ImageController: UIViewController {
     rect.origin.y = newCenter.y - (rect.size.height/2) + imageInsets.height
     return rect
   }
-
-  private let imageInsets: (top: CGFloat, bottom: CGFloat, height: CGFloat) = {
-    return Device.shared.hasNotch ? (150, -150, -300) : (110, -160, -270)
-  }()
 
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
     present(imagePicker, animated: true)
@@ -205,62 +206,50 @@ extension ImageController: UIScrollViewDelegate {
 extension ImageController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     setImage(info[.originalImage] as? UIImage)
-    calculateZoomScale()
+    defineMaxZoomScale()
     dismiss(animated: true)
   }
 
-  func calculateZoomScale() {
-    let imageSize = imageView.image!.size
-    let ratioH = imageSize.height/(view.frame.height/4)
-    let ratioW = imageSize.width/(view.frame.width/4)
-    let ratio = max(ratioH, ratioW)
-    scrollView.maximumZoomScale = max(ratio, 4)
-  }
-
-  func resizedImage(_ image: UIImage, to scale: CGFloat) -> UIImage {
-    let height = image.size.height * scale
-    let width = image.size.width * scale
-    UIGraphicsBeginImageContext(CGSize(width: width, height: height))
-    image.draw(in: CGRect(x: 0, y: 0, width: width, height: height))
-    let newImage = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    return newImage!
-  }
-
-  func appropriateScale(for image: UIImage) -> CGFloat {
-    let maxSideLength: CGFloat = 2100
-    let largestSide = max(image.size.width, image.size.height)
-    let scale = maxSideLength / largestSide
-    return min(1, scale)
-  }
-
   func setImage(_ image: UIImage?) {
-    let scale = appropriateScale(for: image!)
-    let compressedImage = resizedImage(image!, to: scale)
-
+    guard let image = image else { return }
+    let scale = image.maxScreenScale
+    let compressedImage = image.scaled(to: scale)
     imageView.image = compressedImage
-    imageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
     imageView.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
     UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .allowUserInteraction, animations: {
       self.imageView.transform = .identity
     })
+    resetSubviews()
+
+    guard !tipStackView.isHidden else { return }
+    imageView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+    tipStackView.isHidden = true
+    colorPickerView.isHidden = false
+    colorTrackerView.isHidden = false
+  }
+
+  private func resetSubviews() {
+    colorPickerView.transform = .identity
     scrollView.contentInset = .zero
     scrollView.isUserInteractionEnabled = true
     scrollView.zoomScale = 1
 
-    colorPickerView.transform = .identity
-    colorPickerView.isHidden = false
-    colorTrackerView.isHidden = false
-    tipStackView.isHidden = true
-//    pickButton.isHidden = false
-
-    let center = CGPoint(x: imageView.frame.width/2,
-                         y: imageView.frame.height/2)
+    let center = CGPoint(
+      x: imageView.frame.width/2,
+      y: imageView.frame.height/2)
     colorPickerView.center = center
     colorPickerView.shapeLayer.fillColor = UIColor.clear.cgColor
     let color = imageView.layer.pickColor(at: center)
     colorPickerView.shapeLayer.fillColor = color!.cgColor
     moved(to: color!)
+  }
+
+  private func defineMaxZoomScale() {
+    guard let imageSize = imageView.image?.size else { return }
+    let ratioH = imageSize.height/(view.frame.height/4)
+    let ratioW = imageSize.width/(view.frame.width/4)
+    let ratio = max(ratioH, ratioW)
+    scrollView.maximumZoomScale = max(ratio, 4)
   }
 }
 
@@ -309,5 +298,26 @@ extension CALayer {
                    green: CGFloat(pixel[1]) / 255.0,
                    blue: CGFloat(pixel[2]) / 255.0,
                    alpha: CGFloat(pixel[3]) / 255.0)
+  }
+}
+
+// MARK: - UIImage
+extension UIImage {
+  var maxScreenScale: CGFloat {
+    let maxSideLength: CGFloat = 2100
+    let largestSide = max(size.width, size.height)
+    let scale = maxSideLength/largestSide
+    return min(1, scale)
+  }
+
+  func scaled(to value: CGFloat) -> UIImage {
+    let newSize = CGSize(
+      width: size.width * scale,
+      height: size.height * scale)
+    UIGraphicsBeginImageContext(newSize)
+    draw(in: CGRect(origin: .zero, size: newSize))
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return newImage ?? self
   }
 }
