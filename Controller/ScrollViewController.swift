@@ -41,17 +41,17 @@ final class ScrollViewController: UIViewController {
   }
 
   private func setupControllers() {
-    let historyController = ArchiveController()
+    let archiveController = ArchiveController()
 
     let libraryController = ImageController()
-    libraryController.updateColorsArchive = historyController.synchronize
+    libraryController.delegate = archiveController
 
-    controllers.append(contentsOf: [libraryController, historyController])
+    controllers.append(contentsOf: [libraryController, archiveController])
     icons.append(contentsOf: ["person.crop.square", "archivebox"])
 
     if Device.shared.cameraStatus == .authorized {
       let cameraController = CameraController()
-      cameraController.updateColorsArchive = historyController.synchronize
+      cameraController.delegate = archiveController
       controllers.insert(cameraController, at: 1)
       icons.insert("viewfinder", at: 1)
     }
@@ -68,7 +68,7 @@ final class ScrollViewController: UIViewController {
       controllers[i].didMove(toParent: self)
       
       let button = BarButton(icons[i])
-      button.set(size: 24, weight: .light)
+      button.set(size: 23, weight: .light)
       button.tag = i
       button.addTarget(self, action: #selector(handleTap(on:)), for: .touchDown)
       buttonsStackView.addArrangedSubview(button)

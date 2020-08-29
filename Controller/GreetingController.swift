@@ -32,7 +32,7 @@ class GreetingController: UIViewController {
     button.setTitle("Access camera", for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 17.5, weight: .light)
     button.setTitleColor(.white, for: .normal)
-    button.backgroundColor = .darkGray
+    button.backgroundColor = .systemBlue
     button.heightAnchor.constraint(equalToConstant: 50).isActive = true
     button.layer.cornerRadius = 25
     return button
@@ -44,23 +44,8 @@ class GreetingController: UIViewController {
     setupStackView()
   }
 
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-//    welcomeLabel.transform = CGAffineTransform(translationX: 0, y: -1200)
-//    descriptionLabel.transform = CGAffineTransform(translationX: 0, y: -1200)
-//    allowButton.transform = CGAffineTransform(translationX: 0, y: -1200)
-//    usageLabel.transform = CGAffineTransform(translationX: 0, y: -1200)
-//    UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.allowUserInteraction], animations: {
-//      self.welcomeLabel.transform = .identity
-//      self.descriptionLabel.transform = .identity
-//      self.allowButton.transform = .identity
-//      self.usageLabel.transform = .identity
-//    })
-  }
-
   private func setupStackView() {
     allowButton.addTarget(self, action: #selector(requestCameraAccess(sender:)), for: .touchDown)
-
     view.addSubview(welcomeLabel)
     welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([

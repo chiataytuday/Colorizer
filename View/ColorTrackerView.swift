@@ -8,11 +8,11 @@
 
 import UIKit
 
-@objc protocol ColorInfoDelegate {
+@objc protocol ColorPresenting {
   func presentColorController()
 }
 
-final class ColorInfoView: UIButton {
+final class ColorTrackerView: UIButton {
   private let circleView: UIView = {
     let view = UIView()
     view.layer.cornerRadius = 10
@@ -25,22 +25,22 @@ final class ColorInfoView: UIButton {
   }()
   private let hexLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.monospacedFont(ofSize: 19, weight: .light)
-    label.text = "#000000"
+    label.font = .monospacedSystemFont(ofSize: 19, weight: .light)
     label.textColor = .lightGray
+    label.text = "#000000"
     return label
   }()
   private let rgbLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.monospacedFont(ofSize: 14, weight: .regular)
-    label.text = "0 0 0"
+    label.font = .monospacedSystemFont(ofSize: 14, weight: .regular)
     label.textColor = .lightGray
+    label.text = "0 0 0"
     return label
   }()
+  var delegate: ColorPresenting?
   var color: UIColor? {
     return circleView.backgroundColor
   }
-  var delegate: ColorInfoDelegate?
 
   init() {
     super.init(frame: .zero)
@@ -82,26 +82,19 @@ final class ColorInfoView: UIButton {
     })
   }
 
-  func set(color: UIColor) {
+  func configure(with color: UIColor) {
     circleView.backgroundColor = color
     hexLabel.text = color.hex
     rgbLabel.text = color.rgb
   }
 
   required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
+    fatalError()
   }
 }
 
 // MARK: - UIFont
 extension UIFont {
-  static func monospacedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
-    guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.monospaced) else {
-      return .systemFont(ofSize: size, weight: weight)
-    }
-    return UIFont(descriptor: descriptor, size: size)
-  }
-
   static func roundedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
     guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.rounded) else {
       return .systemFont(ofSize: size, weight: weight)

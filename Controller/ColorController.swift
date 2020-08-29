@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol ColorsArchiveUpdating {
+  func updateColorsArchive()
+}
+
 final class ColorController: UIViewController {
   private let saveButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 47, height: 46))
@@ -25,7 +29,7 @@ final class ColorController: UIViewController {
     return button
   }()
   private let stackView = UIStackView()
-  var updateColorsArchive: (() -> Void)?
+  var delegate: ColorsArchiveUpdating?
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -90,7 +94,7 @@ final class ColorController: UIViewController {
     stackView.alignment = .leading
     stackView.spacing = 6
     data.forEach {
-      let dataView = CopyableDataView(with: $0)
+      let dataView = ColorDataView(with: $0)
       dataView.set(color: color.readable)
       stackView.addArrangedSubview(dataView)
     }
@@ -124,7 +128,7 @@ final class ColorController: UIViewController {
         break
     }
     UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 0.4)
-    updateColorsArchive?()
+    delegate?.updateColorsArchive()
   }
 
   private func backToScroll() {

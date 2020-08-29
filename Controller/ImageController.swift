@@ -12,7 +12,7 @@ final class ImageController: UIViewController {
   private let scrollView = UIScrollView()
   private let imagePicker = UIImagePickerController()
   private let doubleTapGesture = UITapGestureRecognizer()
-  private var colorInfoView = ColorInfoView()
+  private var colorTrackerView = ColorTrackerView()
   private var photoImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
@@ -31,16 +31,16 @@ final class ImageController: UIViewController {
       setupBarButtons()
     }
   }
-  private var colorPickerView: ColorPicker!
+  private var colorPickerView: PipetteView!
   private var tipStackView: UIStackView!
-  var updateColorsArchive: (() -> Void)?
+  var delegate: ColorsArchiveUpdating?
 
   override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor(white: 0.95, alpha: 1)
     if let colors = UserDefaults.standard.unarchiveColors(by: "colors") {
       APIManager.shared.set(colors: colors)
-      updateColorsArchive?()
+      delegate?.updateColorsArchive()
     }
 
     calculateImageInsets()
@@ -90,7 +90,7 @@ final class ImageController: UIViewController {
     let tipLabel: UILabel = {
       let label = UILabel()
       label.text = "Tap to select photo"
-      label.font = UIFont.systemFont(ofSize: 17, weight: .light)
+      label.font = UIFont.systemFont(ofSize: 16.5, weight: .regular)
       label.textColor = .lightGray
       return label
     }()
@@ -127,24 +127,23 @@ final class ImageController: UIViewController {
     photoImageView.clipsToBounds = true
     photoImageView.translatesAutoresizingMaskIntoConstraints = false
 
-    colorPickerView = ColorPicker(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
+    colorPickerView = PipetteView(frame: CGRect(origin: .zero, size: CGSize(width: 35, height: 35)))
     colorPickerView.delegate = self
     colorPickerView.isHidden = true
     photoImageView.addSubview(colorPickerView)
     photoImageView.isUserInteractionEnabled = true
     colorPickerView.center = view.center
 
-    colorInfoView = ColorInfoView()
-    colorInfoView.delegate = self
-    colorInfoView.isHidden = true
-    colorInfoView.translatesAutoresizingMaskIntoConstraints = false
-    view.addSubview(colorInfoView)
+    colorTrackerView.delegate = self
+    colorTrackerView.isHidden = true
+    colorTrackerView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(colorTrackerView)
     let topMargin: CGFloat = Device.shared.hasNotch ? 15 : 20
     NSLayoutConstraint.activate([
-      colorInfoView.widthAnchor.constraint(equalToConstant: 172),
-      colorInfoView.heightAnchor.constraint(equalToConstant: 70),
-      colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
+      colorTrackerView.widthAnchor.constraint(equalToConstant: 172),
+      colorTrackerView.heightAnchor.constraint(equalToConstant: 70),
+      colorTrackerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      colorTrackerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
     ])
 
     NSLayoutConstraint.activate([
@@ -288,7 +287,7 @@ extension ImageController: UINavigationControllerDelegate, UIImagePickerControll
 
     colorPickerView.transform = .identity
     colorPickerView.isHidden = false
-    colorInfoView.isHidden = false
+    colorTrackerView.isHidden = false
     tipStackView.isHidden = true
     pickButton.isHidden = false
 
@@ -302,8 +301,8 @@ extension ImageController: UINavigationControllerDelegate, UIImagePickerControll
   }
 }
 
-//MARK: - ColorPickerDelegate
-extension ImageController: ColorPickerDelegate {
+//MARK: - PipetteDelegate
+extension ImageController: PipetteDelegate {
   func endedMovement() {
     doubleTapGesture.isEnabled = true
     scrollView.isScrollEnabled = true
@@ -315,22 +314,23 @@ extension ImageController: ColorPickerDelegate {
   }
 
   func moved(to color: UIColor) {
-    colorInfoView.set(color: color)
+    colorTrackerView.configure(with: color)
     colorPickerView.color = color
   }
 }
 
-//MARK: - ColorInfoDelegate
-extension ImageController: ColorInfoDelegate {
+//MARK: - ColorPresenting
+extension ImageController: ColorPresenting {
   func presentColorController() {
     let colorController = ColorController()
-    colorController.updateColorsArchive = updateColorsArchive
-    colorController.configure(with: colorInfoView.color!)
+    colorController.delegate = delegate
+    colorController.configure(with: colorTrackerView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }
 }
 
+// MARK: - CALayer
 extension CALayer {
   func pickColor(at position: CGPoint) -> UIColor? {
     var pixel = [UInt8](repeatElement(0, count: 4))

@@ -15,15 +15,15 @@ protocol ColorCellDelegate {
 final class ArchiveController: UIViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
-    layout.sectionInset = UIEdgeInsets(top: 18, left: 0, bottom: 100, right: 0)
+    layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 100, right: 0)
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-    collectionView.register(ArchiveHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
+    collectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
     collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
     collectionView.backgroundColor = UIColor(white: 0.95, alpha: 1)
     collectionView.alwaysBounceVertical = true
     return collectionView
   }()
-  private var tipStackView: UIStackView = {
+  private let tipStackView: UIStackView = {
     let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .light)
     let image = UIImage(systemName: "bin.xmark", withConfiguration: config)
     let imageView = UIImageView(image: image)
@@ -31,7 +31,7 @@ final class ArchiveController: UIViewController {
 
     let label = UILabel()
     label.text = "Archive is empty"
-    label.font = UIFont.systemFont(ofSize: 17, weight: .light)
+    label.font = UIFont.systemFont(ofSize: 16.5, weight: .regular)
     label.textColor = .lightGray
 
     return UIStackView(arrangedSubviews: [imageView, label])
@@ -69,8 +69,11 @@ final class ArchiveController: UIViewController {
       tipStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     ])
   }
+}
 
-  func synchronize() {
+// MARK: - ColorsArchiveUpdaing
+extension ArchiveController: ColorsArchiveUpdating {
+  func updateColorsArchive() {
     colors = APIManager.shared.fetchColors()
     tipStackView.isHidden = colors.count > 0
     collectionView.reloadData()
@@ -83,7 +86,7 @@ extension ArchiveController: UICollectionViewDelegate {
     let color = colors[indexPath.item]
     let colorController = ColorController()
     colorController.configure(with: color)
-    colorController.updateColorsArchive = synchronize
+    colorController.delegate = self
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }
@@ -129,6 +132,7 @@ extension ArchiveController: UICollectionViewDelegateFlowLayout {
   }
 }
 
+// MARK: - ColorCellDelegate
 extension ArchiveController: ColorCellDelegate {
   func presentColorController(with color: UIColor) {
     let colorController = ColorController()

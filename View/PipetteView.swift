@@ -8,13 +8,13 @@
 
 import UIKit
 
-protocol ColorPickerDelegate {
+protocol PipetteDelegate {
   func beganMovement()
   func moved(to color: UIColor)
   func endedMovement()
 }
 
-final class ColorPicker: UIView {
+final class PipetteView: UIView {
   let shapeLayer = CAShapeLayer()
   var color: UIColor = .white
   private var defaultScale: CGFloat {
@@ -24,7 +24,7 @@ final class ColorPicker: UIView {
   private lazy var location: CGPoint = {
     return center
   }()
-  var delegate: ColorPickerDelegate?
+  var delegate: PipetteDelegate?
   
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -72,7 +72,7 @@ final class ColorPicker: UIView {
 }
 
 // MARK: - Gesture actions
-extension ColorPicker {
+extension PipetteView {
   @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
     switch recognizer.state {
       case .began:

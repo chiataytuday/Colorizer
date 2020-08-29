@@ -9,12 +9,6 @@
 import UIKit
 import AVFoundation
 
-/**
- This class is responsible for camera color picker,
- it can be used to sip colors from the real world.
- Color is being fetched from view's center via CALayer
- */
-
 final class CameraController: UIViewController {
   private lazy var captureSession: AVCaptureSession = {
     let session = AVCaptureSession()
@@ -27,9 +21,10 @@ final class CameraController: UIViewController {
     layer.frame = view.bounds
     return layer
   }()
-  private var colorInfoView = ColorInfoView()
+  private let colorTrackerView = ColorTrackerView()
   private var captureDevice: AVCaptureDevice?
-  var updateColorsArchive: (() -> Void)?
+  var delegate: ColorsArchiveUpdating?
+  var isCurrent = false
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -89,20 +84,19 @@ final class CameraController: UIViewController {
     view.layer.addSublayer(previewLayer)
     captureSession.startRunning()
 
-    colorInfoView = ColorInfoView()
-    colorInfoView.delegate = self
-    colorInfoView.translatesAutoresizingMaskIntoConstraints = false
-    view.addSubview(colorInfoView)
+    colorTrackerView.delegate = self
+    colorTrackerView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(colorTrackerView)
     let topMargin: CGFloat = Device.shared.hasNotch ? 15 : 20
     NSLayoutConstraint.activate([
-      colorInfoView.widthAnchor.constraint(equalToConstant: 172),
-      colorInfoView.heightAnchor.constraint(equalToConstant: 70),
-      colorInfoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      colorInfoView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
+      colorTrackerView.widthAnchor.constraint(equalToConstant: 172),
+      colorTrackerView.heightAnchor.constraint(equalToConstant: 70),
+      colorTrackerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      colorTrackerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
     ])
 
     let color = UserDefaults.standard.colorForKey("lastColor") ?? .black
-    colorInfoView.set(color: color)
+    colorTrackerView.configure(with: color)
 
     let dot: UIImageView = {
       let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .regular)
@@ -130,22 +124,21 @@ final class CameraController: UIViewController {
     guard presentedViewController == nil else { return }
     guard let _ = previewLayer.connection else { return }
 
-    /* Don't use view.center, because x is negative sometimes */
+    /* Don't use view.center, because x < 0 sometimes */
     let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
 
     let pickedColor = previewLayer.pickColor(at: center)
     UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
-    colorInfoView.set(color: pickedColor!)
+    colorTrackerView.configure(with: pickedColor!)
     UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
   }
 
   override var prefersStatusBarHidden: Bool {
     true
   }
-
-  var isCurrent = false
 }
 
+// MARK: - ScrollableViewDelegate
 extension CameraController: ScrollableViewDelegate {
   @objc func scrollableViewWillAppear() {
     guard isCurrent else { return }
@@ -169,6 +162,7 @@ extension CameraController: ScrollableViewDelegate {
   }
 }
 
+// MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
   func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
     connection.videoOrientation = .portrait
@@ -196,6 +190,7 @@ extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
   }
 }
 
+// MARK: - UserDefaults
 extension UserDefaults {
   func setColor(_ color: UIColor, forKey key: String) {
     var colorData: NSData?
@@ -219,11 +214,12 @@ extension UserDefaults {
   }
 }
 
-extension CameraController: ColorInfoDelegate {
+// MARK: - ColorInfoDelegate
+extension CameraController: ColorPresenting {
   func presentColorController() {
     let colorController = ColorController()
-    colorController.updateColorsArchive = updateColorsArchive
-    colorController.configure(with: colorInfoView.color!)
+    colorController.delegate = delegate
+    colorController.configure(with: colorTrackerView.color!)
     colorController.modalPresentationStyle = .fullScreen
     present(colorController, animated: true)
   }

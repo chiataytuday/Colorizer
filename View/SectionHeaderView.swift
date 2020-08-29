@@ -2,15 +2,15 @@
 //  SectionHeaderView.swift
 //  Tint
 //
-//  Created by debavlad on 18.07.2020.
+//  Created by debavlad on 29.08.2020.
 //  Copyright © 2020 debavlad. All rights reserved.
 //
 
 import UIKit
 
-final class ArchiveHeaderView: UICollectionReusableView {
+final class SectionHeaderView: UICollectionReusableView {
   private let iconImageView: UIImageView = {
-    let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .semibold)
+    let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
     let image = UIImage(systemName: "archivebox", withConfiguration: config)
     let imageView = UIImageView(image: image)
     imageView.tintColor = .black
@@ -19,14 +19,15 @@ final class ArchiveHeaderView: UICollectionReusableView {
   private let titleLabel: UILabel = {
     let label = UILabel()
     label.text = "Archive"
-    label.font = UIFont.systemFont(ofSize: 30, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 29, weight: .semibold)
+    label.transform = CGAffineTransform(translationX: 0, y: 0.65)
     label.textColor = .black
     return label
   }()
   private let subtitleLabel: UILabel = {
     let label = UILabel()
-    label.text = "Last 100 colors are stored here"
-    label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+    label.text = "Up to 200 colors can be stored here"
+    label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
     label.textColor = .lightGray
     return label
   }()
@@ -47,7 +48,7 @@ final class ArchiveHeaderView: UICollectionReusableView {
     let stackView = UIStackView(arrangedSubviews: [iconImageView, titleLabel])
     stackView.alignment = .center
     stackView.axis = .horizontal
-    stackView.spacing = 8
+    stackView.spacing = 7.5
     addSubview(stackView)
     stackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
