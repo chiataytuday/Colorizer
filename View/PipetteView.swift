@@ -8,12 +8,25 @@
 
 import UIKit
 
+/**
+ A set of methods that should be called on the
+ certain events related to the pipette movement.
+ */
 protocol PipetteDelegate {
+  /// Pipette began movement.
   func beganMovement()
+
+  /// Pipette moved.
   func moved(to color: UIColor)
+
+  /// Pipette ended movement.
   func endedMovement()
 }
 
+/**
+ A view that represents the **pipette tool**, which is used
+ to pick colors from user's photo library.
+ */
 final class PipetteView: UIView {
   let shapeLayer = CAShapeLayer()
   var color: UIColor = .white
@@ -57,13 +70,11 @@ final class PipetteView: UIView {
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     delegate?.beganMovement()
     turnToRing()
-    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
   }
   
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
     delegate?.endedMovement()
     turnToCircle()
-    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.2)
   }
   
   required init?(coder: NSCoder) {
@@ -73,6 +84,7 @@ final class PipetteView: UIView {
 
 // MARK: - Gesture actions
 extension PipetteView {
+  /// Handles pipette pan gesture.
   @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
     switch recognizer.state {
       case .began:
@@ -87,25 +99,28 @@ extension PipetteView {
         break
     }
   }
-  
+
+  /// Relocates the pipette using recognizer's translation.
   private func locationChanged(with translation: CGPoint = .zero) {
-    center = CGPoint(x: location.x + translation.x,
-                     y: location.y + translation.y)
-    guard let imageView = superview as? UIImageView else {
-      return
-    }
-    let color = imageView.layer.pickColor(at: center)
-    set(color: color!)
-    delegate?.moved(to: color!)
+    center = CGPoint(
+      x: location.x + translation.x,
+      y: location.y + translation.y)
+    
+    guard let imageView = superview as? UIImageView,
+      let color = imageView.layer.pickColor(at: center) else { return }
+    setColor(color)
+    delegate?.moved(to: color)
   }
-  
-  private func set(color: UIColor) {
+
+  /// Sets `CAShapeLayer`'s `strokeColor` without transition.
+  private func setColor(_ color: UIColor) {
     CATransaction.begin()
     CATransaction.setDisableActions(true)
     shapeLayer.strokeColor = color.cgColor
     CATransaction.commit()
   }
-  
+
+  /// Turns the `CAShapeLayer` to filled circle.
   private func turnToCircle() {
     UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: [.curveLinear, .allowUserInteraction], animations: {
       self.transform = CGAffineTransform(scaleX: self.defaultScale, y: self.defaultScale)
@@ -119,7 +134,8 @@ extension PipetteView {
     shapeLayer.strokeColor = UIColor.white.cgColor
     shapeLayer.lineWidth = 1.3
   }
-  
+
+  /// Turns the `CAShapeLayer` to the ring.
   private func turnToRing() {
     CATransaction.begin()
     CATransaction.setDisableActions(true)

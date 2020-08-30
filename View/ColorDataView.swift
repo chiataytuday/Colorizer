@@ -8,6 +8,10 @@
 
 import UIKit
 
+/**
+ A view that displays the
+ provided color's space and value.
+ */
 final class ColorDataView: UIView {
   private let colorSpaceLabel: UILabel = {
     let label = UILabel()
@@ -47,5 +51,15 @@ final class ColorDataView: UIView {
 
   required init?(coder: NSCoder) {
     fatalError()
+  }
+}
+
+// MARK: - UIFont
+extension UIFont {
+  static func roundedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
+    guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.rounded) else {
+      return .systemFont(ofSize: size, weight: weight)
+    }
+    return UIFont(descriptor: descriptor, size: size)
   }
 }

@@ -8,10 +8,21 @@
 
 import UIKit
 
+/**
+ A set of methods that allows the child view
+ present the `ColorController` via parent controller.
+ */
 @objc protocol ColorPresenting {
   func presentColorController()
 }
 
+/**
+ A view that displays picked color
+ and its RGB and HEX values.
+
+ - Note: Used in `CameraController` and `ImageController`,
+         located in the top of the view.
+ */
 final class ColorTrackerView: UIButton {
   private let circleView: UIView = {
     let view = UIView()
@@ -70,12 +81,14 @@ final class ColorTrackerView: UIButton {
     ])
   }
 
+  /// Reduces view's scale on touch down.
   @objc private func touchDown() {
     UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
       self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
     })
   }
 
+  /// Resets view's scale on touch up.
   @objc private func touchUp() {
     UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.65, initialSpringVelocity: 0, options: .curveEaseOut, animations: {
       self.transform = .identity
@@ -90,15 +103,5 @@ final class ColorTrackerView: UIButton {
 
   required init?(coder: NSCoder) {
     fatalError()
-  }
-}
-
-// MARK: - UIFont
-extension UIFont {
-  static func roundedFont(ofSize size: CGFloat, weight: UIFont.Weight) -> UIFont {
-    guard let descriptor = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.rounded) else {
-      return .systemFont(ofSize: size, weight: weight)
-    }
-    return UIFont(descriptor: descriptor, size: size)
   }
 }

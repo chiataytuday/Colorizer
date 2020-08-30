@@ -43,7 +43,7 @@ final class ArchiveController: ScrollableViewController {
     setupCollectionView()
     layoutTipViews()
 
-    if let colors = UserDefaults.standard.unarchiveColors(by: "colors") {
+    if let colors = UserDefaults.standard.unarchiveColors(byKey: "colors") {
       APIManager.shared.set(colors: colors)
       updateColorsArchive()
     }

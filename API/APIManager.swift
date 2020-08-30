@@ -37,7 +37,7 @@ final class APIManager {
     defaults.archiveColors(colors, byKey: "colors")
   }
 
-  /// Sets the whole collection.
+  /// Replaces the colors collection.
   func set(colors: [UIColor]) {
     self.colors = colors
   }
