@@ -8,6 +8,7 @@
 
 import UIKit
 
+///`RootViewController`'s navigation bar button.
 final class BarButton: UIButton {
   init(_ imageName: String) {
     super.init(frame: .zero)

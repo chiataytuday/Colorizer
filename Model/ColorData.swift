@@ -8,9 +8,16 @@
 
 import Foundation
 
-
+/**
+ An object that represents color data, which is
+ lately used to be displayed in `ColorDataView`.
+ */
 struct ColorData {
-  let spaceName, value: String
+  /// "RGB", "HEX" and etc.
+  let spaceName: String
+
+  /// "0 0 0", "#FFFFFF" and etc.
+  let value: String
 
   init(_ spaceName: String, _ value: String) {
     self.spaceName = spaceName
