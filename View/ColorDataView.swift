@@ -1,14 +1,14 @@
 //
-//  CopyableDataView.swift
+//  ColorDataView.swift
 //  Tint
 //
-//  Created by debavlad on 05.07.2020.
+//  Created by debavlad on 30.08.2020.
 //  Copyright © 2020 debavlad. All rights reserved.
 //
 
 import UIKit
 
-final class RowDataView: UIView {
+final class ColorDataView: UIView {
   private let colorSpaceLabel: UILabel = {
     let label = UILabel()
     label.font = .roundedFont(ofSize: 20, weight: .semibold)
@@ -20,16 +20,14 @@ final class RowDataView: UIView {
     return label
   }()
 
-  init(with color: Color) {
+  init(withData data: ColorData) {
     super.init(frame: .zero)
-    colorSpaceLabel.textColor = tintColor
-    colorSpaceLabel.text = color.spaceName
-    valueLabel.textColor = tintColor
-    valueLabel.text = color.value
+    colorSpaceLabel.text = data.spaceName
+    valueLabel.text = data.value
     setupStackView()
   }
 
-  func set(color: UIColor) {
+  func setLabelColor(_ color: UIColor) {
     colorSpaceLabel.textColor = color
     valueLabel.textColor = color
   }

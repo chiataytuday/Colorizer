@@ -8,10 +8,18 @@
 
 import UIKit
 
+/**
+ A set of methods that interact with
+ colors archive from any view controller.
+ */
 protocol ColorsArchiveUpdating {
   func updateColorsArchive()
 }
 
+/**
+ A view controller, which is used to display a bunch
+ of data like **color spaces** and **color values**.
+ */
 final class ColorController: UIViewController {
   private let saveButton: UIButton = {
     let button = RoundButton(size: CGSize(width: 47, height: 46))
@@ -73,17 +81,12 @@ final class ColorController: UIViewController {
     stackView.alignment = .leading
     stackView.spacing = 6
 
-    _ = [
-      Color("HEX", color.hex),
-      Color("RGB", color.rgb),
-      Color("HSB", color.hsb),
-      Color("CMYK", color.cmyk)
-    ].map {
-      let dataView = RowDataView(with: $0)
-      dataView.set(color: color.readable)
+    color.data.forEach {
+      let dataView = ColorDataView(withData: $0)
+      dataView.setLabelColor(color.readable)
       stackView.addArrangedSubview(dataView)
     }
-
+    
     view.addSubview(stackView)
     stackView.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -145,6 +148,22 @@ extension ColorController: UIViewControllerTransitioningDelegate {
 
 //MARK: - UIColor
 extension UIColor {
+  /// Returns an array of `ColorData`
+  /// with all available color spaces and values.
+  ///
+  /// - Note: Available color spaces: HEX, RGB, HSB, CMYK.
+  var data: [ColorData] {
+    return [
+      ColorData("HEX", hex),
+      ColorData("RGB", rgb),
+      ColorData("HSB", hsb),
+      ColorData("CMYK", cmyk)
+    ]
+  }
+
+  /// Returns darker or lighter edition of the color.
+  ///
+  /// - Note: Use it as label's text color.
   var readable: UIColor {
     var white: CGFloat = 0
     getWhite(&white, alpha: nil)

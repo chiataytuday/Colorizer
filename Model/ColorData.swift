@@ -8,9 +8,9 @@
 
 import Foundation
 
-struct Color {
-  let spaceName: String
-  let value: String
+
+struct ColorData {
+  let spaceName, value: String
 
   init(_ spaceName: String, _ value: String) {
     self.spaceName = spaceName
