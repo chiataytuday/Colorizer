@@ -10,11 +10,7 @@ import UIKit
 import AVFoundation
 
 final class CameraController: UIViewController {
-  private lazy var captureSession: AVCaptureSession = {
-    let session = AVCaptureSession()
-    session.sessionPreset = .inputPriority
-    return session
-  }()
+  private let captureSession = AVCaptureSession()
   private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
     let layer = AVCaptureVideoPreviewLayer(session: captureSession)
     layer.videoGravity = .resizeAspectFill
@@ -24,7 +20,7 @@ final class CameraController: UIViewController {
   private let colorTrackerView = ColorTrackerView()
   private var captureDevice: AVCaptureDevice?
   var delegate: ColorsArchiveUpdating?
-  var isCurrent = false
+//  var isCurrent = false
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -32,8 +28,8 @@ final class CameraController: UIViewController {
     configureDeviceFormat()
     setupSubviews()
 
-    NotificationCenter.default.addObserver(self, selector: #selector(viewWillDisappear(_:)), name: UIApplication.willResignActiveNotification, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(viewWillAppear(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+//    NotificationCenter.default.addObserver(self, selector: #selector(viewWillDisappear(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+//    NotificationCenter.default.addObserver(self, selector: #selector(viewWillAppear(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
   }
 
   private func setupCaptureSession() {
@@ -85,8 +81,10 @@ final class CameraController: UIViewController {
     captureSession.startRunning()
 
     colorTrackerView.delegate = self
-    colorTrackerView.translatesAutoresizingMaskIntoConstraints = false
+    let lastColor = UserDefaults.standard.colorForKey("lastColor") ?? .black
+    colorTrackerView.configure(with: lastColor)
     view.addSubview(colorTrackerView)
+    colorTrackerView.translatesAutoresizingMaskIntoConstraints = false
     let topMargin: CGFloat = Device.shared.hasNotch ? 15 : 20
     NSLayoutConstraint.activate([
       colorTrackerView.widthAnchor.constraint(equalToConstant: 160),
@@ -95,34 +93,21 @@ final class CameraController: UIViewController {
       colorTrackerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topMargin)
     ])
 
-    let color = UserDefaults.standard.colorForKey("lastColor") ?? .black
-    colorTrackerView.configure(with: color)
+    let dotImageView = UIImageView(image: UIImage(systemName: "circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 8, weight: .regular)))
+    dotImageView.tintColor = .white
+    dotImageView.center = view.center
+    view.addSubview(dotImageView)
 
-    let dot: UIImageView = {
-      let config = UIImage.SymbolConfiguration(pointSize: 8, weight: .regular)
-      let image = UIImage(systemName: "circle.fill", withConfiguration: config)
-      let imageView = UIImageView(image: image)
-      imageView.tintColor = .white
-      return imageView
-    }()
-    view.addSubview(dot)
-    dot.center = view.center
-
-    let viewfinder: UIImageView = {
-      let config = UIImage.SymbolConfiguration(pointSize: 38, weight: .regular)
-      let image = UIImage(systemName: "viewfinder", withConfiguration: config)
-      let imageView = UIImageView(image: image)
-      imageView.tintColor = .white
-      imageView.alpha = 0.25
-      return imageView
-    }()
-    view.addSubview(viewfinder)
-    viewfinder.center = view.center
+    let rectImageView = UIImageView(image: UIImage(systemName: "viewfinder", withConfiguration: UIImage.SymbolConfiguration(pointSize: 38, weight: .regular)))
+    rectImageView.tintColor = .white
+    rectImageView.alpha = 0.25
+    rectImageView.center = view.center
+    view.addSubview(rectImageView)
   }
 
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    guard presentedViewController == nil else { return }
-    guard let _ = previewLayer.connection else { return }
+    guard presentedViewController == nil,
+      let _ = previewLayer.connection else { return }
 
     /* Don't use view.center, because x < 0 sometimes */
     let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
@@ -139,28 +124,28 @@ final class CameraController: UIViewController {
 }
 
 // MARK: - ScrollableViewDelegate
-extension CameraController: ScrollableViewDelegate {
-  @objc func scrollableViewWillAppear() {
-    guard isCurrent else { return }
-    previewLayer.connection?.isEnabled = true
-  }
-
-  @objc func scrollableViewWillDisappear() {
-    guard isCurrent else { return }
-    previewLayer.connection?.isEnabled = false
-    isCurrent = false
-  }
-
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    scrollableViewWillAppear()
-  }
-
-  override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    previewLayer.connection?.isEnabled = false
-  }
-}
+//extension CameraController: ScrollableViewDelegate {
+//  @objc func scrollableViewWillAppear() {
+//    guard isCurrent else { return }
+//    previewLayer.connection?.isEnabled = true
+//  }
+//
+//  @objc func scrollableViewWillDisappear() {
+//    guard isCurrent else { return }
+//    previewLayer.connection?.isEnabled = false
+//    isCurrent = false
+//  }
+//
+//  override func viewWillAppear(_ animated: Bool) {
+//    super.viewWillAppear(animated)
+//    scrollableViewWillAppear()
+//  }
+//
+//  override func viewWillDisappear(_ animated: Bool) {
+//    super.viewWillDisappear(animated)
+//    previewLayer.connection?.isEnabled = false
+//  }
+//}
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -195,7 +180,9 @@ extension UserDefaults {
   func setColor(_ color: UIColor, forKey key: String) {
     var colorData: NSData?
     do {
-      colorData = try NSKeyedArchiver.archivedData(withRootObject: color, requiringSecureCoding: false) as NSData
+      colorData = try NSKeyedArchiver.archivedData(
+        withRootObject: color,
+        requiringSecureCoding: false) as NSData
     } catch {
       print(error.localizedDescription)
     }
@@ -206,7 +193,8 @@ extension UserDefaults {
     var colorToReturn: UIColor?
     guard let colorData = data(forKey: key) else { return nil }
     do {
-      colorToReturn = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(colorData) as? UIColor
+      colorToReturn = try NSKeyedUnarchiver
+        .unarchiveTopLevelObjectWithData(colorData) as? UIColor
     } catch {
       print(error.localizedDescription)
     }
