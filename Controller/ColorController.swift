@@ -9,14 +9,6 @@
 import UIKit
 
 /**
- A set of methods that interact with
- colors archive from any view controller.
- */
-protocol ColorsArchiveUpdating {
-  func updateColorsArchive()
-}
-
-/**
  A view controller, which is used to display a bunch
  of data like **color spaces** and **color values**.
  */

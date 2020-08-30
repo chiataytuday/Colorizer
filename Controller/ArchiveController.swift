@@ -8,6 +8,21 @@
 
 import UIKit
 
+/**
+ A set of methods that interact with
+ colors archive from any view controller.
+ */
+protocol ColorsArchiveUpdating {
+  func updateColorsArchive()
+}
+
+/**
+ A view controller, which is used to display
+ a bunch of colors as cells in its collection view.
+
+ - Note: You can update colors archive via
+         delegate from other view controllers.
+ */
 final class ArchiveController: ScrollableViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()

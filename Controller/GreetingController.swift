@@ -9,6 +9,10 @@
 import UIKit
 import AVFoundation
 
+/**
+ A view controller, which is used to greet
+ the user and also ask for the camera access.
+ */
 final class GreetingController: UIViewController {
   private let welcomeLabel: UILabel = {
     let label = UILabel()

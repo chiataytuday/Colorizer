@@ -8,6 +8,12 @@
 
 import UIKit
 
+/**
+ A view controller, which contains a bunch of methods
+ to pick colors from any picture in user's photo library.
+
+ - Note: Color is being picked via `PipetteView`.
+ */
 final class ImageController: ScrollableViewController {
   private let imageInsets: (top: CGFloat, bottom: CGFloat, height: CGFloat) = {
     return Device.shared.hasNotch ? (150, -150, -300) : (110, -160, -270)
@@ -158,6 +164,7 @@ extension ImageController {
     }
   }
 
+  /// Returns a rectangle, which will be zoomed on double tap gesture.
   private func rectForScale(_ scale: CGFloat, to center: CGPoint) -> CGRect {
     var rect: CGRect = .zero
     rect.size.height = (imageView.frame.height - imageInsets.height)/scale
@@ -264,6 +271,7 @@ extension ImageController: UINavigationControllerDelegate, UIImagePickerControll
     moved(to: color!)
   }
 
+  /// Calculates the closest zoom scale for `ImageView`'s image
   private func defineMaxZoomScale() {
     guard let imageSize = imageView.image?.size else { return }
     let ratioH = imageSize.height/(view.frame.height/4)
@@ -304,6 +312,7 @@ extension ImageController: ColorPresenting {
 
 // MARK: - CALayer
 extension CALayer {
+  /// Picks `UIColor` from the provided point.
   func pickColor(at position: CGPoint) -> UIColor? {
     var pixel = [UInt8](repeatElement(0, count: 4))
     let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -331,6 +340,7 @@ extension CALayer {
 
 // MARK: - UIImage
 extension UIImage {
+  /// The most appropriate (to fit in) screen scale.
   var maxScreenScale: CGFloat {
     let maxSideLength: CGFloat = 2100
     let largestSide = max(size.width, size.height)
@@ -338,6 +348,10 @@ extension UIImage {
     return min(1, scale)
   }
 
+  /// Returns scaled image.
+  ///
+  /// - Parameters:
+  ///    - value: The value of the image scale.
   func scaled(to value: CGFloat) -> UIImage {
     let newSize = CGSize(
       width: size.width * scale,

@@ -9,6 +9,13 @@
 import UIKit
 import AVFoundation
 
+/**
+ A view controller, which contains a bunch of methods
+ to pick colors from the real world via device camera.
+
+ - Note: Color is being picked from `view.center`
+         via `CALayer`'s properties.
+ */
 final class CameraController: ScrollableViewController {
   private let captureSession = AVCaptureSession()
   private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
@@ -130,7 +137,7 @@ final class CameraController: ScrollableViewController {
   }
 }
 
-// MARK: - Camera disabled when not used
+// MARK: - Camera is disabled on the background
 extension CameraController {
   override func willScrollTo() {
     super.willScrollTo()
@@ -185,6 +192,7 @@ extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate {
 
 // MARK: - UserDefaults
 extension UserDefaults {
+  /// A method for saving `UIColor` to the `UserDefaults`.
   func setColor(_ color: UIColor, forKey key: String) {
     var colorData: NSData?
     do {
@@ -197,6 +205,7 @@ extension UserDefaults {
     set(colorData, forKey: key)
   }
 
+  /// A method for reading `UIColor` from the `UserDefaults`.
   func colorForKey(_ key: String) -> UIColor? {
     var colorToReturn: UIColor?
     guard let colorData = data(forKey: key) else { return nil }

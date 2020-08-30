@@ -8,6 +8,10 @@
 
 import UIKit
 
+/**
+ An object that is responsible for custom
+ transitions between view controllers.
+ */
 final class AnimationController: NSObject {
   enum AnimationType {
     case present
@@ -17,6 +21,15 @@ final class AnimationController: NSObject {
   private let animationDuration: Double
   private let animationType: AnimationType
 
+  /**
+   Initializes a new animation controller with the provided settings.
+
+   - Parameters:
+      - duration: The duration of the animation
+      - type: The type of the animation
+
+   - Returns: Custom vertical transition with your settings.
+   */
   init(duration: Double, type: AnimationType) {
     animationDuration = duration
     animationType = type
