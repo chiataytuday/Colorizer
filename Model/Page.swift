@@ -9,10 +9,10 @@
 import UIKit
 
 final class Page {
-  let controller: UIViewController
+  let controller: ScrollableViewController
   let barImageName: String
 
-  init(_ controller: UIViewController, _ barImageName: String) {
+  init(_ controller: ScrollableViewController, _ barImageName: String) {
     self.controller = controller
     self.barImageName = barImageName
   }

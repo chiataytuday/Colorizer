@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-final class CameraController: UIViewController {
+final class CameraController: ScrollableViewController {
   private let captureSession = AVCaptureSession()
   private lazy var previewLayer: AVCaptureVideoPreviewLayer = {
     let layer = AVCaptureVideoPreviewLayer(session: captureSession)
@@ -20,7 +20,6 @@ final class CameraController: UIViewController {
   private let colorTrackerView = ColorTrackerView()
   private var captureDevice: AVCaptureDevice?
   var delegate: ColorsArchiveUpdating?
-//  var isCurrent = false
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -28,8 +27,16 @@ final class CameraController: UIViewController {
     configureDeviceFormat()
     setupSubviews()
 
-//    NotificationCenter.default.addObserver(self, selector: #selector(viewWillDisappear(_:)), name: UIApplication.willResignActiveNotification, object: nil)
-//    NotificationCenter.default.addObserver(self, selector: #selector(viewWillAppear(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(viewWillDisappear(_:)),
+      name: UIApplication.willResignActiveNotification,
+      object: nil)
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(viewWillAppear(_:)),
+      name: UIApplication.didBecomeActiveNotification,
+      object: nil)
   }
 
   private func setupCaptureSession() {
@@ -105,6 +112,28 @@ final class CameraController: UIViewController {
     view.addSubview(rectImageView)
   }
 
+  override func willScrollTo() {
+    super.willScrollTo()
+    previewLayer.connection?.isEnabled = true
+  }
+
+  override func willScrollAway() {
+    super.willScrollAway()
+    previewLayer.connection?.isEnabled = false
+  }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    guard isDisplayed else { return }
+    previewLayer.connection?.isEnabled = true
+  }
+
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    guard isDisplayed else { return }
+    previewLayer.connection?.isEnabled = false
+  }
+
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     guard presentedViewController == nil,
       let _ = previewLayer.connection else { return }
@@ -122,30 +151,6 @@ final class CameraController: UIViewController {
     true
   }
 }
-
-// MARK: - ScrollableViewDelegate
-//extension CameraController: ScrollableViewDelegate {
-//  @objc func scrollableViewWillAppear() {
-//    guard isCurrent else { return }
-//    previewLayer.connection?.isEnabled = true
-//  }
-//
-//  @objc func scrollableViewWillDisappear() {
-//    guard isCurrent else { return }
-//    previewLayer.connection?.isEnabled = false
-//    isCurrent = false
-//  }
-//
-//  override func viewWillAppear(_ animated: Bool) {
-//    super.viewWillAppear(animated)
-//    scrollableViewWillAppear()
-//  }
-//
-//  override func viewWillDisappear(_ animated: Bool) {
-//    super.viewWillDisappear(animated)
-//    previewLayer.connection?.isEnabled = false
-//  }
-//}
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraController: AVCaptureVideoDataOutputSampleBufferDelegate {

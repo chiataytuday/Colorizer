@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class ImageController: UIViewController {
+final class ImageController: ScrollableViewController {
   private let scrollView = UIScrollView()
   private let imagePicker = UIImagePickerController()
   private var imageView: UIImageView = {

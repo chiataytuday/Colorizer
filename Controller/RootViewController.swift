@@ -8,12 +8,6 @@
 
 import UIKit
 
-// Move these to Page class?
-@objc protocol ScrollableViewDelegate {
-  func scrollableViewWillAppear()
-  func scrollableViewWillDisappear()
-}
-
 enum ScrollDirection {
   case left, right
 }
@@ -41,10 +35,10 @@ final class RootViewController: UIViewController {
 
   private func setupPages() {
     let archiveController = ArchiveController()
-    let libraryController = ImageController()
-    libraryController.delegate = archiveController
+    let imageController = ImageController()
+    imageController.delegate = archiveController
     pages.append(contentsOf: [
-      Page(libraryController, "person.crop.square"),
+      Page(imageController, "person.crop.square"),
       Page(archiveController, "archivebox")
     ])
 
@@ -101,6 +95,8 @@ final class RootViewController: UIViewController {
 
   @objc private func navigate(to sender: UIButton) {
     guard sender.tag != currentPage else { return }
+    scrolled(from: currentPage, to: sender.tag)
+
     let direction: ScrollDirection = sender.tag >= currentPage ? .right : .left
     let offset = containerScrollView.contentOffset.x +
       (direction == .right ? view.frame.width : -view.frame.width)
@@ -112,29 +108,15 @@ final class RootViewController: UIViewController {
     })
     currentPage = sender.tag
   }
-//  @objc private func handleTap(on sender: UIButton) {
-//    guard sender.tag != currentPage else {
-//      return
-//    }
-//    (controllers[sender.tag] as? CameraController)?.isCurrent = true
-//    (controllers[currentPage] as? ScrollableViewDelegate)?.scrollableViewWillDisappear()
-//    (controllers[sender.tag] as? ScrollableViewDelegate)?.scrollableViewWillAppear()
-//
-//    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
-//      self.buttonsStackView.arrangedSubviews[self.currentPage].tintColor = .softGray
-//      self.buttonsStackView.arrangedSubviews[sender.tag].tintColor = .black
-//    })
-//
-//    let direction: ScrollDirection = sender.tag >= currentPage ? .right : .left
-//    let offset = containerScrollView.contentOffset.x + (direction == .right ? view.frame.width : -view.frame.width)
-//    controllers[sender.tag].view.frame.origin.x = offset
-//    containerScrollView.bringSubviewToFront(controllers[sender.tag].view)
-//
-//    UIView.animate(withDuration: 0.45, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
-//      self.containerScrollView.contentOffset.x = offset
-//    })
-//    currentPage = sender.tag
-//  }
+
+  private func scrolled(from: Int, to: Int) {
+    pages[from].controller.willScrollAway()
+    pages[to].controller.willScrollTo()
+    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
+      self.buttonsStackView.arrangedSubviews[from].tintColor = .softGray
+      self.buttonsStackView.arrangedSubviews[to].tintColor = .black
+    })
+  }
 
   override func viewWillAppear(_ animated: Bool) {
     /* Pages change their order for some reason, so

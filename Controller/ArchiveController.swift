@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class ArchiveController: UIViewController {
+final class ArchiveController: ScrollableViewController {
   private let collectionView: UICollectionView = {
     let layout = UICollectionViewFlowLayout()
     layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 100, right: 0)
