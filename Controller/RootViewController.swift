@@ -76,8 +76,7 @@ final class RootViewController: UIViewController {
     barView.clipsToBounds = true
     view.addSubview(barView)
 
-    let bottomInset = additionalSafeAreaInsets.bottom
-    let barHeight = 65 + bottomInset - (bottomInset > 0 ? 10 : 0)
+    let barHeight = Device.shared.barHeight
     barView.frame.size = CGSize(width: view.frame.width, height: barHeight)
     barView.frame.origin.y = view.frame.height - barHeight
     barView.center.x = view.center.x
@@ -111,10 +110,10 @@ final class RootViewController: UIViewController {
   private func scrolled(from: Int, to: Int) {
     pages[from].controller.willScrollAway()
     pages[to].controller.willScrollTo()
-    UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut, .allowUserInteraction], animations: {
+    UIViewPropertyAnimator(duration: 0.1, curve: .easeOut) {
       self.buttonsStackView.arrangedSubviews[from].tintColor = .softGray
       self.buttonsStackView.arrangedSubviews[to].tintColor = .black
-    })
+    }.startAnimation()
   }
 
   override func viewWillAppear(_ animated: Bool) {

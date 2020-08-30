@@ -9,6 +9,10 @@
 import UIKit
 
 final class ImageController: ScrollableViewController {
+  private let imageInsets: (top: CGFloat, bottom: CGFloat, height: CGFloat) = {
+    return Device.shared.hasNotch ? (150, -150, -300) : (110, -160, -270)
+  }()
+
   private let scrollView = UIScrollView()
   private let imagePicker = UIImagePickerController()
   private var imageView: UIImageView = {
@@ -18,13 +22,17 @@ final class ImageController: ScrollableViewController {
   }()
   private var colorTrackerView = ColorTrackerView()
   private let doubleTapGesture = UITapGestureRecognizer()
+  private let pickButton: UIButton = {
+    let button = RoundButton(size: CGSize(width: 56, height: 55))
+    button.setPreferredSymbolConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .light), forImageIn: .normal)
+    button.setImage(UIImage(systemName: "photo"), for: .normal)
+    button.tintColor = .softGray
+    button.isHidden = true
+    return button
+  }()
   private var colorPickerView: PipetteView!
   private var tipStackView: UIStackView!
   var delegate: ColorsArchiveUpdating?
-
-  private let imageInsets: (top: CGFloat, bottom: CGFloat, height: CGFloat) = {
-    return Device.shared.hasNotch ? (150, -150, -300) : (110, -160, -270)
-  }()
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -113,6 +121,13 @@ final class ImageController: ScrollableViewController {
         equalTo: view.safeAreaLayoutGuide.topAnchor,
         constant: topMargin)
     ])
+
+    let barTop = view.frame.height - Device.shared.barHeight
+    pickButton.addTarget(self, action: #selector(presentImagePicker), for: .touchUpInside)
+    pickButton.frame.origin = CGPoint(
+      x: view.frame.width - pickButton.frame.width - 22.5,
+      y: barTop - pickButton.frame.height - 20)
+    view.addSubview(pickButton)
   }
 
   private func setupGestures() {
@@ -155,6 +170,10 @@ extension ImageController {
   }
 
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    presentImagePicker()
+  }
+
+  @objc private func presentImagePicker() {
     present(imagePicker, animated: true)
   }
 
@@ -226,6 +245,7 @@ extension ImageController: UINavigationControllerDelegate, UIImagePickerControll
     tipStackView.isHidden = true
     colorPickerView.isHidden = false
     colorTrackerView.isHidden = false
+    pickButton.isHidden = false
   }
 
   private func resetSubviews() {

@@ -15,12 +15,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     if let windowScene = scene as? UIWindowScene {
       let window = UIWindow(windowScene: windowScene)
-      Device.shared.hasNotch = window.safeAreaInsets.bottom > 0
+      Device.shared.bottomInset = window.safeAreaInsets.bottom
       switch Device.shared.cameraStatus {
         case .authorized, .denied, .restricted:
-          let rootViewController = RootViewController()
-          rootViewController.additionalSafeAreaInsets.bottom = window.safeAreaInsets.bottom
-          window.rootViewController = rootViewController
+          window.rootViewController = RootViewController()
         case .notDetermined:
           window.rootViewController = GreetingController()
         @unknown default:
