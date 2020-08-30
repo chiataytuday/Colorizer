@@ -112,17 +112,15 @@ final class ColorController: UIViewController {
 //MARK: - Target actions
 @objc extension ColorController {
   private func likeButtonTapped(sender: UIButton) {
-    switch sender.tag {
-      case 0:
-        APIManager.shared.add(color: view.backgroundColor!)
-        sender.tag = 1
-        sender.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
-      case 1:
-        APIManager.shared.remove(color: view.backgroundColor!)
-        sender.tag = 0
-        sender.setImage(UIImage(systemName: "suit.heart"), for: .normal)
-      default:
-        break
+    let isArchived = sender.tag == 1
+    if isArchived {
+      APIManager.shared.remove(color: view.backgroundColor!)
+      sender.setImage(UIImage(systemName: "suit.heart"), for: .normal)
+      sender.tag = 0
+    } else {
+      APIManager.shared.add(color: view.backgroundColor!)
+      sender.setImage(UIImage(systemName: "suit.heart.fill"), for: .normal)
+      sender.tag = 1
     }
     UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 0.4)
     delegate?.updateColorsArchive()
