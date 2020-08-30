@@ -12,6 +12,10 @@ enum ScrollDirection {
   case left, right
 }
 
+/**
+ A **root** view controller, which contains a navigation bar with `BarButton`'s
+ and a `UIScrollView` with a bunch of `ScrollableViewController`'s
+ */
 final class RootViewController: UIViewController {
   private lazy var containerScrollView: UIScrollView = {
     let scrollView = UIScrollView(frame: view.frame)

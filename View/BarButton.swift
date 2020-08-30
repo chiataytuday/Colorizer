@@ -10,6 +10,15 @@ import UIKit
 
 ///`RootViewController`'s navigation bar button.
 final class BarButton: UIButton {
+
+  /**
+  Initializes a new navigation bar button.
+
+  - Parameters:
+     - imageName: System image name.
+
+  - Returns: Navigation bar button with the provided image.
+  */
   init(_ imageName: String) {
     super.init(frame: .zero)
     tintColor = .softGray

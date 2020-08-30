@@ -14,10 +14,14 @@ import UIKit
  */
 final class Page {
   let controller: ScrollableViewController
-
-  /// System image image for an icon of a `BarButton`.
   let barImageName: String
 
+  /**
+  Initializes a new page.
+
+  - Parameters:
+     - barImageName: System image name for a `BarButton`.
+  */
   init(_ controller: ScrollableViewController, _ barImageName: String) {
     self.controller = controller
     self.barImageName = barImageName

@@ -25,8 +25,8 @@ final class AnimationController: NSObject {
    Initializes a new animation controller with the provided settings.
 
    - Parameters:
-      - duration: The duration of the animation
-      - type: The type of the animation
+      - duration: The duration of the animation.
+      - type: The type of the animation.
 
    - Returns: Custom vertical transition with your settings.
    */
