@@ -112,6 +112,26 @@ final class CameraController: ScrollableViewController {
     view.addSubview(rectImageView)
   }
 
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    guard presentedViewController == nil,
+      let _ = previewLayer.connection else { return }
+
+    // Don't use view.center, because x < 0 sometimes
+    let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
+
+    let pickedColor = previewLayer.pickColor(at: center)
+    UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
+    colorTrackerView.configure(with: pickedColor!)
+    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
+  }
+
+  override var prefersStatusBarHidden: Bool {
+    true
+  }
+}
+
+// MARK: - Camera disabled when not used
+extension CameraController {
   override func willScrollTo() {
     super.willScrollTo()
     previewLayer.connection?.isEnabled = true
@@ -132,23 +152,6 @@ final class CameraController: ScrollableViewController {
     super.viewWillDisappear(animated)
     guard isDisplayed else { return }
     previewLayer.connection?.isEnabled = false
-  }
-
-  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    guard presentedViewController == nil,
-      let _ = previewLayer.connection else { return }
-
-    /* Don't use view.center, because x < 0 sometimes */
-    let center = CGPoint(x: view.frame.width/2, y: view.frame.height/2)
-
-    let pickedColor = previewLayer.pickColor(at: center)
-    UserDefaults.standard.setColor(pickedColor!, forKey: "lastColor")
-    colorTrackerView.configure(with: pickedColor!)
-    UIImpactFeedbackGenerator(style: .rigid).impactOccurred(intensity: 0.5)
-  }
-
-  override var prefersStatusBarHidden: Bool {
-    true
   }
 }
 

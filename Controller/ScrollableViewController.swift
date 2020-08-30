@@ -17,7 +17,7 @@ class ScrollableViewController: UIViewController {
   var isDisplayed = false
 }
 
-extension ScrollableViewController: ScrollableViewControllerDelegate {
+@objc extension ScrollableViewController: ScrollableViewControllerDelegate {
   func willScrollTo() {
     isDisplayed = true
   }

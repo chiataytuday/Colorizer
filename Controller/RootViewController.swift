@@ -55,7 +55,6 @@ final class RootViewController: UIViewController {
       page.controller.view.frame.origin.x = view.frame.width * CGFloat(index)
       page.controller.view.tag = index
 
-      // Do we need next 3 lines?
       containerScrollView.addSubview(page.controller.view)
       addChild(page.controller)
       page.controller.didMove(toParent: self)
